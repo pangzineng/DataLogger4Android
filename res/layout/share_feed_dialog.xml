@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/share_feed_title"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/textView0" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/share_feed_friend_email"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="3"  />
+
+            <EditText
+                android:id="@+id/share_friend_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow1" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/share_feed_permission"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="3"  />
+
+            <RadioGroup
+                android:id="@+id/share_permission"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <RadioButton
+                    android:id="@+id/share_permission_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/share_feed_permission_view" />
+
+                <RadioButton
+                    android:id="@+id/share_permission_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_feed_permission_update" />
+
+                <RadioButton
+                    android:id="@+id/share_permission_full"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_feed_permission_full" />
+            </RadioGroup>
+		
+		</TableRow>
+    
+    
+</RelativeLayout>

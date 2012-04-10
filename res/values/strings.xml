@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Home page!</string>
+    <string name="app_name">Datalogger4Android</string>
+    
+    <!-- FOR all dialog buttons -->
+    <string name="dialog_confirm">Submit</string>
+    <string name="dialog_cancel">Cancel</string>
+    
+    <!-- FOR add_feed_dialog -->
+	<string name="add_feed_dialog_title">Add Feed to Feed List</string>
+	<string name="add_feed_choose_exist">* Import From Existing Feed</string>
+	<string name="add_feed_exist_id">Feed ID</string>
+	<string name="add_feed_exist_key">Permission</string>
+	<string name="add_feed_choose_new">* Create New Feed</string>
+	<string name="add_feed_new_title">Name</string>
+	<string name="add_feed_new_type">Type</string>
+ 	<string name="add_feed_new_status">Status</string>
+
+	<!-- FOR edit_delete_feed_dialog -->
+	<string name="edit_feed">* Edit This Feed</string>
+	<string name="edit_feed_name">Rename</string>
+	<string name="edit_feed_status">Change Status</string>
+	<string name="delete_feed">* Delete This Feed</string>
+	<string name="delete_feed_message">Click To Delete This Feed</string>
+	<string name="delete_feed_button">Delete</string>
+	<string name="delete_feed_confirm_title">Are you sure you want to delete this feed?</string>
+	
+	<!-- FOR share_feed_dialog -->
+	<string name="share_feed_title">* Share This Feed With Friend</string>
+	<string name="share_feed_friend_email">Friend Email</string>
+	<string name="share_feed_permission">Permission</string>
+	<string name="share_feed_permission_view">View</string>
+	<string name="share_feed_permission_update">Update</string>
+	<string name="share_feed_permission_full">Full</string>
+
+	<!-- FOR EmailService -->
+	<string name="email_title">Friend Permission From Datalogger4Android</string>
+	<string name="email_opening">Dear my friend:\nThis email is sent from my Datalogger for Android.\nI would like to share the following feed with you:</string>
+	<string name="email_body_feed_name">\n\nFeed Name: </string>
+	<string name="email_body_feed_id">\nFeed ID: </string>
+	<string name="email_body_key">\n\nPermission Key: </string>
+	<string name="email_body_level">\nPermission Level: </string>
+	<string name="email_body_sender">\n\nSent From: </string>
+	<string name="email_ending">\nThanks and have a nice day.</string>
+	
+	<!-- FOR update_feed_dialog -->
+	<string name="update_feed">* Update Current Feed</string>
+	<string name="update_feed_selected">Selected</string>
+	<string name="update_feed_interval">Interval (in minutes)</string>
+	<string name="update_feed_totalTime">Total Runtime (in minutes)</string>
+	
+	<!-- FOR add_datastream_dialog -->
+	<string name="add_datastream">* Add Sensor Data</string>
+	<string name="add_datastream_name">Name</string>
+	<string name="add_datastream_select">Sensor</string>
+	
+	<!-- FOR Sensor Storage 		
+		api14[1] = "ACCELEROMETER";
+		api14[13] = "AMBIENT_TEMPERATURE";
+		api14[9] = "GRAVITY";
+		api14[4] = "GYROSCOPE";
+		api14[5] = "LIGHT";
+		api14[10] = "LINEAR_ACCELERATION";
+		api14[2] = "MAGNETIC_FIELD";
+		api14[6] = "PRESSURE";
+		api14[8] = "PROXIMITY";
+		api14[12] = "RELATIVE_HUMIDITY";
+		api14[11] = "ROTATION_VECTOR";
+	-->
+	<string-array name="sensor_list">
+		<item>Sound</item>
+		<item>Accelerometer</item>
+		<item>Magnetic Field</item>
+		<item>Orientation(deprecated)</item>
+		<item>Gyroscope</item>
+		<item>Light</item>
+		<item>Pressure</item>
+		<item>Temperature(deprecated)</item>
+		<item>Proximity</item>
+		<item>Gravity</item>
+		<item>Linear Acceleration</item>
+		<item>Rotation Vector</item>
+		<item>Relative Humidity</item>
+		<item>Ambient Temperature</item>
+	</string-array>
+		    
+</resources>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_feed_choose_exist"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+    
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/textView0" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_feed_exist_id"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="3"  />
+
+            <EditText
+                android:id="@+id/add_feed_e_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow1" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_feed_exist_key"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="3"  />
+
+            <EditText
+                android:id="@+id/add_feed_e_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:layout_weight="1" />
+		
+		</TableRow>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tableRow2"
+        android:text="@string/add_feed_choose_new"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+		<TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/textView3" >
+
+            <TextView
+                android:id="@+id/textView4"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_feed_new_title"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="3" />
+
+            <EditText
+                android:id="@+id/add_feed_n_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow3" >
+
+            <TextView
+                android:id="@+id/textView5"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_feed_new_type"
+                android:layout_weight="3"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Switch
+                android:id="@+id/add_feed_n_type"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textOff="Sensor"
+                android:textOn="Custome"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow4" >
+            
+            <TextView
+                android:id="@+id/textView6"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_feed_new_status"
+                android:layout_weight="3"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Switch
+                android:id="@+id/add_feed_n_status"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textOff="Public"
+                android:textOn="Private"
+                android:layout_weight="1" />
+		
+		</TableRow>
+    
+</RelativeLayout>

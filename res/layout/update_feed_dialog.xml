@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView
+        android:id="@+id/textView0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/update_feed"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+    
+
+        <TableRow
+            android:id="@+id/tableRow0"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/textView0" >
+    
+            <TextView
+                android:id="@+id/textView4"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/update_feed_selected"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+				android:layout_weight="2"/>
+            
+    	</TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow0" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/update_feed_interval"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="1"  />
+
+            <EditText
+                android:id="@+id/update_feed_interval"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:layout_weight="2" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow1" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/update_feed_totalTime"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="1"  />
+
+            <EditText
+                android:id="@+id/update_feed_totaltime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:layout_weight="2" />
+		
+		</TableRow>
+
+    
+</RelativeLayout>
