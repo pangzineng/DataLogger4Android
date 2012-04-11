@@ -1,6 +1,7 @@
 package com.hsr.datalogger;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.database.DatabaseHelper;
@@ -30,6 +31,7 @@ public class Helper {
 	public String[] setSensorForDevice(){
 		// will only run once for the first launch of the application to settle the sensor info of this device
 		if(!caH.detectSensor()){
+			Log.d("pang", "should run for the first time");
 			dbH.storeSensorStatus(hwH.getAvailableSensor());
 		}
 		
@@ -43,7 +45,7 @@ public class Helper {
 		return key;
 	}
 	
-	public boolean sendEmail(String address, String selected){
-		return exH.sendEmail(address, createPermission(selected), selected, caH.getInfoForEmail());
+	public boolean sendEmail(String address, String selected, Context dialog){
+		return exH.sendEmail(address, createPermission(selected), selected, caH.getInfoForEmail(), dialog);
 	}
 }

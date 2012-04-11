@@ -1,14 +1,21 @@
 package com.hsr.datalogger;
 
+import java.util.List;
+
+import com.hsr.datalogger.FeedList.MFeedItem;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListFragment;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Loader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -31,17 +39,29 @@ public class FeedPage extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedpage);
-		
+		Context conte = FeedPage.this;
 	}
 	
-	public static class FPFragment extends ListFragment {
+	public static class FPFragment extends ListFragment  implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<MFeedItem>>{
 		
 		private static final int ADD_DATASTREAM = 1;
 		private static final int SHARE_FEED = 2;
 		private static final int UPDATE_FEED = 3;
 		
+		Context context;
+		Helper helper;
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			setEmptyText("No Data Stream");
+			setHasOptionsMenu(true);
+			context = getActivity().getApplicationContext();
+			helper = new Helper(context);
+		}
+		
 		@Override
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+			Log.d("pang","get To Options Menu");
 			menu.add(Menu.NONE, ADD_DATASTREAM , Menu.NONE, "Add Datastream")
 				.setIcon(android.R.drawable.ic_menu_add)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -59,11 +79,11 @@ public class FeedPage extends Activity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 			switch(item.getItemId()){
 			case ADD_DATASTREAM:
-				DialogFragment addDatastreamDialog = AddDatastreamDialog.newInstance(R.string.add_datastream, getActivity().getApplicationContext());
+				DialogFragment addDatastreamDialog = AddDatastreamDialog.newInstance(R.string.add_datastream, context, helper);
 				addDatastreamDialog.show(getFragmentManager(), "dialog");
 				return true;
 			case SHARE_FEED:
-				DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, getActivity().getApplicationContext());
+				DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, context, helper);
 				shareFeedDialog.show(getFragmentManager(), "dialog");
 				return true;
 			case UPDATE_FEED:
@@ -71,6 +91,37 @@ public class FeedPage extends Activity {
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+		}
+
+		@Override
+		public Loader<List<MFeedItem>> onCreateLoader(int arg0, Bundle arg1) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void onLoadFinished(Loader<List<MFeedItem>> arg0,
+				List<MFeedItem> arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onLoaderReset(Loader<List<MFeedItem>> arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean onQueryTextChange(String newText) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean onQueryTextSubmit(String query) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 	}
 	
@@ -80,14 +131,14 @@ public class FeedPage extends Activity {
 		private static Context mContext;
 		private static Helper helper;
 
-		public static AddDatastreamDialog newInstance(int title, Context context) {
+		public static AddDatastreamDialog newInstance(int title, Context context, Helper h) {
 			AddDatastreamDialog frag = new AddDatastreamDialog();
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
 			
 			mContext = context;
-			helper = new Helper(mContext);
+			helper = h;
 			
 			return frag;
 		}
@@ -145,14 +196,14 @@ public class FeedPage extends Activity {
 		private static Context mContext;
 		private static Helper helper;
 		
-		public static ShareFeedDialog newInstance(int title, Context context) {
+		public static ShareFeedDialog newInstance(int title, Context context, Helper h) {
 			ShareFeedDialog frag = new ShareFeedDialog();
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
 			
 			mContext = context;
-			helper = new Helper(mContext);
+			helper = h;
 			
 			return frag;
 		}
@@ -172,15 +223,18 @@ public class FeedPage extends Activity {
 			final EditText emailAddress = (EditText)mDialog.findViewById(R.id.share_friend_email);
 			final RadioGroup level = (RadioGroup) mDialog.findViewById(R.id.share_permission);
 			final RadioButton selected = (RadioButton) mDialog.findViewById(level.getCheckedRadioButtonId());
-						
-			return new AlertDialog.Builder(getActivity())
+			
+			final Context forDialog = getActivity();
+			
+			return new AlertDialog.Builder(forDialog)
 					   .setIcon(android.R.drawable.ic_menu_add)
 					   .setTitle(title)
 					   .setView(mDialog)
 					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 						
 							public void onClick(DialogInterface dialog, int which) {
-								if(helper.sendEmail(emailAddress.getText().toString(), selected.getText().toString())){
+								
+								if(helper.sendEmail(emailAddress.getText().toString(), selected.getText().toString(), forDialog)){
 									Toast.makeText(mContext, "Email is sent successfully", Toast.LENGTH_LONG).show();
 								} else {
 									Toast.makeText(mContext, "There are no email apps installed", Toast.LENGTH_LONG).show();

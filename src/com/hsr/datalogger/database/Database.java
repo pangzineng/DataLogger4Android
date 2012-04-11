@@ -8,33 +8,32 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
 	static final String dbName = "PachubeDB";
 	
 	static final String accountTable = "Accounts";
-	static final String colUsername = "Username";
+	static final String colUsername = "Username";  // key
 	static final String colPassword = "Password";
 	
 	static final String feedTable = "Feeds";
-  //static final String colUsername = "Username"; // Key
 	static final String colFeedID = "FeedID";	  // Key
-	static final String colFeedTitle = "Feed Name";
-	static final String colFeedType = "Feed Type";
-	static final String colFeedStatus = "Feed Status";
-	static final String colPermission = "Feed Permission Key";
+	static final String colFeedTitle = "FeedName";
+	static final String colFeedType = "FeedType";
+	static final String colFeedStatus = "FeedStatus";
+	static final String colPermission = "FeedPermissionKey";
 	
-	static final String datastreamTable = "Feed DataStreams";
-  //static final String colFeedID = "FeedID";					// Key
-	static final String colDataName = "Feed DataStream Name";	// Key
-	static final String colDataValue = "Feed DataStream Current Value";
-	static final String colDataTag = "Feed Data Tag";			// This will match the sensor type in integer
+	static final String datastreamTable = "FeedDataStreams";
+	static final String colDataName = "FeedDataStreamName";	// Key
+	static final String colDataValue = "FeedDataStreamCurrentValue";
+	static final String colDataTag = "FeedDataTag";			// This will match the sensor type in integer
 	
-	static final String datapointTable = "Data Points";
+	static final String datapointTable = "DataPoints";
   //static final String colDataIndex = "Feed Data Index";	// Key
-	static final String colDPTimestamp = "Datapoint time";	// Key
-	static final String colDPValue = "Datapoint value";
+	static final String colDPTimestamp = "DatapointTime";	// Key
+	static final String colDPValue = "DatapointValue";
 	
 	/*
 	 * 	This list right here is easier to access than the string array from resource
@@ -43,10 +42,10 @@ public class Database extends SQLiteOpenHelper {
 	 * 
 	 * */
 
-	static final String sensorTable = "API 14 Sensors";
-	static final String colSensorName = "Sensor Type Name";
-	static final String colSensorID = "Sensor ID in Android"; // KEY
-	static final String colAvailable = "Sensor Available";
+	static final String sensorTable = "API14Sensors";
+	static final String colSensorName = "SensorTypeName";
+	static final String colSensorID = "SensorIDinAndroid"; // KEY
+	static final String colAvailable = "SensorAvailable";
 	
 	
 	public static final int ACCOUNT_INDEX = 0;
@@ -60,6 +59,14 @@ public class Database extends SQLiteOpenHelper {
 	}
 
 	@Override
+	public void onOpen(SQLiteDatabase db) {
+		super.onOpen(db);
+		if(!db.isReadOnly()){
+			db.execSQL("PRAGMA foreign_keys=ON;");
+		}
+	}
+	
+	@Override
 	public void onCreate(SQLiteDatabase db) {
 		
 		// CREATE the account table
@@ -68,24 +75,26 @@ public class Database extends SQLiteOpenHelper {
 						   colPassword + " TEXT NOT NULL);"
 					);
 
+		
 		// CREATE the feed table
 		db.execSQL(	"CREATE TABLE " + feedTable +
-					" (" + colUsername + " TEXT, " +
-				           colFeedID + " TEXT, " +
-				           colPermission + " TEXT,"  + 
+					" (" + colUsername + " TEXT NOT NULL, " +
+				           colFeedID + " TEXT NOT NULL, " +
+				           colPermission + " TEXT, "  + 
 				           colFeedTitle + " TEXT NOT NULL, " +
 				           colFeedType + " TEXT NOT NULL, " +
 				           colFeedStatus + " TEXT NOT NULL, " +
-				           "PRIMARY KEY (" + colUsername + ", " + colFeedID + "));"
+				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
+
 		// CREATE the data table
 		db.execSQL(	"CREATE TABLE " + datastreamTable +
 					" (" + colFeedID + " TEXT, " +
 						   colDataName + " TEXT, " +
 						   colDataValue + " FLOAT NOT NULL, " +
 						   colDataTag + " TEXT NOT NULL, " +
-				           "PRIMARY KEY (" + colFeedID + ", " + colDataName +"));"
+						   "PRIMARY KEY (" + colFeedID + ", " + colDataName +"));"
 				   );
 		
 		// CREATE the datapoint table
@@ -96,10 +105,10 @@ public class Database extends SQLiteOpenHelper {
 			               "PRIMARY KEY (" + colDataName + ", " + colDPTimestamp +"));"
 			   );
 		
-		// CREATWE the sensor table
+		// CREATE the sensor table
 		db.execSQL("CREATE TABLE " + sensorTable +
 				   " (" + colSensorID + " INTEGER PRIMARY KEY, " +
-				   		  colSensorName + " TEXT NOT NULL" +
+				   		  colSensorName + " TEXT NOT NULL, " +
 				   		  colAvailable + " BLOB);"
 				);
 	}
@@ -183,10 +192,11 @@ public class Database extends SQLiteOpenHelper {
 		ContentValues cv = new ContentValues();
 		cv.put(colSensorName, sensorName);
 		cv.put(colSensorID, sensorID);
-		cv.put(colAvailable, available);
+		cv.put(colAvailable, available?"1":"0");
 		
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.insert(sensorTable, colSensorID, cv);
+		long log = db.insert(sensorTable, colSensorID, cv);
+		Log.d("pang", "SensorAdd: " + log);
 		db.close();
 	}
 	
@@ -307,6 +317,11 @@ public class Database extends SQLiteOpenHelper {
 				key1Name = colDataName;
 				key2Name = colDPTimestamp;
 				break;
+			case SENSOR_INDEX:
+				tableName = sensorTable;
+				key1Name = colSensorID;
+				key2Name = colSensorName; // not primary key, just to match format
+				break;
 		}
 
 		String query = "SELECT " + colName +  
@@ -337,6 +352,9 @@ public class Database extends SQLiteOpenHelper {
 				break;
 			case DATAPOINT_INDEX:
 				tableName = datapointTable;
+				break;
+			case SENSOR_INDEX:
+				tableName = sensorTable;
 				break;
 		}
 
@@ -375,6 +393,9 @@ public class Database extends SQLiteOpenHelper {
 			case DATAPOINT_INDEX:
 				tableName = datapointTable;
 				break;
+			case SENSOR_INDEX:
+				tableName = sensorTable;
+				break;
 		}
 		
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -389,7 +410,13 @@ public class Database extends SQLiteOpenHelper {
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
 		
+		Log.d("pang", "getAllMatch still runing A");
+
+		
 		if(cur == null || cur.moveToFirst() == false) return null;
+		
+		Log.d("pang", "getAllMatch still runing B");
+		Log.d("pang", "Rows: " + cur.getCount());
 		int colIndex = cur.getColumnIndex(toGetCol);
 		
 		while(cur.isAfterLast() != true){

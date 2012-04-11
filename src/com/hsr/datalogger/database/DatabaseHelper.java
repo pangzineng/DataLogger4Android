@@ -1,6 +1,9 @@
 package com.hsr.datalogger.database;
 
+import java.util.List;
+
 import android.content.Context;
+import android.util.Log;
 
 public class DatabaseHelper {
 	static String temp1 = "a"; static String temp11 = "sensor"; static String temp12 = "private";
@@ -33,12 +36,15 @@ public class DatabaseHelper {
 	public void storeSensorStatus(boolean[] available){
 		sensors = context.getResources().getStringArray(com.hsr.datalogger.R.array.sensor_list);
 		for(int i=0; i<sensors.length; i++){
+			Log.d("pang", "ReadSensor: " + sensors[i] + ", available: " + available[i]);
 			db.Add(sensors[i], i, available[i]);
 		}
 	}
 	
 	public String[] getSensorForDevice(){
-		return (String[]) db.getAllMatchValue(Database.SENSOR_INDEX, Database.colAvailable, "1", Database.colSensorName).toArray();
+		List<String> temp  = db.getAllMatchValue(Database.SENSOR_INDEX, Database.colAvailable, "1", Database.colSensorName);
+		Log.d("pang", "getSensorForDevice: " + temp.size());
+		return temp.toArray(new String[temp.size()]);
 	}
 	
 	public void addFeedToList(String[] info, String feedType, String feedStatus,String key){
