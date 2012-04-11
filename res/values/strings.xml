@@ -28,7 +28,7 @@
 	<string name="delete_feed_confirm_title">Are you sure you want to delete this feed?</string>
 	
 	<!-- FOR share_feed_dialog -->
-	<string name="share_feed_title">* Share This Feed With Friend</string>
+	<string name="share_feed_title">Share This Feed With Friend</string>
 	<string name="share_feed_friend_email">Friend Email</string>
 	<string name="share_feed_permission">Permission</string>
 	<string name="share_feed_permission_view">View</string>
@@ -46,29 +46,16 @@
 	<string name="email_ending">\nThanks and have a nice day.</string>
 	
 	<!-- FOR update_feed_dialog -->
-	<string name="update_feed">* Update Current Feed</string>
-	<string name="update_feed_selected">Selected</string>
+	<string name="update_feed">Update Current Feed</string>
+	<string name="update_feed_selected"> Sensors Are Selected</string>
 	<string name="update_feed_interval">Interval (in minutes)</string>
 	<string name="update_feed_totalTime">Total Runtime (in minutes)</string>
 	
 	<!-- FOR add_datastream_dialog -->
-	<string name="add_datastream">* Add Sensor Data</string>
+	<string name="add_datastream">Add Sensor Data</string>
 	<string name="add_datastream_name">Name</string>
 	<string name="add_datastream_select">Sensor</string>
 	
-	<!-- FOR Sensor Storage 		
-		api14[1] = "ACCELEROMETER";
-		api14[13] = "AMBIENT_TEMPERATURE";
-		api14[9] = "GRAVITY";
-		api14[4] = "GYROSCOPE";
-		api14[5] = "LIGHT";
-		api14[10] = "LINEAR_ACCELERATION";
-		api14[2] = "MAGNETIC_FIELD";
-		api14[6] = "PRESSURE";
-		api14[8] = "PROXIMITY";
-		api14[12] = "RELATIVE_HUMIDITY";
-		api14[11] = "ROTATION_VECTOR";
-	-->
 	<string-array name="sensor_list">
 		<item>Sound</item>
 		<item>Accelerometer</item>

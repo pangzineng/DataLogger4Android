@@ -36,7 +36,6 @@ public class FeedPage extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedpage);
 		Context conte = FeedPage.this;
@@ -87,6 +86,8 @@ public class FeedPage extends Activity {
 				shareFeedDialog.show(getFragmentManager(), "dialog");
 				return true;
 			case UPDATE_FEED:
+				DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
+				updateFeedDialog.show(getFragmentManager(), "dialog");
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -95,32 +96,27 @@ public class FeedPage extends Activity {
 
 		@Override
 		public Loader<List<MFeedItem>> onCreateLoader(int arg0, Bundle arg1) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public void onLoadFinished(Loader<List<MFeedItem>> arg0,
 				List<MFeedItem> arg1) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void onLoaderReset(Loader<List<MFeedItem>> arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public boolean onQueryTextChange(String newText) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public boolean onQueryTextSubmit(String query) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 	}
@@ -227,7 +223,7 @@ public class FeedPage extends Activity {
 			final Context forDialog = getActivity();
 			
 			return new AlertDialog.Builder(forDialog)
-					   .setIcon(android.R.drawable.ic_menu_add)
+					   .setIcon(android.R.drawable.ic_menu_share)
 					   .setTitle(title)
 					   .setView(mDialog)
 					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
@@ -252,5 +248,60 @@ public class FeedPage extends Activity {
 
 	}
 
-	
+	public static class UpdateFeedDialog extends DialogFragment {
+
+		private static Context mContext;
+		private static Helper helper;
+
+		public static DialogFragment newInstance(int title, Context context, Helper h) {
+			UpdateFeedDialog frag = new UpdateFeedDialog();
+			Bundle args = new Bundle();
+			args.putInt("title", title);
+			frag.setArguments(args);
+			
+			mContext = context;
+			helper = h;
+
+			return frag;
+		}
+		
+		public static View getUpdateFeedView(){
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View updateFeedDialog = inflater.inflate(R.layout.update_feed_dialog, null);
+			return updateFeedDialog;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			int title = getArguments().getInt("title");
+			final View mDialog = getUpdateFeedView();
+			
+			final EditText interval = (EditText)mDialog.findViewById(R.id.update_feed_interval);
+			final EditText total = (EditText) mDialog.findViewById(R.id.update_feed_totaltime);
+			
+			final Context forDialog = getActivity();
+			
+			return new AlertDialog.Builder(forDialog)
+					   .setIcon(android.R.drawable.ic_menu_upload)
+					   .setTitle(title)
+					   .setView(mDialog)
+					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+						
+							public void onClick(DialogInterface dialog, int which) {
+								int inter = Integer.parseInt(interval.getText().toString());
+								int tota = Integer.parseInt(total.getText().toString());
+								helper.startUpdateData(inter, tota);
+							}
+						})
+					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+						
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();								
+							}
+						})
+					   .create();
+		}
+
+		
+	}
 }

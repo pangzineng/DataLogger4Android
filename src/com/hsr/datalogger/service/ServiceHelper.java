@@ -12,13 +12,14 @@ public class ServiceHelper {
 		this.context = context;
 	}
 	
-	public void startBackgroundUpdate(String FeedName, int interval, int runningTime){
+	public void startBackgroundUpdate(String FeedName, int interval, int runningTime, int[] selectedSensor){
 		
 		createNotification(FeedName, runningTime);
 		
 		Intent startBackground = new Intent(context, BackgroundUpdate.class);
 		startBackground.putExtra("Interval", interval);
 		startBackground.putExtra("Running Time", runningTime);
+		startBackground.putExtra("selectedSensor", selectedSensor);
 		context.startService(startBackground);
 	}
 	

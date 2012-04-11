@@ -37,7 +37,6 @@ public class FeedList extends Activity {
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
 	}
@@ -143,7 +142,6 @@ public class FeedList extends Activity {
 		}
 
 		public boolean onQueryTextChange(String newText) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -152,18 +150,15 @@ public class FeedList extends Activity {
 		}
 
 		public Loader<List<MFeedItem>> onCreateLoader(int id, Bundle args) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 
 		public void onLoadFinished(Loader<List<MFeedItem>> loader,	List<MFeedItem> data) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		public void onLoaderReset(Loader<List<MFeedItem>> loader) {
-			// TODO Auto-generated method stub
 			
 		}
 		

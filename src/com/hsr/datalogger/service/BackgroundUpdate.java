@@ -1,21 +1,19 @@
 package com.hsr.datalogger.service;
 
-import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.hardware.HardwareHelper;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 public class BackgroundUpdate extends Service {
 	
 	HardwareHelper hwH;
-	CacheHelper caH;
   //PachubeHelper paH;
 	
-	int[] selected;
-	
+	private int[] selected;
 	private int interval;
 	private int runningTime;
 	
@@ -26,6 +24,7 @@ public class BackgroundUpdate extends Service {
 			
 			// pass the value from Hardware component to Pachube component
 			// paH.update(hwH.getSensorValue(selected));
+			Log.d("pang", "Background is running");
 			
 			runningTime = runningTime - (int)(interval/60000);
 			if(runningTime <= 0) stopSelf();
@@ -39,13 +38,11 @@ public class BackgroundUpdate extends Service {
 	
 		interval = intent.getIntExtra("Interval", 1) * 60000;
 		runningTime = intent.getIntExtra("Running Time", 0);
+		selected = intent.getIntArrayExtra("selected");
 		
 		hwH = new HardwareHelper(getApplicationContext());
-		caH = new CacheHelper(getApplicationContext());
 	  //paH = new PachubeHelper();
-		
-		selected = caH.getSelectedSensor();
-		
+				
 		mHandler.removeCallbacks(mTask);
 		mHandler.postDelayed(mTask, 100);
 	

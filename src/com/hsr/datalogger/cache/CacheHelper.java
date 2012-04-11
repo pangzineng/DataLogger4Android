@@ -22,6 +22,9 @@ public class CacheHelper {
 		return new String[]{cache.getFeedName(), cache.getFeedID(), cache.getUsername()};
 	}
 	
+	public String[] getCurrentFeed(){
+		return new String[]{cache.getFeedID(), cache.getFeedName()};
+	}
 	
 	public boolean detectSensor(){
 		if(cache.getSensorDetect()){
