@@ -29,7 +29,7 @@ public class Homepage extends Activity {
         
         bar.addTab(bar.newTab()
         			  .setText("Feed Data")
-        			  .setTabListener(new TabListener<FeedData.fragment>(this, "FeedData", FeedData.fragment.class)));
+        			  .setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
         
         // [TO BE ADDED] get from cache
         bar.setSelectedNavigationItem(0);

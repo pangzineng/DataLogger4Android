@@ -49,6 +49,10 @@ public class Helper {
 		return exH.sendEmail(address, createPermission(selected), selected, caH.getInfoForEmail(), dialog);
 	}
 
+	public boolean sendDiagramEmail(String address, String description, Context dialog){
+		return exH.sendEmail(address, caH.getInfoForEmail(), description, dialog);
+	}
+	
 	public void startUpdateData(int interval, int runningTime) {
 		String FeedName = caH.getCurrentFeed()[1];
 		

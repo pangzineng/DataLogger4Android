@@ -19,7 +19,7 @@ public class CacheHelper {
 	}
 	
 	public String[] getInfoForEmail(){
-		return new String[]{cache.getFeedName(), cache.getFeedID(), cache.getUsername()};
+		return new String[]{cache.getFeedName(), cache.getFeedID(), cache.getUsername(), cache.getDatastream()};
 	}
 	
 	public String[] getCurrentFeed(){

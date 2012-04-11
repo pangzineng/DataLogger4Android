@@ -38,10 +38,9 @@ public class FeedPage extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedpage);
-		Context conte = FeedPage.this;
 	}
 	
-	public static class FPFragment extends ListFragment  implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<MFeedItem>>{
+	public static class FPFragment extends ListFragment {
 		
 		private static final int ADD_DATASTREAM = 1;
 		private static final int SHARE_FEED = 2;
@@ -60,12 +59,11 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-			Log.d("pang","get To Options Menu");
 			menu.add(Menu.NONE, ADD_DATASTREAM , Menu.NONE, "Add Datastream")
 				.setIcon(android.R.drawable.ic_menu_add)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		
-			menu.add(Menu.NONE, SHARE_FEED, Menu.NONE, "Search")
+			menu.add(Menu.NONE, SHARE_FEED, Menu.NONE, "Share")
 				.setIcon(android.R.drawable.ic_menu_share)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -77,47 +75,21 @@ public class FeedPage extends Activity {
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
 			switch(item.getItemId()){
-			case ADD_DATASTREAM:
-				DialogFragment addDatastreamDialog = AddDatastreamDialog.newInstance(R.string.add_datastream, context, helper);
-				addDatastreamDialog.show(getFragmentManager(), "dialog");
-				return true;
-			case SHARE_FEED:
-				DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, context, helper);
-				shareFeedDialog.show(getFragmentManager(), "dialog");
-				return true;
-			case UPDATE_FEED:
-				DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
-				updateFeedDialog.show(getFragmentManager(), "dialog");
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-		}
-
-		@Override
-		public Loader<List<MFeedItem>> onCreateLoader(int arg0, Bundle arg1) {
-			return null;
-		}
-
-		@Override
-		public void onLoadFinished(Loader<List<MFeedItem>> arg0,
-				List<MFeedItem> arg1) {
-			
-		}
-
-		@Override
-		public void onLoaderReset(Loader<List<MFeedItem>> arg0) {
-			
-		}
-
-		@Override
-		public boolean onQueryTextChange(String newText) {
-			return false;
-		}
-
-		@Override
-		public boolean onQueryTextSubmit(String query) {
-			return false;
+				case ADD_DATASTREAM:
+					DialogFragment addDatastreamDialog = AddDatastreamDialog.newInstance(R.string.add_datastream, context, helper);
+					addDatastreamDialog.show(getFragmentManager(), "dialog");
+					return true;
+				case SHARE_FEED:
+					DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, context, helper);
+					shareFeedDialog.show(getFragmentManager(), "dialog");
+					return true;
+				case UPDATE_FEED:
+					DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
+					updateFeedDialog.show(getFragmentManager(), "dialog");
+					return true;
+				default:
+					return super.onOptionsItemSelected(item);
+			}
 		}
 	}
 	

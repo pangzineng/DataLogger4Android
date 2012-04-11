@@ -20,7 +20,7 @@ public class Cache{
 	private static final String CURRENT_KEY = "key";
 	private static final String CURRENT_FEED_ID = "feed id";
 	private static final String CURRENT_FEED_NAME = "feed name";
-	private static final String CURRENT_FEED_DATA_ID = "datastream id";
+	private static final String CURRENT_FEED_DATA = "datastream name";
 	private static final String CURRENT_ACTION = "next action";
 	
 	// to be store for the first launch
@@ -75,8 +75,8 @@ public class Cache{
 		editor.commit();
 	}
 	
-	public void setDataStream(String dataID){
-		editor.putString(CURRENT_FEED_DATA_ID, dataID);
+	public void setDataStream(String dataName){
+		editor.putString(CURRENT_FEED_DATA, dataName);
 		editor.commit();
 	}
 	
@@ -132,7 +132,7 @@ public class Cache{
 	}
 	
 	public String getDatastream(){
-		return sp.getString(CURRENT_FEED_DATA_ID, null);
+		return sp.getString(CURRENT_FEED_DATA, null);
 	}
 	
 	public int getAction(){
