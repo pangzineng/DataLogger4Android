@@ -36,14 +36,11 @@ public class Helper {
 
 
 	public void setAutoLogin(String name, String pw){
-		
+		caH.setAutoLogin(true, name, pw);
 	}
 	
-	public String getAutoLogin(){
-		
-		// if caH 
-		
-		return null;
+	public String[] getAutoLogin(){		
+		return caH.getAutoLogin();
 	}
 	
 	
