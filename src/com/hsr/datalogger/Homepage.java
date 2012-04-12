@@ -1,52 +1,83 @@
 package com.hsr.datalogger;
 
+import com.hsr.datalogger.FeedList.AddFeedDialog;
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Homepage extends Activity {
+	
+	private Helper helper;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        helper = new Helper(this);
         final ActionBar bar = getActionBar();
 
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
         
-        bar.addTab(bar.newTab()
-        			  .setText("Feed List")
-        			  .setTabListener(new TabListener<FeedList.FLFragment>(this, "FeedList", FeedList.FLFragment.class)));
-        
-        bar.addTab(bar.newTab()
-        			  .setText("Feed Page")
-        			  .setTabListener(new TabListener<FeedPage.FPFragment>(this, "FeedPage", FeedPage.FPFragment.class)));
-        
-        bar.addTab(bar.newTab()
-        			  .setText("Feed Data")
-        			  .setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
+        bar.addTab(bar.newTab().setText("Feed List").setTabListener(new TabListener<FeedList.FLFragment>(this, "FeedList", FeedList.FLFragment.class)));
+        bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(this, "FeedPage", FeedPage.FPFragment.class)));
+        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
         
         // [TO BE ADDED] get from cache
         bar.setSelectedNavigationItem(0);
-    }
-    
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	// [TO BE ADDED] put into cache
-    }
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-        // [TO BE ADDED] get from cache
-    }
+        
+        
+        bar.setCustomView(getLayoutInflater().inflate(R.layout.user_account_title, null));
+        TextView user = (TextView)bar.getCustomView();
+        
+        // get from cache
+        if(helper.getAutoLogin()==null){
+            user.setText("guest");
+        } else {
+        	// FIXME use the getAutoLogin String[] values to login through pachube component
+        	// if return true, which means the saved name&pw are correct, display username
+        	user.setText("pangzineng");
+        	// else setText("guest") and show Toast to inform that the saved name&pw are outdated
+        	// then remove stored auto name&pw  and setAutoLogin to false
+        }
+        
+        // FIXME store the current user to caH, even if it is guest
 
+        
+        user.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DialogFragment loginDialog = LoginDialog.newInstance(R.string.login_dialog_title, Homepage.this, helper, v);
+				loginDialog.show(getFragmentManager(), "dialog");
+			}
+		});
+
+		bar.setDisplayOptions(bar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM);
+    }
+    
+    
     public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
         private final Activity mActivity;
         private final String mTag;
@@ -97,5 +128,104 @@ public class Homepage extends Activity {
 
     }
 
-    
+
+	public static class LoginDialog extends DialogFragment {
+
+		private static Context mContext;
+		private static TextView username;
+		private static Helper helper;
+		AlertDialog dialog;
+		
+		public static LoginDialog newInstance(int title, Context context, Helper h, View name) {
+			LoginDialog frag = new LoginDialog();
+			Bundle args = new Bundle();
+			args.putInt("title", title);
+			frag.setArguments(args);
+			
+			mContext = context;
+			helper = h;
+			username = (TextView) name;
+			
+			return frag;
+		}
+		
+		public static View getLoginDialogView(){
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View loginDialog = inflater.inflate(R.layout.login_dialog, null);
+			return loginDialog;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			
+			int title = getArguments().getInt("title");
+			final View mDialog = getLoginDialogView();
+			
+			/* For the logout section
+			 * */
+			
+			final TextView currentName = (TextView) mDialog.findViewById(R.id.current_account);
+			currentName.setText(username.getText());
+			final Button currentLogout = (Button) mDialog.findViewById(R.id.current_logout);
+			
+			if(username.getText().toString().compareTo("guest")==0){
+				currentLogout.setEnabled(false);
+			}
+			
+			currentLogout.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// FIXME remove autologin name&pw from caH, setAutoLogin to false
+					// call somebody to reload the FeedList and setNavigation to list tab
+			    	username.setText("guest");
+			    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
+			    	dialog.dismiss();
+				}
+			});
+			
+			/* For the switch account section
+			 * */
+			
+			final EditText loginName = (EditText)mDialog.findViewById(R.id.login_username);
+			final EditText loginPW = (EditText)mDialog.findViewById(R.id.login_pw);
+			final CheckBox loginAuto = (CheckBox) mDialog.findViewById(R.id.login_autoCheck);
+			
+			dialog = new AlertDialog.Builder(mContext)
+					   .setIcon(R.drawable.ic_menu_login)
+					   .setTitle(title)
+					   .setView(mDialog)
+					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+						
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+								String lgName = loginName.getText().toString();
+								String lgPW = loginPW.getText().toString();
+								
+								// FIXME after the connection with pachube component and return true
+								// store the current user into cache
+								// FIXME call somebody to reload the FeedList and setNavigation to list tab
+								username.setText("newly entered name");
+						    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
+								
+								// if auto login is checked, store the checked account into cache auto preference
+								if(loginAuto.isChecked()){
+									helper.setAutoLogin(lgName, lgPW);
+								}
+							}
+					   })
+					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+						
+							@Override
+						    public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();								
+							}
+						})
+					   .create();
+			
+			return dialog;
+		}
+	}
+
+
 }

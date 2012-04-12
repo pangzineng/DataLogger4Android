@@ -19,15 +19,25 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:gravity="right"
+                android:gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="@string/login_logout_current"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_weight="1" />
 
+            <TextView
+                android:id="@+id/current_account"
+                android:gravity="center"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="1" />
+            
             <Button
-                android:id="@+id/logout_current"
+                android:id="@+id/current_logout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/login_logout_button"

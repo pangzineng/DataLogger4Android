@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.hsr.datalogger.database.DatabaseHelper;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -244,4 +245,6 @@ public class FeedList extends Activity {
 					   .create();
 		}
 	}
+
+
 }

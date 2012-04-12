@@ -33,6 +33,20 @@ public class Helper {
 		this.context = context;
 	}
 	
+
+
+	public void setAutoLogin(String name, String pw){
+		
+	}
+	
+	public String getAutoLogin(){
+		
+		// if caH 
+		
+		return null;
+	}
+	
+	
 	// run for every launch when the sensor list is needed for the display of the "Add Datastream" spinner
 	public String[] setSensorForDevice(){
 		// will only run once for the first launch of the application to settle the sensor info of this device

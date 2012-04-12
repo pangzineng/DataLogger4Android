@@ -17,6 +17,9 @@ public class Cache{
 	// to be shown on the view
 	private static final String CURRENT_USERNAME = "username";
 	private static final String CURRENT_PASSWORD = "password";
+	private static final String AUTO_LOGIN_CHECKED = "auto login";
+	private static final String AUTO_LOGIN_USERNAME = "autoLogin username";
+	private static final String AUTO_LOGIN_PASSWORD = "autoLogin password";
 	private static final String CURRENT_KEY = "key";
 	private static final String CURRENT_FEED_ID = "feed id";
 	private static final String CURRENT_FEED_NAME = "feed name";
@@ -58,6 +61,13 @@ public class Cache{
 	
 	public void setPW(String pw){
 		editor.putString(CURRENT_PASSWORD, pw);
+		editor.apply();
+	}
+	
+	public void setAutoLogin(boolean autoL, String autoN, String autoP){
+		editor.putBoolean(AUTO_LOGIN_CHECKED, autoL);
+		editor.putString(AUTO_LOGIN_USERNAME, autoN);
+		editor.putString(AUTO_LOGIN_PASSWORD, autoP);
 		editor.apply();
 	}
 	
@@ -123,6 +133,14 @@ public class Cache{
 	
 	public String getPw(){
 		return sp.getString(CURRENT_PASSWORD, null);
+	}
+	
+	public String[] getAutoLogin(){
+		if(sp.getBoolean(AUTO_LOGIN_CHECKED, false)){
+			return new String[]{sp.getString(AUTO_LOGIN_USERNAME, null), sp.getString(AUTO_LOGIN_PASSWORD, null)};
+		} else {
+			return null;
+		}
 	}
 	
 	public String getKey(){

@@ -10,6 +10,8 @@ public class CacheHelper {
 		cache = new Cache(context);
 	}
 
+	
+	
 	public void setSelectedSensor(int[] selected){
 		cache.setSelectedSensor(selected);
 	}

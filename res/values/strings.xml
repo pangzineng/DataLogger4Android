@@ -10,9 +10,11 @@
  	
  	
  	<!-- FOR login_dialog -->
+ 	<string name="login_dialog_title">Manage Account</string>
  	<string name="login_logout_title">* Logout current account</string>
- 	<string name="login_logout_current">Current Account: </string>
+ 	<string name="login_logout_current">You are: </string>
  	<string name="login_logout_button">Logout</string>
+ 	<string name="login_logout_confirm">You will log out and become guest, are you sure to log out?</string>
  	<string name="login_title">* Login/Switch to another account</string>
     <string name="login_name">Username</string>
     <string name="login_pw">Password</string>
