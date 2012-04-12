@@ -1,7 +1,9 @@
 package com.hsr.datalogger;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.database.DatabaseHelper;
@@ -11,6 +13,8 @@ import com.hsr.datalogger.service.ServiceHelper;
 
 public class Helper {
 
+	Context context;
+	
 	CacheHelper caH;
 	DatabaseHelper dbH;
 	HardwareHelper hwH;
@@ -25,6 +29,8 @@ public class Helper {
 		srH = new ServiceHelper(context);
 		exH = new ExternalHelper(context);
 	  //paH = new PachubeHelper(context);
+		
+		this.context = context;
 	}
 	
 	// run for every launch when the sensor list is needed for the display of the "Add Datastream" spinner
@@ -49,12 +55,68 @@ public class Helper {
 		return exH.sendEmail(address, createPermission(selected), selected, caH.getInfoForEmail(), dialog);
 	}
 
-	public boolean sendDiagramEmail(String address, String description, Context dialog){
-		return exH.sendEmail(address, caH.getInfoForEmail(), description, dialog);
+	public boolean sendDiagramEmail(String address, String description, Context dialog, ImageView diagram){
+		
+		return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
+
+		//return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
+	}
+	
+	public String getDiagramDuration(){
+		return caH.getDataInfoForDiagram()[2];
+	}
+	
+	public void setDiagramDuration(String duration){
+		caH.setDiagramDuration(duration);
+	}
+
+	/* SOS there should be a better way to communicate between fragment
+	 * in this case, I can only use Helper to get ImageView from main fragment, and called by dialog.
+	 * Think twice, now believe this is a pretty good way. Because the ImageView need to communicate 
+	 * with pachube & cache components all the time. Now I just bring one ImageView to Helper layer,
+	 * it's better to have no external element in this layer, but it's the best I can get now
+	 * */
+	ImageView v;
+	
+	public void tempStore(ImageView view) {
+		v = view;
+	}
+
+	public void reDraw(){
+		Drawable diagram = getDiagram();
+		
+		// only for testing
+		diagram = context.getResources().getDrawable(R.drawable.icon);
+		
+		v.setImageDrawable(diagram);
+	}
+	
+	public Drawable getDiagram(){
+		
+		// include feed id, data stream name and duration
+		String[] para1 = caH.getDataInfoForDiagram();
+		// include screen size and time zone
+		int[] para2 = exH.getDeviceInfo();
+		
+		// this method will set the duration to 1hour for the first launch
+		if(para1[2]==null){
+			caH.setDiagramDuration("1hour");
+			para1 = caH.getDataInfoForDiagram();
+		}
+		
+		// this method will adjust the screen size number (the height actually) to match the pachube requirement <300,000px
+		while(para2[0] * para2[1] > 300000){
+			para2[1] -= 100;
+		}
+		
+		Drawable diagram = null;
+		
+		// diagram = paH.getDiagram(para1, para2);
+		return diagram;
 	}
 	
 	public void startUpdateData(int interval, int runningTime) {
-		String FeedName = caH.getCurrentFeed()[1];
+		String FeedName = caH.getCurrentFeedInfo()[1];
 		
 		// SOS this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
 		// if user selected two datastream that connect with the same sensor, we should alert the case but still allow to continue

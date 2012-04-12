@@ -14,6 +14,10 @@ public class CacheHelper {
 		cache.setSelectedSensor(selected);
 	}
 	
+	public void setDiagramDuration(String duration){
+		cache.setDiagramDuration(duration);
+	}
+	
 	public int[] getSelectedSensor(){
 		return cache.getSelectedSensor();
 	}
@@ -22,8 +26,12 @@ public class CacheHelper {
 		return new String[]{cache.getFeedName(), cache.getFeedID(), cache.getUsername(), cache.getDatastream()};
 	}
 	
-	public String[] getCurrentFeed(){
+	public String[] getCurrentFeedInfo(){
 		return new String[]{cache.getFeedID(), cache.getFeedName()};
+	}
+	
+	public String[] getDataInfoForDiagram(){
+		return new String[]{cache.getFeedID(), cache.getDatastream(), cache.getDiagramDuration()};
 	}
 	
 	public boolean detectSensor(){

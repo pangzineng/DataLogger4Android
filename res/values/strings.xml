@@ -70,6 +70,19 @@
 	<string name="share_diagram_friend_email">Friend Email</string>
 	<string name="share_diagram_description">Description:</string>
 	
+	<!-- FOR edit_diagram_dialog -->
+	<string name="edit_diagram_title">Configure This Diagram</string>
+	<string name="edit_diagram_info">Current Duration: </string>
+	<string name="edit_diagram_set_duration">Change To</string>
+	<string-array name="time_unit_list">
+	    <item>minute</item>
+	    <item>hour</item>
+	    <item>day</item>
+	    <item>week</item>
+	    <item>month</item>
+	</string-array>
+	<string name="edit_diagram_notice">Notice: the maximum duration allowed is 23 months or 730 days.</string>
+	
 	<!-- FOR update_feed_dialog -->
 	<string name="update_feed">Update Current Feed</string>
 	<string name="update_feed_selected"> Sensors Are Selected</string>

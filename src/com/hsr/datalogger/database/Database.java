@@ -196,7 +196,6 @@ public class Database extends SQLiteOpenHelper {
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long log = db.insert(sensorTable, colSensorID, cv);
-		Log.d("pang", "SensorAdd: " + log);
 		db.close();
 	}
 	
@@ -409,14 +408,9 @@ public class Database extends SQLiteOpenHelper {
 			query = "SELECT * FROM " + tableName + " WHERE " + keyName + " =?";
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
-		
-		Log.d("pang", "getAllMatch still runing A");
-
-		
+				
 		if(cur == null || cur.moveToFirst() == false) return null;
 		
-		Log.d("pang", "getAllMatch still runing B");
-		Log.d("pang", "Rows: " + cur.getCount());
 		int colIndex = cur.getColumnIndex(toGetCol);
 		
 		while(cur.isAfterLast() != true){

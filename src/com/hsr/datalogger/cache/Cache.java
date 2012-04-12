@@ -21,6 +21,7 @@ public class Cache{
 	private static final String CURRENT_FEED_ID = "feed id";
 	private static final String CURRENT_FEED_NAME = "feed name";
 	private static final String CURRENT_FEED_DATA = "datastream name";
+	private static final String CURRENT_FEED_DIAGRAM_DURATION = "diagram duration";
 	private static final String CURRENT_ACTION = "next action";
 	
 	// to be store for the first launch
@@ -52,37 +53,42 @@ public class Cache{
 	
 	public void setUsername(String name){
 		editor.putString(CURRENT_USERNAME, name);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setPW(String pw){
 		editor.putString(CURRENT_PASSWORD, pw);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setKey(String key){
 		editor.putString(CURRENT_KEY, key);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setFeedID(String fID){
 		editor.putString(CURRENT_FEED_ID, fID);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setFeedName(String fName){
 		editor.putString(CURRENT_FEED_NAME, fName);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setDataStream(String dataName){
 		editor.putString(CURRENT_FEED_DATA, dataName);
-		editor.commit();
+		editor.apply();
+	}
+	
+	public void setDiagramDuration(String duration){
+		editor.putString(CURRENT_FEED_DIAGRAM_DURATION, duration);
+		editor.apply();
 	}
 	
 	public void setAction(int choice){
 		editor.putInt("Action", choice);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setSelectedSensor(int[] selected){
@@ -94,17 +100,17 @@ public class Cache{
 			builder.append(selected[i]).append(",");
 		}
 		editor.putString(SELECT_SENSORS, builder.toString());
-		editor.commit();
+		editor.apply();
 	}
 	
 	private void setSelectedSensorNum(int[] selected){
 		editor.putInt(SELECT_SENSORS_NUM, selected.length);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public void setSensorDetectTrigger(){
 		editor.putBoolean(SENSOR_DETECTED, true);
-		editor.commit();
+		editor.apply();
 	}
 	
 	/* Get the current data & passing data from the cache
@@ -133,6 +139,10 @@ public class Cache{
 	
 	public String getDatastream(){
 		return sp.getString(CURRENT_FEED_DATA, null);
+	}
+	
+	public String getDiagramDuration(){
+		return sp.getString(CURRENT_FEED_DIAGRAM_DURATION, null);
 	}
 	
 	public int getAction(){

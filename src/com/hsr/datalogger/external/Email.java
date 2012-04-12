@@ -37,11 +37,10 @@ public class Email {
 	
 	public boolean sendDiagram(String address, String[] info, String description){
 		
-		// TODO remember to toggle this back after the testing
-		//String imageName = info[0] + ": " + info[3];
-		String imageName = "250";
+		// TODO remember to toggle this for testing
+		String imageName = info[0] + " - " + info[3];
 		
-		email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/DataLogger/" + imageName + ".jpg"));
+		email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/DataLogger/" + imageName + ".png"));
 		
 		email.setType("text/plain"); 
 		email.putExtra(Intent.EXTRA_EMAIL, new String[]{address}); 
