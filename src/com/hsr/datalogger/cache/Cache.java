@@ -71,6 +71,13 @@ public class Cache{
 		editor.apply();
 	}
 	
+	public void removeAutoLogin(){
+		editor.remove(AUTO_LOGIN_CHECKED);
+		editor.remove(AUTO_LOGIN_USERNAME);
+		editor.remove(AUTO_LOGIN_PASSWORD);
+		editor.apply();
+	}
+	
 	public void setKey(String key){
 		editor.putString(CURRENT_KEY, key);
 		editor.apply();
@@ -128,7 +135,7 @@ public class Cache{
 	 * */
 	
 	public String getUsername(){
-		return sp.getString(CURRENT_USERNAME, null);
+		return sp.getString(CURRENT_USERNAME, "guest");
 	}
 	
 	public String getPw(){

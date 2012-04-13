@@ -33,14 +33,49 @@ public class Helper {
 		this.context = context;
 	}
 	
-
-
-	public void setAutoLogin(String name, String pw){
-		caH.setAutoLogin(true, name, pw);
+	
+	/* handle different cases for login & logout
+	 * (1) login/out dialog
+	 * */ 
+	
+	public void logout(){
+		caH.removeAutoLogin();
+		caH.setCurrentUser(new String[]{"guest"});
 	}
 	
-	public String[] getAutoLogin(){		
-		return caH.getAutoLogin();
+	public boolean login(String[] account, boolean checked){
+		// FIXME if(paH.login(account)){  // to checked whether user change name&pw somewhere else 
+					if(checked){
+						caH.setAutoLogin(true, account);
+					} else {
+						caH.removeAutoLogin();
+					}
+					caH.setCurrentUser(account);
+					return true;
+		//		  }	else {
+		// 			return false;
+		//		  {
+	}
+	
+	/* handle different cases for login & logout
+	 * (2) action bar title
+	 * */
+	
+	public String AutoLoginAccount(){
+		String[] autoAccount = caH.getAutoLogin();
+		if(autoAccount == null){
+			caH.setCurrentUser(new String[]{"guest"});
+			return "guest";
+		} else {
+			// FIXME if(paH.login(autoAccount)){  // to checked whether user change name&pw somewhere else 
+						caH.setCurrentUser(autoAccount);	
+			//		 } else {	// this means the name&pw in database for autologin aren't correct, need to remove
+			//			caH.removeAutoLogin();
+			//			caH.setCurrentUser(new String[]{"guest"});
+			//			return null;			
+			//		 }
+		}
+		return autoAccount[0];
 	}
 	
 	

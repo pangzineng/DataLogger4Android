@@ -10,13 +10,25 @@ public class CacheHelper {
 		cache = new Cache(context);
 	}
 
-	public void setAutoLogin(boolean autoL, String autoN, String autoP){
-		cache.setAutoLogin(autoL, autoN, autoP);
+	public void setAutoLogin(boolean autoL, String[] account){
+		cache.setAutoLogin(autoL, account[0], account[1]);
+	}
+	
+	public void removeAutoLogin(){
+		cache.removeAutoLogin();
 	}
 	
 	public String[] getAutoLogin(){
 		return cache.getAutoLogin();
 	}
+
+	public void setCurrentUser(String[] account){
+		cache.setUsername(account[0]);
+		if(account.length==2){
+			cache.setPW(account[1]);
+		}
+	}
+	
 	
 	public void setSelectedSensor(int[] selected){
 		cache.setSelectedSensor(selected);

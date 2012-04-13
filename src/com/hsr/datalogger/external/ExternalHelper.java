@@ -35,7 +35,6 @@ public class ExternalHelper {
 		return email.sendDiagram(address, info, description);
 	}
 	
-	// SOS this will 99% crash the diagram, because pachube only allow 300,000px, which means < 730 * 411
 	public int[] getDeviceInfo(){
 		int[] size = deviceInfo.getScreenSize();
 		int zone = deviceInfo.getTimezone();

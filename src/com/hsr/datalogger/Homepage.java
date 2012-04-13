@@ -53,19 +53,14 @@ public class Homepage extends Activity {
         TextView user = (TextView)bar.getCustomView();
         
         // get from cache
-        if(helper.getAutoLogin()==null){
-            user.setText("guest");
+        String autoCheck = helper.AutoLoginAccount();
+        if(autoCheck == null){
+        	user.setText("guest");
+        	Toast.makeText(this, "You auto login password had change, auto login failed", Toast.LENGTH_LONG).show();
         } else {
-        	// FIXME use the getAutoLogin String[] values to login through pachube component
-        	// if return true, which means the saved name&pw are correct, display username
-        	user.setText("pangzineng");
-        	// else setText("guest") and show Toast to inform that the saved name&pw are outdated
-        	// then remove stored auto name&pw  and setAutoLogin to false
+            user.setText(autoCheck);
         }
-        
-        // FIXME store the current user to caH, even if it is guest
-
-        
+                
         user.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -175,8 +170,8 @@ public class Homepage extends Activity {
 			currentLogout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// FIXME remove autologin name&pw from caH, setAutoLogin to false
-					// call somebody to reload the FeedList and setNavigation to list tab
+					helper.logout();
+					// FIXME call somebody to reload the FeedList and setNavigation to list tab
 			    	username.setText("guest");
 			    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
 			    	dialog.dismiss();
@@ -201,16 +196,14 @@ public class Homepage extends Activity {
 								
 								String lgName = loginName.getText().toString();
 								String lgPW = loginPW.getText().toString();
+								String[] account = new String[]{lgName, lgPW};
 								
-								// FIXME after the connection with pachube component and return true
-								// store the current user into cache
-								// FIXME call somebody to reload the FeedList and setNavigation to list tab
-								username.setText("newly entered name");
-						    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
-								
-								// if auto login is checked, store the checked account into cache auto preference
-								if(loginAuto.isChecked()){
-									helper.setAutoLogin(lgName, lgPW);
+								if(helper.login(account, loginAuto.isChecked())){
+									username.setText(lgName);
+							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
+									// FIXME call somebody to reload the FeedList and setNavigation to list tab
+								} else {
+									Toast.makeText(mContext, "You enter wrong name or password", Toast.LENGTH_LONG).show();
 								}
 							}
 					   })
