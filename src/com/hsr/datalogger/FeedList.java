@@ -2,6 +2,7 @@ package com.hsr.datalogger;
 
 import java.util.List;
 
+import com.hsr.datalogger.FeedList.MFeedItem;
 import com.hsr.datalogger.database.DatabaseHelper;
 
 import android.app.ActionBar;
@@ -11,24 +12,32 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FeedList extends Activity {
@@ -42,15 +51,21 @@ public class FeedList extends Activity {
 		
 	}
 	
+	// FIXME this one accept the resource from database and sort it to different attribute for the list to load
+	// FIXME need another loader class to load the list from database and store individually into the FeedItem
 	public static class MFeedItem {
+		
+		public final static int VIEW = 0;
+		public final static int FULL = 1;
+		
 		private final String feedName;
-		private final String feedType;
-		private final String feedStatus;
+		private final String feedDataCount;
+		private final int feedStatus;
 		
 		public MFeedItem(String username, int feedIndex) {
 			feedName = DatabaseHelper.getFeedName(username, feedIndex);
-			feedType = DatabaseHelper.getFeedType(username, feedIndex);
-			feedStatus = DatabaseHelper.getFeedStatus(username, feedIndex);
+			feedDataCount = DatabaseHelper.getFeedType(username, feedIndex);
+			feedStatus = 0;
 			// feedName = Helper.getFeedList();
 			// [TO BE ADDED] get from database component the list of feeds
 		}
@@ -59,13 +74,28 @@ public class FeedList extends Activity {
 			return feedName;
 		}
 		
-		public String getFeedType(){
-			return feedType;
+		public String getDataCount(){
+			return feedDataCount;
 		}
 		
-		public String getFeedStatus(){
+		public int getFeedStatus(){
 			return feedStatus;
 		}
+	}
+	
+	public static class FeedListLoader extends AsyncTaskLoader<List<MFeedItem>> {
+
+		public FeedListLoader(Context context) {
+			super(context);
+			// SOS to be fill in
+		}
+
+		@Override
+		public List<MFeedItem> loadInBackground() {
+			// SOS to be fill in
+			return null;
+		}
+		
 	}
 	
 	public static class MFeedListAdapter extends ArrayAdapter<MFeedItem>{
@@ -85,6 +115,47 @@ public class FeedList extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = null;
+			if(convertView == null){
+				view = mInflater.inflate(R.layout.list_feed_item, parent, false);
+			} else {
+				view = convertView;
+			}
+			
+			MFeedItem item = getItem(position);
+			
+			TextView feedName = (TextView) view.findViewById(R.id.list_feed_name);
+			TextView feedDataCount = (TextView) view.findViewById(R.id.list_feed_data_count);
+			ImageView feedPremission = (ImageView) view.findViewById(R.id.list_feed_premission);
+			
+			feedName.setText(item.getFeedName());
+			feedDataCount.setText(item.getDataCount());
+			if(item.getFeedStatus()==MFeedItem.VIEW){
+				feedPremission.setImageResource(R.drawable.feed_pre_view);
+			} else if (item.getFeedStatus()==MFeedItem.FULL){
+				feedPremission.setImageResource(R.drawable.feed_pre_all);
+			} else {
+				feedPremission.setImageResource(R.drawable.feed_pre_error);
+			}
+
+			// SOS this should be done in ListFragment below
+//			view.setOnClickListener(new View.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					// bring the tab to the next tab
+//					Log.d("pang", "Click on feed list item");
+//					
+//				}
+//			});
+//			view.setOnLongClickListener(new View.OnLongClickListener() {
+//				
+//				@Override
+//				public boolean onLongClick(View v) {
+//					// bring out the edit_delete dialog
+//					Log.d("pang", "Long press on feed list item");
+//					return false;
+//				}
+//			});
 			
 			return view;
 		}
@@ -95,7 +166,7 @@ public class FeedList extends Activity {
 		private static final int ADD_FEED = 1;
 		private static final int SEARCH_LIST = 2;
 		
-		ArrayAdapter<String> mAdapter;
+		MFeedListAdapter mAdapter;
 		String mCurFilter;
 		
 				
@@ -105,12 +176,21 @@ public class FeedList extends Activity {
 			setEmptyText("No Feed");
 			setHasOptionsMenu(true);
 			
-			mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2);
+			mAdapter = new MFeedListAdapter(getActivity());
 			setListAdapter(mAdapter);
 			
 			setListShown(false);
 			
 			getLoaderManager().initLoader(0, null, this);
+			
+			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+					// FIXME do the list item long click here
+					return false;
+				}
+			});
 		}
 		
 		@Override
@@ -142,27 +222,42 @@ public class FeedList extends Activity {
 			}
 		}
 
+		@Override
 		public boolean onQueryTextChange(String newText) {
-			return false;
+			mCurFilter = !TextUtils.isEmpty(newText)?newText:null;
+			mAdapter.getFilter().filter(mCurFilter);
+			return true;
 		}
 
+		@Override
 		public boolean onQueryTextSubmit(String query) {
 			return true;
 		}
 
+		@Override
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			Log.d("pang", "Click on feed list item, listener in fragment");
+			// FIXME do the list item click here
+		}
+		
+		
+		@Override
 		public Loader<List<MFeedItem>> onCreateLoader(int id, Bundle args) {
-			return null;
+			return new FeedListLoader(getActivity());
 		}
 
-
 		public void onLoadFinished(Loader<List<MFeedItem>> loader,	List<MFeedItem> data) {
-			
+			mAdapter.setData(data);
+			if(isResumed()){
+				setListShown(true);
+			} else {
+				setListShownNoAnimation(true);
+			}
 		}
 
 		public void onLoaderReset(Loader<List<MFeedItem>> loader) {
-			
+			mAdapter.setData(null);
 		}
-		
 	}
 
 	public static class AddFeedDialog extends DialogFragment {

@@ -44,7 +44,6 @@
 	<string name="share_feed_friend_email">Friend Email</string>
 	<string name="share_feed_permission">Permission</string>
 	<string name="share_feed_permission_view">View</string>
-	<string name="share_feed_permission_update">Update</string>
 	<string name="share_feed_permission_full">Full</string>
 
 	<!-- FOR EmailService: send permission -->

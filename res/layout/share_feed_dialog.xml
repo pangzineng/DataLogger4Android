@@ -55,12 +55,6 @@
                     android:text="@string/share_feed_permission_view" />
 
                 <RadioButton
-                    android:id="@+id/share_permission_update"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/share_feed_permission_update" />
-
-                <RadioButton
                     android:id="@+id/share_permission_full"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

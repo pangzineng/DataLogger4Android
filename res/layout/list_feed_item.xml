@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/coloumn_1"
+        android:layout_width="fill_parent"
+        android:layout_height="64px"
+		android:orientation="vertical"        
+        android:layout_weight="1">
+	        
+	    <TextView
+	        android:id="@+id/list_feed_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="The Name of Feed "
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <LinearLayout
+	        android:id="@+id/coloumn_1_row_2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+
+			<TextView
+		        android:id="@+id/textView1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="Data Number:"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+		    <TextView
+		        android:id="@+id/list_feed_data_count"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="0"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    </LinearLayout>
+    </LinearLayout>
+    
+    <TableRow 
+        android:id="@id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+        android:layout_weight="5">
+        
+        <ImageView
+	        android:id="@+id/list_feed_premission"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="premission"
+	        android:src="@drawable/feed_pre_view" />
+    </TableRow>
+
+</LinearLayout>
