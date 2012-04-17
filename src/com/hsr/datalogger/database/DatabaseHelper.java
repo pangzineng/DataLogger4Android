@@ -15,20 +15,12 @@ public class DatabaseHelper {
 		db = new Database(context);
 	}
 
-
-	public static String getFeedName(String username, int feedIndex) {
-		return (feedIndex==1)?temp1:temp2;
+	public List<String> getCurrentFeedList(String username){
+		List<String> feedIDlist = null;
+		feedIDlist = db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID);
+		return feedIDlist;
 	}
-
-
-	public static String getFeedType(String username, int feedIndex) {
-		return (feedIndex==1)?temp11:temp21;
-	}
-
-
-	public static String getFeedStatus(String username, int feedIndex) {
-		return (feedIndex==1)?temp12:temp22;
-	}
+	
 	
 	String[] sensors;
 	
@@ -46,5 +38,13 @@ public class DatabaseHelper {
 	
 	public void addFeedToList(String[] info, String feedType, String feedStatus,String key){
 		
+	}
+
+	public String[] getOneFeedInfo(String currentUser, String feedID) {
+		// SOS need to return feed name, feed data count and feed premission
+		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
+		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);
+		String premission = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedStatus);
+		return new String[]{name, count, premission};
 	}
 }

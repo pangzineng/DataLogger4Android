@@ -82,7 +82,7 @@ public class Database extends SQLiteOpenHelper {
 				           colFeedID + " TEXT NOT NULL, " +
 				           colPermission + " TEXT, "  + 
 				           colFeedTitle + " TEXT NOT NULL, " +
-				           colFeedType + " TEXT NOT NULL, " +
+				           colFeedType + " TEXT, " +
 				           colFeedStatus + " TEXT NOT NULL, " +
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
@@ -369,7 +369,7 @@ public class Database extends SQLiteOpenHelper {
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
 		
-		if(cur == null || cur.moveToFirst() != true) return -1;
+		if(cur == null || cur.moveToFirst() != true) return 0;
 		db.close();
 		return cur.getCount();
 	}

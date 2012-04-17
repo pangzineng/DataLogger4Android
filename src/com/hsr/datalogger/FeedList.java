@@ -1,8 +1,10 @@
 package com.hsr.datalogger;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import com.hsr.datalogger.FeedList.MFeedItem;
+import com.hsr.datalogger.FeedList.FeedItem;
 import com.hsr.datalogger.database.DatabaseHelper;
 
 import android.app.ActionBar;
@@ -17,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -53,7 +56,7 @@ public class FeedList extends Activity {
 	
 	// FIXME this one accept the resource from database and sort it to different attribute for the list to load
 	// FIXME need another loader class to load the list from database and store individually into the FeedItem
-	public static class MFeedItem {
+	public static class FeedItem {
 		
 		public final static int VIEW = 0;
 		public final static int FULL = 1;
@@ -61,15 +64,19 @@ public class FeedList extends Activity {
 		private final String feedName;
 		private final String feedDataCount;
 		private final int feedStatus;
-		
-		public MFeedItem(String username, int feedIndex) {
-			feedName = DatabaseHelper.getFeedName(username, feedIndex);
-			feedDataCount = DatabaseHelper.getFeedType(username, feedIndex);
-			feedStatus = 0;
-			// feedName = Helper.getFeedList();
-			// [TO BE ADDED] get from database component the list of feeds
+				
+		public FeedItem(Helper helper, String feedID) {
+			String[] info = helper.getFeedListItem(feedID);
+			feedName = info[0];
+			feedDataCount = info[1];
+			String premission = Resources.getSystem().getString(R.string.share_feed_permission_view);
+			if(info[2].compareTo(premission)==0){
+				feedStatus = VIEW;
+			} else {
+				feedStatus = FULL;
+			}
 		}
-		
+
 		public String getFeedName(){
 			return feedName;
 		}
@@ -83,31 +90,39 @@ public class FeedList extends Activity {
 		}
 	}
 	
-	public static class FeedListLoader extends AsyncTaskLoader<List<MFeedItem>> {
+	public static class FeedListLoader extends AsyncTaskLoader<List<FeedItem>> {
 
-		public FeedListLoader(Context context) {
+		
+		private Helper helper;
+
+		public FeedListLoader(Context context, Helper h) {
 			super(context);
-			// SOS to be fill in
+			helper = h;
 		}
 
 		@Override
-		public List<MFeedItem> loadInBackground() {
-			// SOS to be fill in
-			return null;
+		public List<FeedItem> loadInBackground() {
+			List<String> feeds = helper.getFeedList(); 
+			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
+			for(int i=0; i<feeds.size(); i++){
+				FeedItem item = new FeedItem(helper, feeds.get(i));
+				entries.add(item);
+			}
+			return entries;
 		}
 		
 	}
 	
-	public static class MFeedListAdapter extends ArrayAdapter<MFeedItem>{
+	public static class FeedListAdapter extends ArrayAdapter<FeedItem>{
 		
 		private final LayoutInflater mInflater;
 		
-		public MFeedListAdapter(Context context) {
+		public FeedListAdapter(Context context) {
 			super(context, android.R.layout.simple_list_item_2);
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 		
-		public void setData(List<MFeedItem> data){
+		public void setData(List<FeedItem> data){
 			clear();
 			if(data!=null) addAll(data);
 		}
@@ -121,7 +136,7 @@ public class FeedList extends Activity {
 				view = convertView;
 			}
 			
-			MFeedItem item = getItem(position);
+			FeedItem item = getItem(position);
 			
 			TextView feedName = (TextView) view.findViewById(R.id.list_feed_name);
 			TextView feedDataCount = (TextView) view.findViewById(R.id.list_feed_data_count);
@@ -129,9 +144,9 @@ public class FeedList extends Activity {
 			
 			feedName.setText(item.getFeedName());
 			feedDataCount.setText(item.getDataCount());
-			if(item.getFeedStatus()==MFeedItem.VIEW){
+			if(item.getFeedStatus()==FeedItem.VIEW){
 				feedPremission.setImageResource(R.drawable.feed_pre_view);
-			} else if (item.getFeedStatus()==MFeedItem.FULL){
+			} else if (item.getFeedStatus()==FeedItem.FULL){
 				feedPremission.setImageResource(R.drawable.feed_pre_all);
 			} else {
 				feedPremission.setImageResource(R.drawable.feed_pre_error);
@@ -161,22 +176,25 @@ public class FeedList extends Activity {
 		}
 	}
 	
-	public static class FLFragment extends ListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<MFeedItem>> {
+	public static class FLFragment extends ListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<FeedItem>> {
 		
 		private static final int ADD_FEED = 1;
 		private static final int SEARCH_LIST = 2;
 		
-		MFeedListAdapter mAdapter;
+		FeedListAdapter mAdapter;
 		String mCurFilter;
-		
+		Helper helper;
 				
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
+			
+			helper = new Helper(getActivity().getApplicationContext());
+			
 			setEmptyText("No Feed");
 			setHasOptionsMenu(true);
 			
-			mAdapter = new MFeedListAdapter(getActivity());
+			mAdapter = new FeedListAdapter(getActivity());
 			setListAdapter(mAdapter);
 			
 			setListShown(false);
@@ -242,11 +260,11 @@ public class FeedList extends Activity {
 		
 		
 		@Override
-		public Loader<List<MFeedItem>> onCreateLoader(int id, Bundle args) {
-			return new FeedListLoader(getActivity());
+		public Loader<List<FeedItem>> onCreateLoader(int id, Bundle args) {
+			return new FeedListLoader(getActivity(), helper);
 		}
 
-		public void onLoadFinished(Loader<List<MFeedItem>> loader,	List<MFeedItem> data) {
+		public void onLoadFinished(Loader<List<FeedItem>> loader,	List<FeedItem> data) {
 			mAdapter.setData(data);
 			if(isResumed()){
 				setListShown(true);
@@ -255,7 +273,7 @@ public class FeedList extends Activity {
 			}
 		}
 
-		public void onLoaderReset(Loader<List<MFeedItem>> loader) {
+		public void onLoaderReset(Loader<List<FeedItem>> loader) {
 			mAdapter.setData(null);
 		}
 	}

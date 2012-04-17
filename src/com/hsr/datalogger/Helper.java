@@ -1,5 +1,7 @@
 package com.hsr.datalogger;
 
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -171,5 +173,20 @@ public class Helper {
 		
 		srH.startBackgroundUpdate(FeedName, interval, runningTime, selected);
 		
+	}
+
+
+	/* For the feed list in the first tab
+	 * */
+	
+	public String[] getFeedListItem(String feedID) {
+		String currentUser = caH.getCurrentUsername();
+		return dbH.getOneFeedInfo(currentUser, feedID);
+	}
+
+
+	public List<String> getFeedList() {
+		String currentUser = caH.getCurrentUsername();
+		return dbH.getCurrentFeedList(currentUser);
 	}
 }

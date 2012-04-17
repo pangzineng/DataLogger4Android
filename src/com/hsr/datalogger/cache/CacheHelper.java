@@ -29,6 +29,9 @@ public class CacheHelper {
 		}
 	}
 	
+	public String getCurrentUsername(){
+		return cache.getUsername();
+	}
 	
 	public void setSelectedSensor(int[] selected){
 		cache.setSelectedSensor(selected);
