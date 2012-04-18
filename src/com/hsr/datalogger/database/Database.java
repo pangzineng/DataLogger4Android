@@ -21,9 +21,10 @@ public class Database extends SQLiteOpenHelper {
 	static final String feedTable = "Feeds";
 	static final String colFeedID = "FeedID";	  // Key
 	static final String colFeedTitle = "FeedName";
-	static final String colFeedType = "FeedType";
-	static final String colFeedStatus = "FeedStatus";
-	static final String colPermission = "FeedPermissionKey";
+	static final String colFeedType = "FeedType"; // Custom, Sensor
+	static final String colOwnership = "FeedOwnerShip"; // Public, Private, None
+	static final String colPermissionLevel = "FeedPermissionLevel"; // Full, View
+	static final String colPermission = "FeedPermissionKey"; // key, Null
 	
 	static final String datastreamTable = "FeedDataStreams";
 	static final String colDataName = "FeedDataStreamName";	// Key
@@ -80,10 +81,11 @@ public class Database extends SQLiteOpenHelper {
 		db.execSQL(	"CREATE TABLE " + feedTable +
 					" (" + colUsername + " TEXT NOT NULL, " +
 				           colFeedID + " TEXT NOT NULL, " +
+				           colOwnership + " TEXT, " +
 				           colPermission + " TEXT, "  + 
+				           colPermissionLevel+ " TEXT, " + 
 				           colFeedTitle + " TEXT NOT NULL, " +
-				           colFeedType + " TEXT, " +
-				           colFeedStatus + " TEXT NOT NULL, " +
+				           colFeedType + " TEXT NOT NULL, " +
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
@@ -142,14 +144,15 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add feed
-	public int Add(String name, String feedID, String feedTitle, String feedType, String feedStatus, String Permission){
+	public int Add(String username, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
 		ContentValues cv = new ContentValues();
-		cv.put(colUsername, name);
+		cv.put(colUsername, username);
 		cv.put(colFeedID, feedID);
+		cv.put(colOwnership, ownership);
+		cv.put(colPermission, permission);
+		cv.put(colPermissionLevel, permissionLevel);
 		cv.put(colFeedTitle, feedTitle);
 		cv.put(colFeedType, feedType);
-		cv.put(colFeedStatus, feedStatus);
-		cv.put(colPermission, Permission);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long rowID = db.insert(feedTable, colFeedID, cv);

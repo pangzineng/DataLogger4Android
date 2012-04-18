@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
@@ -52,28 +53,48 @@ public class FeedList extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+        FragmentManager fm = getFragmentManager();
+
+        // Create the list fragment and add it as our sole content.
+        if (fm.findFragmentById(android.R.id.content) == null) {
+        	FLFragment list = new FLFragment();
+            fm.beginTransaction().add(android.R.id.content, list).commit();
+        }
+
 	}
 	
 	// FIXME this one accept the resource from database and sort it to different attribute for the list to load
 	// FIXME need another loader class to load the list from database and store individually into the FeedItem
 	public static class FeedItem {
 		
+		public final static int PUBLIC = 10;
+		public final static int PRIVATE = 11;
+		public final static int NONE = 12;
+		
 		public final static int VIEW = 0;
 		public final static int FULL = 1;
 		
 		private final String feedName;
 		private final String feedDataCount;
-		private final int feedStatus;
+		private final int feedOwnership;
+		private final int feedPermissionLevel;
 				
 		public FeedItem(Helper helper, String feedID) {
 			String[] info = helper.getFeedListItem(feedID);
 			feedName = info[0];
 			feedDataCount = info[1];
-			String premission = Resources.getSystem().getString(R.string.share_feed_permission_view);
-			if(info[2].compareTo(premission)==0){
-				feedStatus = VIEW;
+			if(info[2].compareTo("None")==0){
+				feedOwnership = NONE;
+			} else if(info[2].compareTo("Private")==0){
+				feedOwnership = PRIVATE;
 			} else {
-				feedStatus = FULL;
+				feedOwnership = PUBLIC;
+			}
+			
+			if(info[3].compareTo("View")==0){
+				feedPermissionLevel = VIEW;
+			} else {
+				feedPermissionLevel = FULL;
 			}
 		}
 
@@ -85,8 +106,12 @@ public class FeedList extends Activity {
 			return feedDataCount;
 		}
 		
-		public int getFeedStatus(){
-			return feedStatus;
+		public int getFeedOwnerShip(){
+			return feedOwnership;
+		}
+		
+		public int getFeedPremissionLevel(){
+			return feedPermissionLevel;
 		}
 	}
 	
@@ -94,7 +119,8 @@ public class FeedList extends Activity {
 
 		
 		private Helper helper;
-
+		List<FeedItem> mList;
+		
 		public FeedListLoader(Context context, Helper h) {
 			super(context);
 			helper = h;
@@ -103,6 +129,8 @@ public class FeedList extends Activity {
 		@Override
 		public List<FeedItem> loadInBackground() {
 			List<String> feeds = helper.getFeedList(); 
+			// SOS for testing only
+			//List<FeedItem> entries = new ArrayList<FeedItem>(0);
 			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
 			for(int i=0; i<feeds.size(); i++){
 				FeedItem item = new FeedItem(helper, feeds.get(i));
@@ -111,6 +139,61 @@ public class FeedList extends Activity {
 			return entries;
 		}
 		
+		@Override
+		public void deliverResult(List<FeedItem> data) {
+			
+            mList = data;
+
+            if (isStarted()) {
+                // If the Loader is currently started, we can immediately deliver its results.
+                super.deliverResult(data);
+            }
+		}
+
+		@Override
+		protected void onStartLoading() {
+            if (mList != null) {
+                // If we currently have a result available, deliver it immediately.
+                deliverResult(mList);
+            }
+
+            // FIXME Start watching for changes in the data.
+//            if (mPackageObserver == null) {
+//                mPackageObserver = new PackageIntentReceiver(this);
+//            }
+
+            if (takeContentChanged() || mList == null) {
+                // If the data has changed since the last time it was loaded
+                // or is not currently available, start a load.
+                forceLoad();
+            }
+		}
+		
+		@Override
+		protected void onStopLoading() {
+			cancelLoad();
+		}
+		
+		@Override
+		protected void onReset() {
+			super.onReset();
+			
+            // Ensure the loader is stopped
+            onStopLoading();
+
+            // At this point we can release the resources associated with 'apps'
+            // if needed.
+            if (mList != null) {
+                mList = null;
+            }
+
+            // FIXME Stop monitoring for changes.
+//            if (mPackageObserver != null) {
+//                getContext().unregisterReceiver(mPackageObserver);
+//                mPackageObserver = null;
+//            }
+
+		}
 	}
 	
 	public static class FeedListAdapter extends ArrayAdapter<FeedItem>{
@@ -140,16 +223,26 @@ public class FeedList extends Activity {
 			
 			TextView feedName = (TextView) view.findViewById(R.id.list_feed_name);
 			TextView feedDataCount = (TextView) view.findViewById(R.id.list_feed_data_count);
-			ImageView feedPremission = (ImageView) view.findViewById(R.id.list_feed_premission);
+			TextView feedOwnership = (TextView) view.findViewById(R.id.list_feed_ownership);
+			ImageView feedPremissionLevel = (ImageView) view.findViewById(R.id.list_feed_premission);
 			
 			feedName.setText(item.getFeedName());
 			feedDataCount.setText(item.getDataCount());
-			if(item.getFeedStatus()==FeedItem.VIEW){
-				feedPremission.setImageResource(R.drawable.feed_pre_view);
-			} else if (item.getFeedStatus()==FeedItem.FULL){
-				feedPremission.setImageResource(R.drawable.feed_pre_all);
+			
+			if(item.getFeedOwnerShip()==FeedItem.PUBLIC){
+				feedOwnership.setText("Public");
+			} else if (item.getFeedOwnerShip()==FeedItem.PRIVATE){
+				feedOwnership.setText("Private");
 			} else {
-				feedPremission.setImageResource(R.drawable.feed_pre_error);
+				feedOwnership.setText("None");
+			}
+
+			if(item.getFeedPremissionLevel()==FeedItem.VIEW){
+				feedPremissionLevel.setImageResource(R.drawable.feed_pre_view);
+			} else if (item.getFeedPremissionLevel()==FeedItem.FULL){
+				feedPremissionLevel.setImageResource(R.drawable.feed_pre_all);
+			} else {
+				feedPremissionLevel.setImageResource(R.drawable.feed_pre_error);
 			}
 
 			// SOS this should be done in ListFragment below
@@ -230,7 +323,7 @@ public class FeedList extends Activity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 			switch(item.getItemId()){
 				case ADD_FEED:
-					DialogFragment addfeedDialog = AddFeedDialog.newInstance(R.string.add_feed_dialog_title, getActivity().getApplicationContext());
+					DialogFragment addfeedDialog = AddFeedDialog.newInstance(R.string.add_feed_dialog_title, getActivity().getApplicationContext(), helper);
 					addfeedDialog.show(getFragmentManager(), "dialog");
 					return true;
 				case SEARCH_LIST:
@@ -264,6 +357,7 @@ public class FeedList extends Activity {
 			return new FeedListLoader(getActivity(), helper);
 		}
 
+		@Override
 		public void onLoadFinished(Loader<List<FeedItem>> loader,	List<FeedItem> data) {
 			mAdapter.setData(data);
 			if(isResumed()){
@@ -272,7 +366,8 @@ public class FeedList extends Activity {
 				setListShownNoAnimation(true);
 			}
 		}
-
+		
+		@Override
 		public void onLoaderReset(Loader<List<FeedItem>> loader) {
 			mAdapter.setData(null);
 		}
@@ -281,14 +376,16 @@ public class FeedList extends Activity {
 	public static class AddFeedDialog extends DialogFragment {
 
 		private static Context mContext;
+		private static Helper helper;
 		
-		public static AddFeedDialog newInstance(int title, Context context) {
+		public static AddFeedDialog newInstance(int title, Context context, Helper h) {
 			AddFeedDialog frag = new AddFeedDialog();
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
 			
 			mContext = context;
+			helper = h;
 			
 			return frag;
 		}
@@ -309,7 +406,7 @@ public class FeedList extends Activity {
 			final EditText feedkey = (EditText)mDialog.findViewById(R.id.add_feed_e_key);
 			final EditText newfeedtitle = (EditText)mDialog.findViewById(R.id.add_feed_n_title);
 			final Switch newfeedtype = (Switch) mDialog.findViewById(R.id.add_feed_n_type);
-			final Switch newfeedstatus = (Switch) mDialog.findViewById(R.id.add_feed_n_status);
+			final Switch newfeedOwnership = (Switch) mDialog.findViewById(R.id.add_feed_n_status);
 			
 			feedid.addTextChangedListener(new TextWatcher() {
 								
@@ -338,14 +435,37 @@ public class FeedList extends Activity {
 					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 						
 							public void onClick(DialogInterface dialog, int which) {
+								
+								String title = newfeedtitle.getText().toString();
+								String type = newfeedtype.isChecked()?"Custome":"Sensor";
+								String ownership = newfeedOwnership.isChecked()?"Private":"Public";
+								
+								String importID = feedid.getText().toString();
+								String importPermission  = feedkey.getText().toString();
+								
+								boolean result = false;
 								if(feedid.length()<=0 && newfeedtitle.length()>0){
-									// Helper.createFeed(newfeedtitle.getText().toString(), newfeedtype.isChecked(), newfeedstatus.isChecked());
-									// [TO BE ADDED] send the request to Pachube Component to create one feed
+									// For create new feed
+									if(helper.feedCreate(title, type, ownership)){
+										Toast.makeText(mContext, "You just create a new feed", Toast.LENGTH_LONG).show();
+										result = true;
+									} else {
+										Toast.makeText(mContext, "Fail to create new feed", Toast.LENGTH_SHORT).show();
+									}
 								} else if (feedid.length()>0 && newfeedtitle.length()<=0){
-									// Helper.getFeedInfo(feedid.getText().toString(), feedkey.getText().toString());
-									// [TO BE ADDED] or send request to get the existing feed info
+									// For import existed feed
+									if(helper.feedImport(importID, importPermission)){
+										Toast.makeText(mContext, "You just import a feed", Toast.LENGTH_LONG).show();
+										result = true;
+									} else {
+										Toast.makeText(mContext, "Fail to import feed", Toast.LENGTH_SHORT).show();
+									}
 								} else {
 									Toast.makeText(mContext, "Please enter feed id or new feed title", Toast.LENGTH_LONG).show();
+								}
+								
+								if(result){
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 								}
 							}
 						})

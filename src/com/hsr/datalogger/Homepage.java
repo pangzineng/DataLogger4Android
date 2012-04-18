@@ -1,7 +1,5 @@
 package com.hsr.datalogger;
 
-import com.hsr.datalogger.FeedList.AddFeedDialog;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,6 +26,10 @@ import android.widget.Toast;
 
 public class Homepage extends Activity {
 	
+	public static final int FEED_LIST = 0;
+	public static final int FEED_PAGE = 1;
+	public static final int FEED_DATA = 2;
+	
 	private Helper helper;
 	
     @Override
@@ -46,7 +48,7 @@ public class Homepage extends Activity {
         bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
         
         // [TO BE ADDED] get from cache
-        bar.setSelectedNavigationItem(0);
+        bar.setSelectedNavigationItem(FEED_LIST);
         
         
         bar.setCustomView(getLayoutInflater().inflate(R.layout.user_account_title, null));

@@ -180,13 +180,37 @@ public class Helper {
 	 * */
 	
 	public String[] getFeedListItem(String feedID) {
-		String currentUser = caH.getCurrentUsername();
+		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getOneFeedInfo(currentUser, feedID);
 	}
 
 
 	public List<String> getFeedList() {
-		String currentUser = caH.getCurrentUsername();
+		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
+	}
+
+
+	public boolean feedCreate(String title, String type, String ownership) {
+		String[] user = caH.getCurrentUser();
+		String feedID = null; // FIXME  = paH.create(user, title, status); // should return the feed ID or null if fail
+		if(feedID != null){   
+			dbH.addFeedToList(user[0], feedID, ownership, null, "Full", title, type);
+		} else {	
+			return false;			
+		}
+		return true;
+	}
+
+
+	public boolean feedImport(String feedID, String permission) {
+		String[] feed = null; // FIXME  = paH.getFeed(feedID, permission); // should include feedName and premission level(View, Full), return null if fail
+		String[] user = caH.getCurrentUser();
+		if(feed != null){
+			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor");
+		} else {
+			return false;
+		}
+		return true;
 	}
 }

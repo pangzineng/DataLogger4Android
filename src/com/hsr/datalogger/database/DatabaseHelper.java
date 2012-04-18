@@ -36,15 +36,16 @@ public class DatabaseHelper {
 		return temp.toArray(new String[temp.size()]);
 	}
 	
-	public void addFeedToList(String[] info, String feedType, String feedStatus,String key){
-		
+	public void addFeedToList(String user, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
+		db.Add(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
 	}
 
 	public String[] getOneFeedInfo(String currentUser, String feedID) {
 		// SOS need to return feed name, feed data count and feed premission
 		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
 		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);
-		String premission = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedStatus);
-		return new String[]{name, count, premission};
+		String ownership = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colOwnership);
+		String premissionLevel = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colPermissionLevel);
+		return new String[]{name, count, ownership, premissionLevel};
 	}
 }

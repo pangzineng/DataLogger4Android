@@ -44,7 +44,22 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 	    android:layout_gravity="center_vertical"
-        android:layout_weight="5">
+        android:layout_weight="3">
+        
+		<TextView
+	        android:id="@+id/list_feed_ownership"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Public"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+    </TableRow>
+    
+    <TableRow 
+        android:id="@id/tableRow3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+        android:layout_weight="3">
         
         <ImageView
 	        android:id="@+id/list_feed_premission"
