@@ -92,7 +92,7 @@ public class Helper {
 		return dbH.getSensorForDevice();
 	}
 
-	// [NOTICE] This one should be remove later when the PachubeHelper is done, just duplicate method here 
+	// SOS This one should be remove later when the PachubeHelper is done, just duplicate method here 
 	public String createPermission(String selectedLevel){
 		String key = null;
 		//String key = paH.createPermission(caH.getEmailInfo, selectedLevel);
@@ -105,9 +105,9 @@ public class Helper {
 
 	public boolean sendDiagramEmail(String address, String description, Context dialog, ImageView diagram){
 		
-		return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
-
+		// SOS for sending diagram testing only 
 		//return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
+		return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
 	}
 	
 	public String getDiagramDuration(){

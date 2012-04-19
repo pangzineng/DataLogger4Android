@@ -172,11 +172,26 @@ public class Homepage extends Activity {
 			currentLogout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					helper.logout();
-					// FIXME call somebody to reload the FeedList and setNavigation to list tab
-			    	username.setText("guest");
-			    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
-			    	dialog.dismiss();
+					AlertDialog confirm = new AlertDialog.Builder(mContext)
+								   .setMessage(R.string.login_logout_confirm)
+								   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											helper.logout();
+											// FIXME call somebody to reload the FeedList and setNavigation to list tab
+									    	username.setText("guest");
+									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
+									    	dialog.dismiss();
+										}
+								   })
+								   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											dialog.cancel();
+										}
+								   }).create();
+					getDialog().cancel();
+					confirm.show();
 				}
 			});
 			

@@ -41,7 +41,6 @@ public class DatabaseHelper {
 	}
 
 	public String[] getOneFeedInfo(String currentUser, String feedID) {
-		// SOS need to return feed name, feed data count and feed premission
 		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
 		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);
 		String ownership = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colOwnership);

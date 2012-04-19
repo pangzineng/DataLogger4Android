@@ -31,6 +31,7 @@
  	<string name="add_feed_new_status">Status</string>
  	
 	<!-- FOR edit_delete_feed_dialog -->
+	<string name="edit_delete_dialog_title">Modify This Feed</string>
 	<string name="edit_feed">* Edit This Feed</string>
 	<string name="edit_feed_name">Rename</string>
 	<string name="edit_feed_status">Change Status</string>

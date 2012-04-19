@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -130,12 +131,12 @@ public class FeedList extends Activity {
 		public List<FeedItem> loadInBackground() {
 			List<String> feeds = helper.getFeedList(); 
 			// SOS for testing only
-			//List<FeedItem> entries = new ArrayList<FeedItem>(0);
-			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
-			for(int i=0; i<feeds.size(); i++){
-				FeedItem item = new FeedItem(helper, feeds.get(i));
-				entries.add(item);
-			}
+			List<FeedItem> entries = new ArrayList<FeedItem>(0);
+//			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
+//			for(int i=0; i<feeds.size(); i++){
+//				FeedItem item = new FeedItem(helper, feeds.get(i));
+//				entries.add(item);
+//			}
 			return entries;
 		}
 		
@@ -244,26 +245,6 @@ public class FeedList extends Activity {
 			} else {
 				feedPremissionLevel.setImageResource(R.drawable.feed_pre_error);
 			}
-
-			// SOS this should be done in ListFragment below
-//			view.setOnClickListener(new View.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					// bring the tab to the next tab
-//					Log.d("pang", "Click on feed list item");
-//					
-//				}
-//			});
-//			view.setOnLongClickListener(new View.OnLongClickListener() {
-//				
-//				@Override
-//				public boolean onLongClick(View v) {
-//					// bring out the edit_delete dialog
-//					Log.d("pang", "Long press on feed list item");
-//					return false;
-//				}
-//			});
 			
 			return view;
 		}
@@ -298,7 +279,8 @@ public class FeedList extends Activity {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-					// FIXME do the list item long click here
+					DialogFragment editDeletedialog = EditDeleteFeedDialog.newInstance(R.string.edit_delete_dialog_title, getActivity().getApplicationContext(), helper);
+					editDeletedialog.show(getFragmentManager(), "dialog");
 					return false;
 				}
 			});
@@ -349,6 +331,8 @@ public class FeedList extends Activity {
 		public void onListItemClick(ListView l, View v, int position, long id) {
 			Log.d("pang", "Click on feed list item, listener in fragment");
 			// FIXME do the list item click here
+			// helper.selectOneFeed(); // store the clicked item info to cache
+			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 		}
 		
 		
@@ -373,6 +357,80 @@ public class FeedList extends Activity {
 		}
 	}
 
+	public static class EditDeleteFeedDialog extends DialogFragment {
+		private static Context mContext;
+		private static Helper helper;
+		
+		public static EditDeleteFeedDialog newInstance(int title, Context context, Helper h){
+			EditDeleteFeedDialog frag = new EditDeleteFeedDialog();
+			Bundle args = new Bundle();
+			args.putInt("title", title);
+			frag.setArguments(args);
+			
+			mContext = context;
+			helper = h;
+			
+			return frag;
+		}
+		
+		public static View getEditDeleteFeedView(){
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View editDeleteFeeddailog = inflater.inflate(R.layout.edit_delete_feed_dialog, null);
+			return editDeleteFeeddailog;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			int title = getArguments().getInt("title");
+			final View mDialog = getEditDeleteFeedView();
+			final EditText newTitle = (EditText) mDialog.findViewById(R.id.edit_feed_new_name);
+			final Switch newStatus = (Switch) mDialog.findViewById(R.id.edit_feed_new_status);
+			
+			final Button delete = (Button) mDialog.findViewById(R.id.delete_feed_delete);
+			delete.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					AlertDialog confirm = new AlertDialog.Builder(mContext)
+					   .setMessage(R.string.delete_feed_confirm_title)
+					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								// FIXME delete from database and reload the list
+							}
+					   	})
+					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+					   }).create();
+					getDialog().cancel();
+					confirm.show();
+				}
+			});
+			
+			return new AlertDialog.Builder(mContext)
+								  .setIcon(android.R.drawable.ic_menu_edit)
+								  .setView(mDialog)
+								  .setTitle(title)
+								  .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											// FIXME edit to database and reload the list
+											
+										}
+								  })
+								  .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											dialog.cancel();
+										}
+								  })
+								  .create();
+		}
+	}
+	
 	public static class AddFeedDialog extends DialogFragment {
 
 		private static Context mContext;
