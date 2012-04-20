@@ -47,14 +47,12 @@ public class Homepage extends Activity {
         bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(this, "FeedPage", FeedPage.FPFragment.class)));
         bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
         
-        // [TO BE ADDED] get from cache
-        bar.setSelectedNavigationItem(FEED_LIST);
+        bar.setSelectedNavigationItem(helper.getCurrentTab());
         
         
         bar.setCustomView(getLayoutInflater().inflate(R.layout.user_account_title, null));
         TextView user = (TextView)bar.getCustomView();
         
-        // get from cache
         String autoCheck = helper.AutoLoginAccount();
         if(autoCheck == null){
         	user.setText("guest");
@@ -177,8 +175,9 @@ public class Homepage extends Activity {
 								   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
+											// FIXME reload the list (logout)
 											helper.logout();
-											// FIXME call somebody to reload the FeedList and setNavigation to list tab
+											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									    	username.setText("guest");
 									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
 									    	dialog.dismiss();
@@ -216,9 +215,10 @@ public class Homepage extends Activity {
 								String[] account = new String[]{lgName, lgPW};
 								
 								if(helper.login(account, loginAuto.isChecked())){
+									// FIXME reload the list (login)
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);
 							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
-									// FIXME call somebody to reload the FeedList and setNavigation to list tab
 								} else {
 									Toast.makeText(mContext, "You enter wrong name or password", Toast.LENGTH_LONG).show();
 								}

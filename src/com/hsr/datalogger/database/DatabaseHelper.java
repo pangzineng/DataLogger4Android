@@ -47,4 +47,16 @@ public class DatabaseHelper {
 		String premissionLevel = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colPermissionLevel);
 		return new String[]{name, count, ownership, premissionLevel};
 	}
+
+	public void deleteFeed(String username, String id) {
+		db.DeleteRow(Database.FEED_INDEX, username, id);
+	}
+
+	public void editFeedTitle(String user, String id, String nTitle) {
+		db.Edit(Database.FEED_INDEX, user, id, Database.colFeedTitle, nTitle);
+	}
+
+	public void editFeedOwn(String user, String id, String nOwn) {
+		db.Edit(Database.FEED_INDEX, user, id, Database.colOwnership, nOwn);
+	}
 }

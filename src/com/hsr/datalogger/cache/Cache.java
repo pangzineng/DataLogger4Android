@@ -14,6 +14,9 @@ public class Cache{
 
 	private static final String STORE = "Datalogger for Android Cache";
 	
+	// to be store the last display tab
+	private static final String CURRENT_TAB = "current Tab";
+	
 	// to be shown on the view
 	private static final String CURRENT_USERNAME = "username";
 	private static final String CURRENT_PASSWORD = "password";
@@ -54,6 +57,11 @@ public class Cache{
 	 * 
 	 * */
 	
+	public void setCurrentTab(int index){
+		editor.putInt(CURRENT_TAB, index);
+		editor.apply();
+	}
+
 	public void setUsername(String name){
 		editor.putString(CURRENT_USERNAME, name);
 		editor.apply();
@@ -133,6 +141,10 @@ public class Cache{
 	/* Get the current data & passing data from the cache
 	 * 
 	 * */
+	
+	public int getCurrentTab(){
+		return sp.getInt(CURRENT_TAB, 0);
+	}
 	
 	public String getUsername(){
 		return sp.getString(CURRENT_USERNAME, "guest");

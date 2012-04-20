@@ -24,11 +24,23 @@
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal" >
 
+	        <TextView
+		        android:id="@+id/textView0"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="No."
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+		    <TextView
+		        android:id="@+id/list_feed_id"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="25025"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
 			<TextView
 		        android:id="@+id/textView1"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="Data Number:"
+		        android:text=" (Data: "
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
 		    <TextView
 		        android:id="@+id/list_feed_data_count"
@@ -36,7 +48,13 @@
 		        android:layout_height="wrap_content"
 		        android:text="0"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
-	    </LinearLayout>
+			<TextView
+		        android:id="@+id/textView2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text=")"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+   	    </LinearLayout>
     </LinearLayout>
     
     <TableRow 

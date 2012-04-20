@@ -64,12 +64,15 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
+			// FIXME check whether user has premission to modify this feed
+			
 			switch(item.getItemId()){
 				case ADD_DATASTREAM:
 					DialogFragment addDatastreamDialog = AddDatastreamDialog.newInstance(R.string.add_datastream, context, helper);
 					addDatastreamDialog.show(getFragmentManager(), "dialog");
 					return true;
 				case SHARE_FEED:
+
 					DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, context, helper);
 					shareFeedDialog.show(getFragmentManager(), "dialog");
 					return true;
@@ -80,6 +83,8 @@ public class FeedPage extends Activity {
 				default:
 					return super.onOptionsItemSelected(item);
 			}
+			
+			// if not, just Toast
 		}
 	}
 	
@@ -129,7 +134,7 @@ public class FeedPage extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 								if(dataName.length() > 0){
 									
-									/* Pass the value of Spinner and EditText to pachube component
+									/* FIXME Pass the value of Spinner and EditText to pachube component
 									 * get confirm and show Toast
 									 * */
 									
@@ -195,7 +200,7 @@ public class FeedPage extends Activity {
 								if(helper.sendEmail(emailAddress.getText().toString(), selected.getText().toString(), forDialog)){
 									Toast.makeText(mContext, "Email is sent successfully", Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext, "There are no email apps installed", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Fail to create premission, or there are no email apps", Toast.LENGTH_LONG).show();
 								}
 							}
 						})

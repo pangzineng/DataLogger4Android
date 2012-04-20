@@ -37,7 +37,6 @@ public class Email {
 	
 	public boolean sendDiagram(String address, String[] info, String description){
 		
-		// SOS remember to toggle this for testing
 		String imageName = info[0] + " - " + info[3];
 		
 		email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/DataLogger/" + imageName + ".png"));
