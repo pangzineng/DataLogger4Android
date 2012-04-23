@@ -40,6 +40,7 @@ public class DatabaseHelper {
 		db.Add(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
 	}
 
+	// FeedTitle, DataCount, Ownership, PremissionLevel
 	public String[] getOneFeedInfo(String currentUser, String feedID) {
 		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
 		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);

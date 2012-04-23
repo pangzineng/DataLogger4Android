@@ -136,7 +136,7 @@ public class FeedList extends Activity {
 		@Override
 		public List<FeedItem> loadInBackground() {
 			List<String> feeds = helper.getFeedList(); 
-			// SOS Testing (load feed list)
+			// TODO Testing on (load feed list)
 			List<FeedItem> entries = new ArrayList<FeedItem>(0);
 //			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
 //			for(int i=0; i<feeds.size(); i++){

@@ -64,7 +64,12 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
-			// FIXME check whether user has premission to modify this feed
+			
+			// check whether user has premission to modify this feed
+			if(helper.notFullLevel()){
+				Toast.makeText(context, "You have no premission to control this feed", Toast.LENGTH_LONG).show();
+				return super.onOptionsItemSelected(item);
+			}
 			
 			switch(item.getItemId()){
 				case ADD_DATASTREAM:
@@ -72,7 +77,6 @@ public class FeedPage extends Activity {
 					addDatastreamDialog.show(getFragmentManager(), "dialog");
 					return true;
 				case SHARE_FEED:
-
 					DialogFragment shareFeedDialog = ShareFeedDialog.newInstance(R.string.share_feed_title, context, helper);
 					shareFeedDialog.show(getFragmentManager(), "dialog");
 					return true;
@@ -83,8 +87,6 @@ public class FeedPage extends Activity {
 				default:
 					return super.onOptionsItemSelected(item);
 			}
-			
-			// if not, just Toast
 		}
 	}
 	
@@ -134,9 +136,15 @@ public class FeedPage extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 								if(dataName.length() > 0){
 									
-									/* FIXME Pass the value of Spinner and EditText to pachube component
-									 * get confirm and show Toast
-									 * */
+									String name = dataName.getText().toString();
+									String sensor = sp.getSelectedItem().toString();
+									
+									if(helper.dataCreate(name, sensor)){
+										// reload the data list
+										getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									} else {
+										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
+									}
 									
 								} else {
 									Toast.makeText(mContext, "Please enter a name for datastream", Toast.LENGTH_LONG).show();

@@ -159,6 +159,41 @@ public class Helper {
 		return key;
 	}
 	
+	/* 4. Feed Page Tab function
+	 * (2) Add Datastream to the feed
+	 * */
+	public String[] setSensorForDevice(){
+		// will only run once for the first launch of the app to set the sensor info of this device
+		if(!caH.detectSensor()){
+			dbH.storeSensorStatus(hwH.getAvailableSensor());
+		}
+		// later it will get the detected list from the database
+		return dbH.getSensorForDevice();
+	}
+	
+	public boolean notFullLevel(){
+		String thisFeedID = caH.getCurrentFeedInfo()[0];
+		String thisUser = caH.getCurrentUser()[0];
+		String level = dbH.getOneFeedInfo(thisUser, thisFeedID)[3];
+		if(level.equals("Full")){
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean dataCreate(String name, String sensor) {
+
+		// SOS to create one or two string array with unit of different sensors matching their index
+		
+		// FIXME if(paH.createData())
+		//
+		//
+		//
+		//
+		return false;
+	}
+
+
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram
 	 * */
@@ -177,7 +212,7 @@ public class Helper {
 	public void reDraw(){
 		Drawable diagram = getDiagram();
 		
-		// SOS Testing (download diagram from pachube pt.1)
+		// TODO Testing on (download diagram from pachube pt.1)
 		diagram = context.getResources().getDrawable(R.drawable.icon);
 		
 		v.setImageDrawable(diagram);
@@ -201,7 +236,7 @@ public class Helper {
 			para2[1] -= 100;
 		}
 		
-		// SOS Testing (download diagram from pachube pt.2)
+		// TODO Testing on (download diagram from pachube pt.2)
 		Drawable diagram = null; // FIXME = paH.getDiagram(para1, para2);
 		
 		return diagram;
@@ -218,34 +253,23 @@ public class Helper {
 		caH.setDiagramDuration(duration);
 	}
 	
-	
-	// run for every launch when the sensor list is needed for the display of the "Add Datastream" spinner
-	public String[] setSensorForDevice(){
-		// will only run once for the first launch of the application to settle the sensor info of this device
-		if(!caH.detectSensor()){
-			Log.d("pang", "should run for the first time");
-			dbH.storeSensorStatus(hwH.getAvailableSensor());
-		}
-		
-		return dbH.getSensorForDevice();
-	}
-
-
+	/* 5. Feed Data Tab function
+	 * (3) share via email with diagram attachment
+	 * */
 	public boolean sendDiagramEmail(String address, String description, Context dialog, ImageView diagram){
 		
-		// SOS Testing (send diagram with info) 
-		//return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
-		return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
+		// TODO Testing off (send diagram with info) 
+		//return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
+		return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
 	}
 	
 	
-
-	
+	//===============================================================================================
 	
 	public void startUpdateData(int interval, int runningTime) {
 		String FeedName = caH.getCurrentFeedInfo()[1];
 		
-		// SOS this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
+		// TODO this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
 		// if user selected two datastream that connect with the same sensor, we should alert the case but still allow to continue
 		// this means one update should have the unit of "1 datastream -- the sensor allocated". code should went through the datastream to get the sensor type
 		int[] selected = caH.getSelectedSensor();
@@ -268,6 +292,7 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
 
 
 
