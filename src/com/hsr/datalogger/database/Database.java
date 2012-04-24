@@ -94,8 +94,8 @@ public class Database extends SQLiteOpenHelper {
 		db.execSQL(	"CREATE TABLE " + datastreamTable +
 					" (" + colFeedID + " TEXT, " +
 						   colDataName + " TEXT, " +
-						   colDataValue + " FLOAT NOT NULL, " +
-						   colDataTag + " TEXT NOT NULL, " +
+						   colDataValue + " FLOAT, " +
+						   colDataTag + " TEXT, " +
 						   "PRIMARY KEY (" + colFeedID + ", " + colDataName +"));"
 				   );
 		
@@ -162,7 +162,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add data
-	public int Add(String feedID, String dataName, String currentValue, String dataTag){
+	public int Add(String feedID, String dataName, float currentValue, String dataTag){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
 		cv.put(colDataName, dataName);

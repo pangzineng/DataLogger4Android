@@ -60,4 +60,20 @@ public class DatabaseHelper {
 	public void editFeedOwn(String user, String id, String nOwn) {
 		db.Edit(Database.FEED_INDEX, user, id, Database.colOwnership, nOwn);
 	}
+
+	public void addDataToFeed(String feedID, String dataName, String tag) {
+		db.Add(feedID, dataName, 0, tag);
+	}
+
+	public String getPremissionFor(String user, String feedID) {
+		return db.getValue(Database.FEED_INDEX, user, feedID, Database.colPermission);
+	}
+
+	public void deleteData(String feedID, String dataID) {
+		db.DeleteRow(Database.DATASTREAM_INDEX, feedID, dataID);
+	}
+
+	public void editDataTitle(String feedID, String oName, String nName) {
+		db.Edit(Database.DATASTREAM_INDEX, feedID, oName, Database.colDataName, nName);
+	}
 }

@@ -85,6 +85,15 @@
 	</string-array>
 	<string name="edit_diagram_notice">Notice: the maximum duration allowed is 23 months or 730 days.</string>
 	
+	<!-- FOR edit_delete_data_dialog -->
+	<string name="edit_data_dialog_title">Modify This Data</string>
+	<string name="edit_data">* Edit This Data Stream</string>
+	<string name="edit_data_name">Rename</string>
+	<string name="delete_data">* Delete This Data Stream</string>
+	<string name="delete_data_message">Click To Delete This Data</string>
+	<string name="delete_data_button">Delete</string>
+	<string name="delete_data_confirm_title">Are you sure you want to delete this data stream?</string>
+	
 	<!-- FOR update_feed_dialog -->
 	<string name="update_feed">Update Current Feed</string>
 	<string name="update_feed_selected"> Sensors Are Selected</string>
@@ -112,12 +121,21 @@
 		<item>Ambient Temperature</item>
 	</string-array>
 	
-	<!-- FOR edit_delete_data_dialog -->
-	<string name="edit_data">* Edit This Data Stream</string>
-	<string name="edit_data_name">Rename</string>
-	<string name="delete_data">* Delete This Data Stream</string>
-	<string name="delete_data_message">Click To Delete This Data</string>
-	<string name="delete_data_button">Delete</string>
-	<string name="delete_data_confirm_title">Are you sure you want to delete this data stream?</string>
-		    
+	<string-array name="sensor_unit">
+	    <item>dB</item>
+	    <item>m/s^2</item>
+	    <item>uT</item>
+	    <item>degree</item>
+	    <item>radian/s</item>
+	    <item>lux</item>
+	    <item>hPa</item>
+	    <item>degree Celsius</item>
+	    <item>cm</item>
+	    <item>m/s^2</item>
+	    <item>m/s^2</item>
+	    <item>(No Unit)</item>
+	    <item>percent</item>
+	    <item>degree Celsius</item>
+	</string-array>
+	
 </resources>

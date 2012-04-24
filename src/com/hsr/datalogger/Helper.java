@@ -1,5 +1,6 @@
 package com.hsr.datalogger;
 
+import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
@@ -181,19 +182,58 @@ public class Helper {
 		return true;
 	}
 	
-	public boolean dataCreate(String name, String sensor) {
-
-		// SOS to create one or two string array with unit of different sensors matching their index
+	public boolean dataCreate(String dataName, String tag) {
+		String user = caH.getCurrentUser()[0];
+		String feedID = caH.getCurrentFeedInfo()[0];
+		String premission = dbH.getPremissionFor(user, feedID);
 		
-		// FIXME if(paH.createData())
-		//
-		//
-		//
-		//
-		return false;
+		String[] sensors = context.getResources().getStringArray(R.array.sensor_list);
+		String[] units = context.getResources().getStringArray(R.array.sensor_unit);
+		String unit = units[Arrays.asList(sensors).indexOf(tag)];
+		
+		// FIXME if(paH.createData(feedID, dataID, premission, tag, unit)) {
+									// premission might be null if it's his own feed
+									// tag is the name of sensor from the string list
+									// unit is the unit of sensor value from another list
+			dbH.addDataToFeed(feedID, dataName, tag);
+			return true;
+		//} else {
+		//	return false;
+		//}
+	}
+	
+	/* 4. Feed Page Tab function
+	 * (3) Edit or delete the data
+	 * */
+	public boolean dataDelete(String dataID) {
+		
+		// SOS this duplicate codes should be combine
+		String user = caH.getCurrentUser()[0];
+		String feedID = caH.getCurrentFeedInfo()[0];
+		String premission = dbH.getPremissionFor(user, feedID);
+		
+		//FIXME if(paH.deleteData(feedID, dataID, premission)){
+			dbH.deleteData(feedID, dataID);
+			return true;
+		//} else {
+		//	return false;
+		//}
 	}
 
-
+	public boolean dataEdit(String oName, String nName) {
+		String user = caH.getCurrentUser()[0];
+		String feedID = caH.getCurrentFeedInfo()[0];
+		String premission = dbH.getPremissionFor(user, feedID);
+		
+		// FIXME if(paH.editData(feedID, oName, nName, premission)){
+			dbH.editDataTitle(feedID, oName, nName);
+			return true;
+		//} else {
+			//return false;
+		//}
+	}
+	
+	
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram
 	 * */
@@ -292,6 +332,9 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
+
 
 
 

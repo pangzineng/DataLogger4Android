@@ -1,5 +1,7 @@
 package com.hsr.datalogger;
 
+import com.hsr.datalogger.FeedList.EditDeleteFeedDialog;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +16,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,6 +35,19 @@ public class FeedPage extends Activity {
 		setContentView(R.layout.feedpage);
 	}
 	
+	public static class DataItem {
+		
+	}
+	
+	public static class DataListAdapter extends ArrayAdapter<DataItem>{
+
+		public DataListAdapter(Context context) {
+			super(context, android.R.layout.simple_list_item_2);
+			// TODO Auto-generated constructor stub
+		}
+		
+	}
+	
 	public static class FPFragment extends ListFragment {
 		
 		private static final int ADD_DATASTREAM = 1;
@@ -38,13 +56,28 @@ public class FeedPage extends Activity {
 		
 		Context context;
 		Helper helper;
+		DataListAdapter mAdapter;
+		
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			setEmptyText("No Data Stream");
-			setHasOptionsMenu(true);
+			
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
+
+			setEmptyText("No Data Stream");
+			setHasOptionsMenu(true);
+			
+			setListAdapter(mAdapter);
+			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					DialogFragment editDeletedialog = EditDeleteDataDialog.newInstance(R.string.edit_data_dialog_title, getActivity().getApplicationContext(), helper, view);
+					editDeletedialog.show(getFragmentManager(), "dialog");
+					return false;
+				}
+			});
 		}
 		
 		@Override
@@ -160,7 +193,6 @@ public class FeedPage extends Activity {
 					   .create();
 		}
 	}
-
 	
 	public static class ShareFeedDialog extends DialogFragment {
 
@@ -278,5 +310,101 @@ public class FeedPage extends Activity {
 		}
 
 		
+	}
+
+	public static class EditDeleteDataDialog extends DialogFragment {
+
+		private static Context mContext;
+		private static Helper helper;
+		private static View view;
+
+		public static EditDeleteDataDialog newInstance(int title, Context context, Helper h, View v){
+			EditDeleteDataDialog frag = new EditDeleteDataDialog();
+			Bundle args = new Bundle();
+			args.putInt("title", title);
+			frag.setArguments(args);
+			
+			mContext = context;
+			helper = h;
+			view = v;
+			return frag;
+		}
+		
+		public static View getEditDeleteFeedView(){
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View editDeleteFeeddailog = inflater.inflate(R.layout.edit_delete_data_dialog, null);
+			return editDeleteFeeddailog;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+			int title = getArguments().getInt("title");
+			final View mDialog = getEditDeleteFeedView();
+			
+			final EditText newName = (EditText) mDialog.findViewById(R.id.edit_data_new_name);
+			Button deleteData = (Button) mDialog.findViewById(R.id.delete_data_delete);
+			deleteData.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					AlertDialog confirm = new AlertDialog.Builder(mContext)
+					   .setMessage(R.string.delete_feed_confirm_title)
+					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+								// FIXME to be build, should get from the list item
+								String dataID = "";
+								
+								// FIXME reload the list (delete data)
+								if(helper.dataDelete(dataID)){
+									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+								} else {
+									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
+								}
+							}
+					   	})
+					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+					   }).create();
+					getDialog().cancel();
+					confirm.show();
+				}
+			});
+			
+			return new AlertDialog.Builder(mContext)
+			  .setIcon(android.R.drawable.ic_menu_edit)
+			  .setView(mDialog)
+			  .setTitle(title)
+			  .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// FIXME to be build, should get from the list item, same thing as above
+						String oName = "";
+						
+						// FIXME reload the list (edit data)
+						String nName = newName.getText().toString();
+
+						if(helper.dataEdit(oName, nName)){
+							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
+							getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+						} else {
+							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();
+						}
+					}
+			  })
+			  .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+			  })
+			  .create();
+		}
 	}
 }
