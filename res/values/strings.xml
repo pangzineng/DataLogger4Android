@@ -96,7 +96,7 @@
 	
 	<!-- FOR update_feed_dialog -->
 	<string name="update_feed">Update Current Feed</string>
-	<string name="update_feed_selected"> Sensors Are Selected</string>
+	<string name="update_feed_selected">Selected Data:</string>
 	<string name="update_feed_interval">Interval (in minutes)</string>
 	<string name="update_feed_totalTime">Total Runtime (in minutes)</string>
 	

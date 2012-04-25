@@ -121,22 +121,25 @@ public class Helper {
 	 * */
 	public boolean feedEdit(String id, String nTitle, boolean titleOnly, String nOwn) {
 		String user = caH.getCurrentUser()[0];
+		String premission = dbH.getPremissionFor(user, id);
 		dbH.editFeedTitle(user, id, nTitle);
 		if(titleOnly){
-			return true; // FIXME paH.editTitle(id, nTitle);
+			return true; // FIXME paH.editTitle(id, nTitle, premission);
 		} else {
 			dbH.editFeedOwn(user, id, nOwn);
-			return false; //FIXME paH.editStatus(id, nOwn);
+			return false; //FIXME paH.editStatus(id, nOwn, premission);
 		}
 	}
 
 	public boolean feedDelete(String id, boolean local) {
 		String username = caH.getCurrentUser()[0];
+		String premission = dbH.getPremissionFor(username, id);
+
 		dbH.deleteFeed(username, id);
 		if(local){
 			return true;
 		} else {
-			return false;// FIXME paH.delete(id); 
+			return false;// FIXME paH.delete(id, premission); 
 		}
 	}
 
@@ -156,7 +159,9 @@ public class Helper {
 	}
 	
 	private String createPermission(String selectedLevel){
-		String key = null;//FIXME = paH.createKey(caH.getEmailInfo, selectedLevel);
+		String[] account = caH.getCurrentUser();
+		String feedID = caH.getCurrentFeedInfo()[0];
+		String key = null;//FIXME = paH.createKey(account, feedID, selectedLevel);
 		return key;
 	}
 	
@@ -233,6 +238,26 @@ public class Helper {
 		//}
 	}
 	
+	/* 4. Feed Page Tab function
+	 * (3) Update Feed
+	 * */
+	public int getSelectedDataNum() {
+		// FIXME to get from the list
+		return 0;
+	}
+	
+	public void startUpdateData(int interval, int runningTime) {
+		String FeedName = caH.getCurrentFeedInfo()[1];
+		
+		// TODO this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
+		// if user selected two datastream that connect with the same sensor, we should alert the case but still allow to continue
+		// this means one update should have the unit of "1 datastream -- the sensor allocated". code should went through the datastream to get the sensor type
+		int[] selected = caH.getSelectedSensor();
+		
+		srH.startBackgroundUpdate(FeedName, interval, runningTime, selected);
+		
+	}
+
 	
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram
@@ -306,17 +331,6 @@ public class Helper {
 	
 	//===============================================================================================
 	
-	public void startUpdateData(int interval, int runningTime) {
-		String FeedName = caH.getCurrentFeedInfo()[1];
-		
-		// TODO this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
-		// if user selected two datastream that connect with the same sensor, we should alert the case but still allow to continue
-		// this means one update should have the unit of "1 datastream -- the sensor allocated". code should went through the datastream to get the sensor type
-		int[] selected = caH.getSelectedSensor();
-		
-		srH.startBackgroundUpdate(FeedName, interval, runningTime, selected);
-		
-	}
 
 
 	/* For the feed list in the first tab
@@ -332,6 +346,8 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
 
 
 

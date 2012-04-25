@@ -6,7 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-public class NetworkLocation {
+public class LocationReport {
 	
 	private double lon = 0.0;
 	private double lat = 0.0;
@@ -15,7 +15,7 @@ public class NetworkLocation {
 	LocationManager lm; 
 	LocationListener ll;
 	
-	public NetworkLocation(Context context) {
+	public LocationReport(Context context) {
 		
 		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 

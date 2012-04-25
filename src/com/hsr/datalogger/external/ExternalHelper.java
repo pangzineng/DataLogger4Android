@@ -5,10 +5,11 @@ import android.widget.ImageView;
 
 public class ExternalHelper {
 
-	NetworkLocation nl;
+	LocationReport nl;
 	Email email;
 	DeviceInfo deviceInfo;
 	ImageDownload image;
+	NetworkCondition network;
 	
 	Context context;
 	
@@ -16,10 +17,11 @@ public class ExternalHelper {
 		this.context = context;
 		deviceInfo = new DeviceInfo(context);
 		image = new ImageDownload();
+		network = new NetworkCondition(context);
 	}
 
 	public void turnOnLocation(){
-		nl = new NetworkLocation(context);
+		nl = new LocationReport(context);
 	}
 	
 	// send permission email
@@ -39,5 +41,9 @@ public class ExternalHelper {
 		int[] size = deviceInfo.getScreenSize();
 		int zone = deviceInfo.getTimezone();
 		return new int[]{size[0], size[1], zone};
+	}
+	
+	public boolean getNetworkCondition(){
+		return network.getNetworkInfo();
 	}
 }

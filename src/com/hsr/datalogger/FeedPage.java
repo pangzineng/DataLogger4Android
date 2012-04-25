@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FeedPage extends Activity {
@@ -280,14 +281,29 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final Context forDialog = getActivity();
+
 			int title = getArguments().getInt("title");
 			final View mDialog = getUpdateFeedView();
 			
+			TextView selected = (TextView) mDialog.findViewById(R.id.update_selected_num);
+			int num = helper.getSelectedDataNum();
+			if(num<=0){
+				return new AlertDialog.Builder(forDialog)
+									  .setMessage("You did not select any data")
+									  .setNeutralButton(R.string.dialog_cancel, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											dialog.cancel();
+										}
+									  }).create();
+			} else {
+				selected.setText(String.valueOf(num));
+			}
+			
 			final EditText interval = (EditText)mDialog.findViewById(R.id.update_feed_interval);
 			final EditText total = (EditText) mDialog.findViewById(R.id.update_feed_totaltime);
-			
-			final Context forDialog = getActivity();
-			
+
 			return new AlertDialog.Builder(forDialog)
 					   .setIcon(android.R.drawable.ic_menu_upload)
 					   .setTitle(title)

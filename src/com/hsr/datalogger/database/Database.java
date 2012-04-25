@@ -29,7 +29,8 @@ public class Database extends SQLiteOpenHelper {
 	static final String datastreamTable = "FeedDataStreams";
 	static final String colDataName = "FeedDataStreamName";	// Key
 	static final String colDataValue = "FeedDataStreamCurrentValue";
-	static final String colDataTag = "FeedDataTag";			// This will match the sensor type in integer
+	static final String colDataTag = "FeedDataTag";			// This will match the sensor type
+	static final String colChecked = "CheckedForUpdate";
 	
 	static final String datapointTable = "DataPoints";
   //static final String colDataIndex = "Feed Data Index";	// Key
@@ -85,7 +86,8 @@ public class Database extends SQLiteOpenHelper {
 				           colPermission + " TEXT, "  + 
 				           colPermissionLevel+ " TEXT, " + 
 				           colFeedTitle + " TEXT NOT NULL, " +
-				           colFeedType + " TEXT NOT NULL, " +
+				           colFeedType + " TEXT NOT NULL, " + 
+				           colChecked + " BLOB, " +
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
