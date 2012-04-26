@@ -50,6 +50,7 @@ public class FeedData extends Activity {
 			helper = new Helper(context);
 			
 			diagram = (ImageView) getView().findViewById(R.id.data_diagram);
+			// FIXME 
 						
 			helper.tempStore(diagram);
 			helper.reDraw();

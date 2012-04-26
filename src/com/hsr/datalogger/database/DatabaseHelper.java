@@ -73,7 +73,27 @@ public class DatabaseHelper {
 		db.DeleteRow(Database.DATASTREAM_INDEX, feedID, dataID);
 	}
 
-	public void editDataTitle(String feedID, String oName, String nName) {
-		db.Edit(Database.DATASTREAM_INDEX, feedID, oName, Database.colDataName, nName);
+	public void editDataTitle(String feedID, String dataName, String nTags) {
+		db.Edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataTag, nTags);
+	}
+
+	public List<String> getOfflineTime(String dataName) {
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPTimestamp);
+	}
+
+	public List<String> getOfflineValue(String dataName) {
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPValue);
+	}
+	
+	public List<String> getOfflineData(){
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, null, "DISTINCT", Database.colDataName);
+	}
+
+	public void checkData(String feedID, String dataName, boolean isChecked) {
+		db.Edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colChecked, isChecked?"1":"0");
+	}
+
+	public int getDataCheckNum(String feedID) {
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked).size();
 	}
 }

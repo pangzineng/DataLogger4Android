@@ -1,6 +1,10 @@
 package com.hsr.datalogger;
 
+import java.util.List;
+
 import com.hsr.datalogger.FeedList.EditDeleteFeedDialog;
+import com.hsr.datalogger.FeedList.FeedItem;
+import com.hsr.datalogger.FeedPage.DataItem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,10 +20,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -37,16 +45,58 @@ public class FeedPage extends Activity {
 	}
 	
 	public static class DataItem {
+		private String dataName = "";
+		private String tags = "";
+		
+		
+		public String getDataName(){
+			return dataName;
+		}
+		
+		public String getTags(){
+			return tags;
+		}
 		
 	}
 	
 	public static class DataListAdapter extends ArrayAdapter<DataItem>{
 
-		public DataListAdapter(Context context) {
+		private final LayoutInflater mInflater;
+		private Helper helper;
+
+		public DataListAdapter(Context context, Helper h) {
 			super(context, android.R.layout.simple_list_item_2);
-			// TODO Auto-generated constructor stub
+			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			helper = h;
 		}
 		
+		public void setData(List<DataItem> data){
+			clear();
+			if(data!=null) addAll(data);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			final DataItem item = getItem(position);
+			
+			View view = null;
+			if(convertView == null){
+				view = mInflater.inflate(R.layout.list_data_item, parent, false);
+			} else {
+				view = convertView;
+			}
+			
+			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
+			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					helper.checkData(item.getDataName(), isChecked); 
+				}
+			});
+			
+			return super.getView(position, convertView, parent);
+		}
 	}
 	
 	public static class FPFragment extends ListFragment {
@@ -69,6 +119,7 @@ public class FeedPage extends Activity {
 			setEmptyText("No Data Stream");
 			setHasOptionsMenu(true);
 			
+			mAdapter = new DataListAdapter(context, helper);
 			setListAdapter(mAdapter);
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -358,7 +409,12 @@ public class FeedPage extends Activity {
 			int title = getArguments().getInt("title");
 			final View mDialog = getEditDeleteFeedView();
 			
-			final EditText newName = (EditText) mDialog.findViewById(R.id.edit_data_new_name);
+			final TextView dataName = (TextView) view.findViewById(R.id.data_item_name);
+			
+			final EditText newTags = (EditText) mDialog.findViewById(R.id.edit_data_new_tags);
+			TextView oldTags = (TextView) view.findViewById(R.id.data_item_tags);
+			newTags.setText(oldTags.getText());
+			
 			Button deleteData = (Button) mDialog.findViewById(R.id.delete_data_delete);
 			deleteData.setOnClickListener(new View.OnClickListener() {
 				
@@ -370,8 +426,7 @@ public class FeedPage extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								
-								// FIXME to be build, should get from the list item
-								String dataID = "";
+								String dataID = dataName.getText().toString();
 								
 								// FIXME reload the list (delete data)
 								if(helper.dataDelete(dataID)){
@@ -400,13 +455,13 @@ public class FeedPage extends Activity {
 			  .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// FIXME to be build, should get from the list item, same thing as above
-						String oName = "";
+
+						String dataID = dataName.getText().toString();
 						
 						// FIXME reload the list (edit data)
-						String nName = newName.getText().toString();
+						String nTags = newTags.getText().toString();
 
-						if(helper.dataEdit(oName, nName)){
+						if(helper.dataEdit(dataID, nTags)){
 							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
 							getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 						} else {

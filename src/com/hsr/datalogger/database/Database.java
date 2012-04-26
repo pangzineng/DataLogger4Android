@@ -87,7 +87,6 @@ public class Database extends SQLiteOpenHelper {
 				           colPermissionLevel+ " TEXT, " + 
 				           colFeedTitle + " TEXT NOT NULL, " +
 				           colFeedType + " TEXT NOT NULL, " + 
-				           colChecked + " BLOB, " +
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
@@ -98,6 +97,7 @@ public class Database extends SQLiteOpenHelper {
 						   colDataName + " TEXT, " +
 						   colDataValue + " FLOAT, " +
 						   colDataTag + " TEXT, " +
+				           colChecked + " TEXT, " + //FIXME
 						   "PRIMARY KEY (" + colFeedID + ", " + colDataName +"));"
 				   );
 		
@@ -407,7 +407,11 @@ public class Database extends SQLiteOpenHelper {
 		String query = "";
 
 		if(keyName == null){
-			query = "SELECT * FROM " + tableName;
+			if(keyValue.equals("DISTINCT")){
+				query = "SELECT DISTINCT " + toGetCol + " FROM " + tableName;
+			} else {
+				query = "SELECT * FROM " + tableName;
+			}
 			cur = db.rawQuery(query, null);
 		} else {
 			query = "SELECT * FROM " + tableName + " WHERE " + keyName + " =?";

@@ -1,11 +1,11 @@
 package com.hsr.datalogger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.hsr.datalogger.cache.CacheHelper;
@@ -96,7 +96,7 @@ public class Helper {
 
 	public boolean feedCreate(String title, String type, String ownership) {
 		String[] user = caH.getCurrentUser();
-		String feedID = null; // FIXME  = paH.create(user, title, status); // should return the feed ID or null if fail
+		String feedID = null; // FIXME  = paH.create(title, status); // should return the feed ID or null if fail
 		if(feedID != null){   
 			dbH.addFeedToList(user[0], feedID, ownership, null, "Full", title, type);
 		} else {	
@@ -159,9 +159,8 @@ public class Helper {
 	}
 	
 	private String createPermission(String selectedLevel){
-		String[] account = caH.getCurrentUser();
 		String feedID = caH.getCurrentFeedInfo()[0];
-		String key = null;//FIXME = paH.createKey(account, feedID, selectedLevel);
+		String key = null;//FIXME = paH.createKey(feedID, selectedLevel);
 		return key;
 	}
 	
@@ -225,13 +224,13 @@ public class Helper {
 		//}
 	}
 
-	public boolean dataEdit(String oName, String nName) {
+	public boolean dataEdit(String dataName, String newTags) {
 		String user = caH.getCurrentUser()[0];
 		String feedID = caH.getCurrentFeedInfo()[0];
 		String premission = dbH.getPremissionFor(user, feedID);
 		
-		// FIXME if(paH.editData(feedID, oName, nName, premission)){
-			dbH.editDataTitle(feedID, oName, nName);
+		// FIXME if(paH.editData(feedID, dataName, newTags, premission)){
+			dbH.editDataTitle(feedID, dataName, newTags);
 			return true;
 		//} else {
 			//return false;
@@ -241,9 +240,15 @@ public class Helper {
 	/* 4. Feed Page Tab function
 	 * (3) Update Feed
 	 * */
+
+	public void checkData(String dataName, boolean isChecked) {
+		String feedID = caH.getCurrentFeedInfo()[0];
+		dbH.checkData(feedID, dataName, isChecked);
+	}
+	
 	public int getSelectedDataNum() {
-		// FIXME to get from the list
-		return 0;
+		String feedID = caH.getCurrentFeedInfo()[0];
+		return dbH.getDataCheckNum(feedID);
 	}
 	
 	public void startUpdateData(int interval, int runningTime) {
@@ -258,6 +263,23 @@ public class Helper {
 		
 	}
 
+	public List<List<String[]>> getOfflineData(){
+		List<String> datas = dbH.getOfflineData();
+		
+		if(datas==null) return null;
+		
+		List<List<String[]>> mList = new ArrayList<List<String[]>>();
+		for(int i=0; i<datas.size(); i++){
+			List<String[]> temp = new ArrayList<String[]>();
+			List<String> times = dbH.getOfflineTime(datas.get(i));
+			List<String> values = dbH.getOfflineValue(datas.get(i));
+			for(int j=0; j<times.size(); j++){
+				temp.add(new String[]{times.get(j), values.get(j)});
+			}
+			mList.add(temp);
+		}
+		return mList;
+	}
 	
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram
@@ -346,6 +368,8 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
 
 
 

@@ -88,7 +88,8 @@
 	<!-- FOR edit_delete_data_dialog -->
 	<string name="edit_data_dialog_title">Modify This Data</string>
 	<string name="edit_data">* Edit This Data Stream</string>
-	<string name="edit_data_name">Rename</string>
+	<string name="edit_data_tags">Tags:</string>
+	<string name="edit_data_notice">Notice: Please use \",\" to seperate different tags</string>
 	<string name="delete_data">* Delete This Data Stream</string>
 	<string name="delete_data_message">Click To Delete This Data</string>
 	<string name="delete_data_button">Delete</string>

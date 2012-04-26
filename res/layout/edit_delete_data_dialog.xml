@@ -22,25 +22,34 @@
                 android:gravity="right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_data_name"
+                android:text="@string/edit_data_tags"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_weight="3"  />
 
             <EditText
-                android:id="@+id/edit_data_new_name"
+                android:id="@+id/edit_data_new_tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_weight="1" />
 
         </TableRow>
-
+        
+		<TextView
+		    android:id="@+id/textView2"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/tableRow1"
+		    android:text="@string/edit_data_notice"
+		    android:textAppearance="?android:attr/textAppearanceSmall" />
+		
     <TextView
         android:id="@+id/textView3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tableRow1"
+        android:layout_below="@+id/textView2"
         android:text="@string/delete_data"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 	
@@ -68,6 +77,6 @@
 
         </TableRow>
 
-
+		
     
 </RelativeLayout>
