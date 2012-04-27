@@ -17,19 +17,33 @@
         android:layout_height="fill_parent"
         android:layout_weight="10">
 	    <TextView
-	        android:id="@+id/textView6"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="Current Value: "
-	        android:layout_weight="1"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	
-	    <TextView
 	        android:id="@+id/textView1"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="250"
+	        android:text="Current:"
+		    android:background="#FF0000"
 	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <TextView
+	        android:id="@+id/diagram_stat_current"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="250"
+		    android:background="#CC0000"
+	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <TextView
+	        android:id="@+id/diagram_stat_unit"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Unit"
+		    android:background="#FF0000"
+	        android:layout_weight="1"
+	        android:gravity="center"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
     
     </TableRow>
@@ -45,15 +59,17 @@
             android:id="@+id/textView2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Max"
+            android:text="Max:"
+	    	android:background="#990000"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/diagram_stat_max"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="9000"
+	    	android:background="#440000"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -61,15 +77,17 @@
             android:id="@+id/textView4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Min"
+            android:text="Min:"
+	    	android:background="#990000"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/diagram_stat_min"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="5"
+	    	android:background="#440000"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceSmall" />
         

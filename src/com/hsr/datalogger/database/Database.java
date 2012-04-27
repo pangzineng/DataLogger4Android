@@ -103,10 +103,11 @@ public class Database extends SQLiteOpenHelper {
 		
 		// CREATE the datapoint table
 		db.execSQL(	"CREATE TABLE " + datapointTable +
-					" (" + colDataName + " TEXT, " +
+					" (" + colFeedID + " TEXT, " +
+						   colDataName + " TEXT, " +
 					   	   colDPTimestamp + " TEXT, " +
 					       colDPValue + " FLOAT NOT NULL, " + 
-			               "PRIMARY KEY (" + colDataName + ", " + colDPTimestamp +"));"
+			               "PRIMARY KEY (" + colFeedID + ", " + colDataName + ", " + colDPTimestamp +"));"
 			   );
 		
 		// CREATE the sensor table
@@ -179,8 +180,9 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add datapoint
-	public int Add(String dataName, String timestamp, String value){
+	public int Add(String feedID, String dataName, String timestamp, String value){
 		ContentValues cv = new ContentValues();
+		cv.put(colFeedID, feedID);
 		cv.put(colDataName, dataName);
 		cv.put(colDataValue, value);
 		cv.put(colDPTimestamp, timestamp);

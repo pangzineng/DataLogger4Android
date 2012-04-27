@@ -262,6 +262,18 @@ public class Helper {
 		srH.startBackgroundUpdate(FeedName, interval, runningTime, selected);
 		
 	}
+	
+	public void startOnlineUpdate(){
+		String[] dataNames;
+		String[] dataValues;
+		// FIXME paH.update(feedID, premission, datanames, dataValues);
+	}
+	
+	public void startOfflineUpdate(){
+		List<List<String[]>> datapoints = getOfflineData();
+		String[] dataNames;
+		// FIXME paH.updateOffline(feedID, premission, dataNames, datapoints);
+	}
 
 	public List<List<String[]>> getOfflineData(){
 		List<String> datas = dbH.getOfflineData();
@@ -329,6 +341,19 @@ public class Helper {
 		return diagram;
 	}
 
+	public String[] getDiagramStat() {
+		// current, unit, max, min
+		String[] stat = new String[4];
+		
+		String user = caH.getCurrentUser()[0];
+		String feedID = caH.getDataInfoForDiagram()[0];
+		String dataName = caH.getDataInfoForDiagram()[1];
+		String premission = dbH.getPremissionFor(user, feedID);
+		
+		// stat = paH.getDataStat(feedID, dataName, premission);
+		return stat;
+	}
+
 	/* 5. Feed Data Tab function
 	 * (2) set parameter for diagram
 	 * */
@@ -368,6 +393,8 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
 
 
 

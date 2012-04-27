@@ -49,9 +49,22 @@ public class FeedData extends Activity {
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
 			
-			diagram = (ImageView) getView().findViewById(R.id.data_diagram);
-			// FIXME 
-						
+			View view = getView();
+			
+			diagram = (ImageView) view.findViewById(R.id.data_diagram);
+
+			TextView current = (TextView) view.findViewById(R.id.diagram_stat_current);
+			TextView unit = (TextView) view.findViewById(R.id.diagram_stat_unit);
+			TextView max = (TextView) view.findViewById(R.id.diagram_stat_max);
+			TextView min = (TextView) view.findViewById(R.id.diagram_stat_min);
+			
+			String[] stat = helper.getDiagramStat();
+			
+			current.setText(stat[0]);
+			unit.setText(stat[1]);
+			max.setText(stat[2]);
+			min.setText(stat[3]);
+			
 			helper.tempStore(diagram);
 			helper.reDraw();
 		}

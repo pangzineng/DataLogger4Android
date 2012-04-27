@@ -1,5 +1,7 @@
 package com.hsr.datalogger.database;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -95,5 +97,10 @@ public class DatabaseHelper {
 
 	public int getDataCheckNum(String feedID) {
 		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked).size();
+	}
+	
+	// FIXME for offline data
+	public void storeDatapoint(Date date){
+		String time = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(date);
 	}
 }
