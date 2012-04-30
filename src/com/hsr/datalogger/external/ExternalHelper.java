@@ -1,5 +1,7 @@
 package com.hsr.datalogger.external;
 
+import java.util.Date;
+
 import android.content.Context;
 import android.widget.ImageView;
 
@@ -45,5 +47,9 @@ public class ExternalHelper {
 	
 	public boolean getNetworkCondition(){
 		return network.getNetworkInfo();
+	}
+	
+	public Date getSystemTime(){
+		return deviceInfo.getSystemTime();
 	}
 }

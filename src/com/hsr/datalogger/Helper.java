@@ -238,7 +238,7 @@ public class Helper {
 	}
 	
 	/* 4. Feed Page Tab function
-	 * (3) Update Feed
+	 * (3) Turn On Feed Update
 	 * */
 
 	public void checkData(String dataName, boolean isChecked) {
@@ -268,11 +268,25 @@ public class Helper {
 		String[] dataValues;
 		// FIXME paH.update(feedID, premission, datanames, dataValues);
 	}
+
+	public void closeBackground() {
+		hwH.stopListenToSensor();
+	}
 	
-	public void startOfflineUpdate(){
+	/* 4. Feed Page Tab function
+	 * (3) Clean Offline Data (when network is on)
+	 * */
+
+	public boolean startOfflineUpdate(){
 		List<List<String[]>> datapoints = getOfflineData();
+		if(datapoints==null) return true;
 		String[] dataNames;
-		// FIXME paH.updateOffline(feedID, premission, dataNames, datapoints);
+		// FIXME if(paH.updateOffline(feedID, premission, dataNames, datapoints)){
+			dbH.cleanDatapoint();
+			return true;
+		//} else {
+		//	return false;
+		//}
 	}
 
 	public List<List<String[]>> getOfflineData(){
@@ -393,6 +407,8 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
 
 
 

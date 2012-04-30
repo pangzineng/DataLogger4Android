@@ -99,8 +99,12 @@ public class DatabaseHelper {
 		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked).size();
 	}
 	
-	// FIXME for offline data
-	public void storeDatapoint(Date date){
+	public void storeDatapoint(String feedID, String dataName, Date date, float value){
 		String time = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(date);
+		db.Add(feedID, dataName, time, value);
+	}
+
+	public void cleanDatapoint() {
+		db.DeleteOfflineData();
 	}
 }

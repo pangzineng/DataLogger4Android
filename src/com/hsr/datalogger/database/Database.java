@@ -180,7 +180,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add datapoint
-	public int Add(String feedID, String dataName, String timestamp, String value){
+	public int Add(String feedID, String dataName, String timestamp, float value){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
 		cv.put(colDataName, dataName);

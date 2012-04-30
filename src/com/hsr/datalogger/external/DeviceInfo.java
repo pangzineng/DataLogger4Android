@@ -1,5 +1,6 @@
 package com.hsr.datalogger.external;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ public class DeviceInfo {
 	Context mContext;
 	private Display display;
 	private TimeZone timezone;
+	private Date current;
 	
 	public DeviceInfo(Context context) {
 		mContext = context;
@@ -27,6 +29,11 @@ public class DeviceInfo {
 	
 	public int getTimezone(){
 		return (int)(timezone.getRawOffset()/3600000);
+	}
+	
+	public Date getSystemTime(){
+		current = new Date();
+		return current;
 	}
 	
 }
