@@ -1,4 +1,4 @@
-package com.hsr.datalogger.external;
+package com.hsr.datalogger.hardware;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

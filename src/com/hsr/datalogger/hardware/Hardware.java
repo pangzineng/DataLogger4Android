@@ -18,6 +18,7 @@ public class Hardware implements SensorEventListener{
 	// Sensor Value
 	private float[] sensorValue;
 	
+	
 	public Hardware(Context context) {
         sensorValue = new float[context.getResources().getStringArray(com.hsr.datalogger.R.array.sensor_list).length];
 		mSensor = new SoundMeter();

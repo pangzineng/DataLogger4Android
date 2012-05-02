@@ -95,26 +95,28 @@ public class Database extends SQLiteOpenHelper {
 		db.execSQL(	"CREATE TABLE " + datastreamTable +
 					" (" + colFeedID + " TEXT, " +
 						   colDataName + " TEXT, " +
-						   colDataValue + " FLOAT, " +
+						   colDataValue + " TEXT, " +
 						   colDataTag + " TEXT, " +
-				           colChecked + " TEXT, " + //FIXME
+				           colChecked + " TEXT, " +
+						   colSensorID + " TEXT, " +
 						   "PRIMARY KEY (" + colFeedID + ", " + colDataName +"));"
 				   );
 		
 		// CREATE the datapoint table
 		db.execSQL(	"CREATE TABLE " + datapointTable +
 					" (" + colFeedID + " TEXT, " +
+						   colPermission + " TEXT, " +
 						   colDataName + " TEXT, " +
 					   	   colDPTimestamp + " TEXT, " +
-					       colDPValue + " FLOAT NOT NULL, " + 
+					       colDPValue + " TEXT NOT NULL, " + 
 			               "PRIMARY KEY (" + colFeedID + ", " + colDataName + ", " + colDPTimestamp +"));"
 			   );
 		
 		// CREATE the sensor table
 		db.execSQL("CREATE TABLE " + sensorTable +
-				   " (" + colSensorID + " INTEGER PRIMARY KEY, " +
+				   " (" + colSensorID + " TEXT PRIMARY KEY, " +
 				   		  colSensorName + " TEXT NOT NULL, " +
-				   		  colAvailable + " BLOB);"
+				   		  colAvailable + " TEXT);"
 				);
 	}
 
@@ -134,7 +136,7 @@ public class Database extends SQLiteOpenHelper {
 	 * */
 	
 	// Add account
-	public int Add(String name, String password){
+	public int addAccount(String name, String password){
 		ContentValues cv = new ContentValues();
 		cv.put(colUsername, name);
 		cv.put(colPassword, password);
@@ -147,7 +149,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add feed
-	public int Add(String username, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
+	public int addFeed(String username, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
 		ContentValues cv = new ContentValues();
 		cv.put(colUsername, username);
 		cv.put(colFeedID, feedID);
@@ -165,12 +167,13 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add data
-	public int Add(String feedID, String dataName, float currentValue, String dataTag){
+	public int addData(String feedID, String dataName, String currentValue, String dataTag, String sensorID){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
 		cv.put(colDataName, dataName);
 		cv.put(colDataValue, currentValue);
 		cv.put(colDataTag, dataTag);
+		cv.put(colSensorID, sensorID);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long rowID = db.insert(datastreamTable, colDataName, cv);
@@ -180,11 +183,12 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add datapoint
-	public int Add(String feedID, String dataName, String timestamp, float value){
+	public int addDatapoint(String feedID, String premission, String dataName, String timestamp, String value){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
+		cv.put(colPermission, premission);
 		cv.put(colDataName, dataName);
-		cv.put(colDataValue, value);
+		cv.put(colDPValue, value);
 		cv.put(colDPTimestamp, timestamp);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -195,11 +199,11 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add sensor
-	public void Add(String sensorName, int sensorID, boolean available){
+	public void addSensor(String sensorName, String sensorID, String available){
 		ContentValues cv = new ContentValues();
 		cv.put(colSensorName, sensorName);
 		cv.put(colSensorID, sensorID);
-		cv.put(colAvailable, available?"1":"0");
+		cv.put(colAvailable, available);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long log = db.insert(sensorTable, colSensorID, cv);
@@ -207,7 +211,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Delete 
-	public int DeleteRow(int tableIndex, String key1, String key2){
+	public int deleteRow(int tableIndex, String key1, String key2){
 		
 		String tableName = "";
 		String key1Name = "";
@@ -242,7 +246,7 @@ public class Database extends SQLiteOpenHelper {
 		return result;
 	}
 	
-	public int DeleteOfflineData(){
+	public int deleteOfflineData(){
 		SQLiteDatabase db = this.getWritableDatabase();
 		int result = db.delete(datapointTable, null, null);
 		db.close();
@@ -250,7 +254,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Update
-	public int Edit(int tableIndex, String key1, String key2, String colName, String newValue){
+	public int edit(int tableIndex, String key1, String key2, String colName, String newValue){
 
 		String tableName = "";
 		String key1Name = "";
@@ -295,7 +299,7 @@ public class Database extends SQLiteOpenHelper {
 	/* Database reading. Get certain account info & feed info.
 	 * Direct result will be return instead of cursor.
 	 * */
-	
+		
 	public String getValue(int tableIndex, String key1, String key2, String colName){
 		
 		String tableName = "";
@@ -380,7 +384,7 @@ public class Database extends SQLiteOpenHelper {
 		db.close();
 		return cur.getCount();
 	}
-	
+		
 	public List<String> getAllMatchValue(int tableIndex, String keyName, String keyValue, String toGetCol){
 		
 		List<String> allValues = new ArrayList<String>();
@@ -432,4 +436,6 @@ public class Database extends SQLiteOpenHelper {
 		db.close();
 		return allValues;
 	}
+	
+	
 }

@@ -1,10 +1,10 @@
 package com.hsr.datalogger;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
+import android.datalogger.PachubeHelper;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
@@ -23,7 +23,7 @@ public class Helper {
 	HardwareHelper hwH;
 	ServiceHelper srH;
 	ExternalHelper exH;
-  //PachubeHelper paH;
+    PachubeHelper paH;
 	
 	public Helper(Context context) {
 		caH = new CacheHelper(context);
@@ -150,6 +150,17 @@ public class Helper {
 	
 	
 	/* 4. Feed Page Tab function
+	 * (0) Feed Page Info 
+	 * */
+	public String[] getFeedPageInfo(){
+		// user, feedID, premission
+		String user = caH.getCurrentUser()[0];
+		String feedID = caH.getCurrentFeedInfo()[0];
+		return new String[]{user, feedID, dbH.getPremissionFor(user, feedID)};
+	}
+	
+	
+	/* 4. Feed Page Tab function
 	 * (1) Share Feed via email
 	 * */
 	public boolean sendEmail(String address, String selected, Context dialog){
@@ -159,8 +170,7 @@ public class Helper {
 	}
 	
 	private String createPermission(String selectedLevel){
-		String feedID = caH.getCurrentFeedInfo()[0];
-		String key = null;//FIXME = paH.createKey(feedID, selectedLevel);
+		String key = null;//FIXME = paH.createKey(getFeedPageInfo()[1], selectedLevel);
 		return key;
 	}
 	
@@ -177,29 +187,23 @@ public class Helper {
 	}
 	
 	public boolean notFullLevel(){
-		String thisFeedID = caH.getCurrentFeedInfo()[0];
-		String thisUser = caH.getCurrentUser()[0];
-		String level = dbH.getOneFeedInfo(thisUser, thisFeedID)[3];
+		String level = dbH.getOneFeedInfo(getFeedPageInfo()[0], getFeedPageInfo()[1])[3];
 		if(level.equals("Full")){
 			return false;
 		}
 		return true;
 	}
 	
-	public boolean dataCreate(String dataName, String tag) {
-		String user = caH.getCurrentUser()[0];
-		String feedID = caH.getCurrentFeedInfo()[0];
-		String premission = dbH.getPremissionFor(user, feedID);
-		
+	public boolean dataCreate(String dataName, String tag, int sensorID) {		
 		String[] sensors = context.getResources().getStringArray(R.array.sensor_list);
 		String[] units = context.getResources().getStringArray(R.array.sensor_unit);
 		String unit = units[Arrays.asList(sensors).indexOf(tag)];
 		
-		// FIXME if(paH.createData(feedID, dataID, premission, tag, unit)) {
+		// FIXME if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit)) {
 									// premission might be null if it's his own feed
 									// tag is the name of sensor from the string list
 									// unit is the unit of sensor value from another list
-			dbH.addDataToFeed(feedID, dataName, tag);
+			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, tag, sensorID);
 			return true;
 		//} else {
 		//	return false;
@@ -210,14 +214,8 @@ public class Helper {
 	 * (3) Edit or delete the data
 	 * */
 	public boolean dataDelete(String dataID) {
-		
-		// SOS this duplicate codes should be combine
-		String user = caH.getCurrentUser()[0];
-		String feedID = caH.getCurrentFeedInfo()[0];
-		String premission = dbH.getPremissionFor(user, feedID);
-		
-		//FIXME if(paH.deleteData(feedID, dataID, premission)){
-			dbH.deleteData(feedID, dataID);
+		//FIXME if(paH.deleteData(getFeedPageInfo()[1], dataID, getFeedPageInfo()[2])){
+			dbH.deleteData(getFeedPageInfo()[1], dataID);
 			return true;
 		//} else {
 		//	return false;
@@ -225,12 +223,8 @@ public class Helper {
 	}
 
 	public boolean dataEdit(String dataName, String newTags) {
-		String user = caH.getCurrentUser()[0];
-		String feedID = caH.getCurrentFeedInfo()[0];
-		String premission = dbH.getPremissionFor(user, feedID);
-		
-		// FIXME if(paH.editData(feedID, dataName, newTags, premission)){
-			dbH.editDataTitle(feedID, dataName, newTags);
+		// FIXME if(paH.editData(getFeedPageInfo()[1], dataName, newTags, getFeedPageInfo()[2])){
+			dbH.editDataTitle(getFeedPageInfo()[1], dataName, newTags);
 			return true;
 		//} else {
 			//return false;
@@ -242,71 +236,23 @@ public class Helper {
 	 * */
 
 	public void checkData(String dataName, boolean isChecked) {
-		String feedID = caH.getCurrentFeedInfo()[0];
-		dbH.checkData(feedID, dataName, isChecked);
+		dbH.checkData(getFeedPageInfo()[1], dataName, isChecked);
 	}
 	
 	public int getSelectedDataNum() {
-		String feedID = caH.getCurrentFeedInfo()[0];
-		return dbH.getDataCheckNum(feedID);
+		return dbH.getDataCheckNum(getFeedPageInfo()[1]);
 	}
 	
-	public void startUpdateData(int interval, int runningTime) {
-		String FeedName = caH.getCurrentFeedInfo()[1];
-		
-		// TODO this code need change, it should be the selected datastream. we will allow multiple data binded with one sensor
-		// if user selected two datastream that connect with the same sensor, we should alert the case but still allow to continue
-		// this means one update should have the unit of "1 datastream -- the sensor allocated". code should went through the datastream to get the sensor type
-		int[] selected = caH.getSelectedSensor();
-		
-		srH.startBackgroundUpdate(FeedName, interval, runningTime, selected);
-		
+	public void startBackgroundUpdate(int interval, int runningTime) {
+		// TODO Testing off (switch off functions with paH)
+		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo());
+		//srH.startBackgroundUpdate("feedName", interval, runningTime, new String[]{"username", "feedID", "premission"});
 	}
 	
-	public void startOnlineUpdate(){
-		String[] dataNames;
-		String[] dataValues;
-		// FIXME paH.update(feedID, premission, datanames, dataValues);
-	}
 
-	public void closeBackground() {
-		hwH.stopListenToSensor();
-	}
-	
-	/* 4. Feed Page Tab function
-	 * (3) Clean Offline Data (when network is on)
-	 * */
 
-	public boolean startOfflineUpdate(){
-		List<List<String[]>> datapoints = getOfflineData();
-		if(datapoints==null) return true;
-		String[] dataNames;
-		// FIXME if(paH.updateOffline(feedID, premission, dataNames, datapoints)){
-			dbH.cleanDatapoint();
-			return true;
-		//} else {
-		//	return false;
-		//}
-	}
 
-	public List<List<String[]>> getOfflineData(){
-		List<String> datas = dbH.getOfflineData();
-		
-		if(datas==null) return null;
-		
-		List<List<String[]>> mList = new ArrayList<List<String[]>>();
-		for(int i=0; i<datas.size(); i++){
-			List<String[]> temp = new ArrayList<String[]>();
-			List<String> times = dbH.getOfflineTime(datas.get(i));
-			List<String> values = dbH.getOfflineValue(datas.get(i));
-			for(int j=0; j<times.size(); j++){
-				temp.add(new String[]{times.get(j), values.get(j)});
-			}
-			mList.add(temp);
-		}
-		return mList;
-	}
-	
+
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram
 	 * */
@@ -336,7 +282,7 @@ public class Helper {
 		// include feed id, data stream name and duration
 		String[] para1 = caH.getDataInfoForDiagram();
 		// include screen size and time zone
-		int[] para2 = exH.getDeviceInfo();
+		int[] para2 = hwH.getDeviceInfo();
 		
 		// set the duration to 1hour as default for the first launch
 		if(para1[2]==null){
@@ -407,6 +353,8 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+
 
 
 

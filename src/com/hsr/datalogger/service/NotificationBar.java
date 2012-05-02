@@ -21,6 +21,7 @@ public class NotificationBar {
 	
 	String FeedName;
 	int runningTime;
+	String user;
 	
 	int time;
 	private Handler mHandler = new Handler();
@@ -35,12 +36,13 @@ public class NotificationBar {
 
 	
 	
-	public NotificationBar(Context context, String FeedName, int runningTime) {
+	public NotificationBar(Context context, String FeedName, int runningTime, String user) {
 		
 		time = 0;
 		this.context = context;
 		this.FeedName = FeedName;
 		this.runningTime = runningTime + 1;
+		this.user = user;
 		
 		nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		nt = new Notification(R.drawable.icon, "Datalogger is updating", System.currentTimeMillis());
@@ -59,7 +61,7 @@ public class NotificationBar {
 	}
 	
 	private void updateTimer(){
-		nt.setLatestEventInfo(context, "\"" + FeedName + "\" runs for " + time + " mintues.", "Auto stop in " + (runningTime-time) + " minutes. Click to stop now", pnoti);
+		nt.setLatestEventInfo(context, user + " is updating \"" + FeedName, "\"(" + time + " mintues) Stop in " + (runningTime-time) + " minutes. Click to stop now", pnoti);
 		time ++;
 		if(runningTime-time <0){
 			Log.d("pang", "should close the noti now");

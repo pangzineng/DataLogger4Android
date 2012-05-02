@@ -151,6 +151,7 @@ public class FeedPage extends Activity {
 		public boolean onOptionsItemSelected(MenuItem item) {
 			
 			// check whether user has premission to modify this feed
+			// TODO Testing off (switch off functions with paH)
 			if(helper.notFullLevel()){
 				Toast.makeText(context, "You have no premission to control this feed", Toast.LENGTH_LONG).show();
 				return super.onOptionsItemSelected(item);
@@ -223,8 +224,9 @@ public class FeedPage extends Activity {
 									
 									String name = dataName.getText().toString();
 									String sensor = sp.getSelectedItem().toString();
+									int sensorID = sp.getSelectedItemPosition();
 									
-									if(helper.dataCreate(name, sensor)){
+									if(helper.dataCreate(name, sensor, sensorID)){
 										// reload the data list
 										getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 									} else {
@@ -338,6 +340,7 @@ public class FeedPage extends Activity {
 			final View mDialog = getUpdateFeedView();
 			
 			TextView selected = (TextView) mDialog.findViewById(R.id.update_selected_num);
+			// TODO Testing off (switch off functions with paH)
 			int num = helper.getSelectedDataNum();
 			if(num<=0){
 				return new AlertDialog.Builder(forDialog)
@@ -364,7 +367,7 @@ public class FeedPage extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 								int inter = Integer.parseInt(interval.getText().toString());
 								int tota = Integer.parseInt(total.getText().toString());
-								helper.startUpdateData(inter, tota);
+								helper.startBackgroundUpdate(inter, tota);
 							}
 						})
 					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {

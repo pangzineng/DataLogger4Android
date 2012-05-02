@@ -266,12 +266,14 @@ public class FeedList extends Activity {
 		FeedListAdapter mAdapter;
 		String mCurFilter;
 		Helper helper;
+		Context context;
 				
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			
-			helper = new Helper(getActivity().getApplicationContext());
+			context = getActivity().getApplicationContext();
+			helper = new Helper(context);
 			
 			setEmptyText("No Feed");
 			setHasOptionsMenu(true);

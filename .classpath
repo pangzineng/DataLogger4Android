@@ -11,6 +11,7 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="lib" path="//c101.hsr.ch/zpang/Desktop/JPachube.jar"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

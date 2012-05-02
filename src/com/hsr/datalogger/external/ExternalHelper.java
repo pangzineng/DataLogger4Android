@@ -2,6 +2,9 @@ package com.hsr.datalogger.external;
 
 import java.util.Date;
 
+import com.hsr.datalogger.hardware.DeviceInfo;
+import com.hsr.datalogger.hardware.NetworkCondition;
+
 import android.content.Context;
 import android.widget.ImageView;
 
@@ -9,17 +12,13 @@ public class ExternalHelper {
 
 	LocationReport nl;
 	Email email;
-	DeviceInfo deviceInfo;
 	ImageDownload image;
-	NetworkCondition network;
 	
 	Context context;
 	
 	public ExternalHelper(Context context) {
 		this.context = context;
-		deviceInfo = new DeviceInfo(context);
 		image = new ImageDownload();
-		network = new NetworkCondition(context);
 	}
 
 	public void turnOnLocation(){
@@ -39,17 +38,4 @@ public class ExternalHelper {
 		return email.sendDiagram(address, info, description);
 	}
 	
-	public int[] getDeviceInfo(){
-		int[] size = deviceInfo.getScreenSize();
-		int zone = deviceInfo.getTimezone();
-		return new int[]{size[0], size[1], zone};
-	}
-	
-	public boolean getNetworkCondition(){
-		return network.getNetworkInfo();
-	}
-	
-	public Date getSystemTime(){
-		return deviceInfo.getSystemTime();
-	}
 }

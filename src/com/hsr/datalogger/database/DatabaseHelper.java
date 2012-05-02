@@ -7,9 +7,6 @@ import java.util.List;
 import android.content.Context;
 
 public class DatabaseHelper {
-	static String temp1 = "a"; static String temp11 = "sensor"; static String temp12 = "private";
-	static String temp2 = "b"; static String temp21 = "sensor"; static String temp22 = "public";
-	
 	Database db;
 	Context context;
 	public DatabaseHelper(Context context) {
@@ -29,7 +26,7 @@ public class DatabaseHelper {
 	public void storeSensorStatus(boolean[] available){
 		sensors = context.getResources().getStringArray(com.hsr.datalogger.R.array.sensor_list);
 		for(int i=0; i<sensors.length; i++){
-			db.Add(sensors[i], i, available[i]);
+			db.addSensor(sensors[i], String.valueOf(i), available[i]?"1":"0");
 		}
 	}
 	
@@ -39,7 +36,7 @@ public class DatabaseHelper {
 	}
 	
 	public void addFeedToList(String user, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
-		db.Add(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
+		db.addFeed(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
 	}
 
 	// FeedTitle, DataCount, Ownership, PremissionLevel
@@ -52,19 +49,19 @@ public class DatabaseHelper {
 	}
 
 	public void deleteFeed(String username, String id) {
-		db.DeleteRow(Database.FEED_INDEX, username, id);
+		db.deleteRow(Database.FEED_INDEX, username, id);
 	}
 
 	public void editFeedTitle(String user, String id, String nTitle) {
-		db.Edit(Database.FEED_INDEX, user, id, Database.colFeedTitle, nTitle);
+		db.edit(Database.FEED_INDEX, user, id, Database.colFeedTitle, nTitle);
 	}
 
 	public void editFeedOwn(String user, String id, String nOwn) {
-		db.Edit(Database.FEED_INDEX, user, id, Database.colOwnership, nOwn);
+		db.edit(Database.FEED_INDEX, user, id, Database.colOwnership, nOwn);
 	}
 
-	public void addDataToFeed(String feedID, String dataName, String tag) {
-		db.Add(feedID, dataName, 0, tag);
+	public void addDataToFeed(String feedID, String dataName, String tag, int sensorID) {
+		db.addData(feedID, dataName, "0", tag, String.valueOf(sensorID));
 	}
 
 	public String getPremissionFor(String user, String feedID) {
@@ -72,11 +69,11 @@ public class DatabaseHelper {
 	}
 
 	public void deleteData(String feedID, String dataID) {
-		db.DeleteRow(Database.DATASTREAM_INDEX, feedID, dataID);
+		db.deleteRow(Database.DATASTREAM_INDEX, feedID, dataID);
 	}
 
 	public void editDataTitle(String feedID, String dataName, String nTags) {
-		db.Edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataTag, nTags);
+		db.edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataTag, nTags);
 	}
 
 	public List<String> getOfflineTime(String dataName) {
@@ -92,19 +89,37 @@ public class DatabaseHelper {
 	}
 
 	public void checkData(String feedID, String dataName, boolean isChecked) {
-		db.Edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colChecked, isChecked?"1":"0");
+		db.edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colChecked, isChecked?"1":"0");
 	}
 
 	public int getDataCheckNum(String feedID) {
 		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked).size();
 	}
 	
-	public void storeDatapoint(String feedID, String dataName, Date date, float value){
-		String time = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(date);
-		db.Add(feedID, dataName, time, value);
+	public void cleanDatapoint() {
+		db.deleteOfflineData();
 	}
 
-	public void cleanDatapoint() {
-		db.DeleteOfflineData();
+	public List<String> getUpdateDataNames() {
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colChecked, "1", Database.colDataName);
+	}
+	
+	public List<String> getUpdateDataSensors(){
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colChecked, "1", Database.colSensorID);
+	}
+
+	public void editDataValue(String feedID, String dataName, String newValue) {
+		db.edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataValue, newValue);
+	}
+
+	public void putOfflineData(String feedID, String premission, Date date, List<String> dataNames, float[] dataValues) {
+		String time = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(date);
+		for(int i=0; i< dataNames.size(); i++){
+			db.addDatapoint(feedID, premission, dataNames.get(i), time, String.valueOf(dataValues[i]));
+		}
+	}
+
+	public String getFeedTitle(String[] info) {
+		return db.getValue(Database.FEED_INDEX, info[0], info[1], Database.colFeedTitle);
 	}
 }
