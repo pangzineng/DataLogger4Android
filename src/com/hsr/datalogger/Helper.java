@@ -4,14 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
-import android.datalogger.PachubeHelper;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.database.DatabaseHelper;
 import com.hsr.datalogger.external.ExternalHelper;
 import com.hsr.datalogger.hardware.HardwareHelper;
+import com.hsr.datalogger.pachube.PachubeHelper;
 import com.hsr.datalogger.service.ServiceHelper;
 
 public class Helper {
@@ -31,7 +32,7 @@ public class Helper {
 		hwH = new HardwareHelper(context);
 		srH = new ServiceHelper(context);
 		exH = new ExternalHelper(context);
-	  //paH = new PachubeHelper(context);
+	    paH = new PachubeHelper();
 		
 		this.context = context;
 	}
@@ -52,13 +53,13 @@ public class Helper {
 			caH.setCurrentUser(new String[]{"guest"});
 			return "guest";
 		} else {
-			// FIXME if(paH.login(autoAccount)){  // to checked whether user change name&pw somewhere else 
-						caH.setCurrentUser(autoAccount);	
-			//		 } else {	// this means the name&pw in database for autologin aren't correct, need to remove
-			//			caH.removeAutoLogin();
-			//			caH.setCurrentUser(new String[]{"guest"});
-			//			return null;			
-			//		 }
+			if(paH.login(autoAccount)){  // to checked whether user change name&pw somewhere else 
+				caH.setCurrentUser(autoAccount);	
+			 } else {	// this means the name&pw in database for autologin aren't correct, need to remove
+				caH.removeAutoLogin();
+				caH.setCurrentUser(new String[]{"guest"});
+				return null;			
+			 }
 		}
 		return autoAccount[0];
 	}
@@ -73,17 +74,17 @@ public class Helper {
 	}
 	
 	public boolean login(String[] account, boolean checked){
-		// FIXME if(paH.login(account)){  // to checked whether user change name&pw somewhere else 
-					if(checked){
-						caH.setAutoLogin(true, account);
-					} else {
-						caH.removeAutoLogin();
-					}
-					caH.setCurrentUser(account);
-					return true;
-		//		  }	else {
-		// 			return false;
-		//		  {
+		if(paH.login(account)){  // to checked whether user change name&pw somewhere else
+				if(checked){
+					caH.setAutoLogin(true, account);
+				} else {
+					caH.removeAutoLogin();
+				}
+				caH.setCurrentUser(account);
+				return true;
+		  }	else {
+			return false;
+		  }
 	}
 	
 	/* 3. Feed List Tab function
@@ -96,7 +97,7 @@ public class Helper {
 
 	public boolean feedCreate(String title, String type, String ownership) {
 		String[] user = caH.getCurrentUser();
-		String feedID = null; // FIXME  = paH.create(title, status); // should return the feed ID or null if fail
+		String feedID = paH.createFeed(title, ownership); // should return the feed ID or null if fail
 		if(feedID != null){   
 			dbH.addFeedToList(user[0], feedID, ownership, null, "Full", title, type);
 		} else {	
@@ -106,7 +107,7 @@ public class Helper {
 	}
 
 	public boolean feedImport(String feedID, String permission) {
-		String[] feed = null; // FIXME  = paH.getFeed(feedID, permission); // should include feedName and premission level(View, Full), return null if fail
+		String[] feed = paH.getFeed(feedID, permission); // should include feedName and premission level(View, Full), return null if fail
 		String[] user = caH.getCurrentUser();
 		if(feed != null){
 			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor");
@@ -124,10 +125,10 @@ public class Helper {
 		String premission = dbH.getPremissionFor(user, id);
 		dbH.editFeedTitle(user, id, nTitle);
 		if(titleOnly){
-			return true; // FIXME paH.editTitle(id, nTitle, premission);
+			return paH.editTitle(id, nTitle, premission);
 		} else {
 			dbH.editFeedOwn(user, id, nOwn);
-			return false; //FIXME paH.editStatus(id, nOwn, premission);
+			return paH.editStatus(id, nOwn, premission);
 		}
 	}
 
@@ -139,7 +140,7 @@ public class Helper {
 		if(local){
 			return true;
 		} else {
-			return false;// FIXME paH.delete(id, premission); 
+			return paH.deleteFeed(id, premission); 
 		}
 	}
 
@@ -170,7 +171,7 @@ public class Helper {
 	}
 	
 	private String createPermission(String selectedLevel){
-		String key = null;//FIXME = paH.createKey(getFeedPageInfo()[1], selectedLevel);
+		String key = paH.createKey(getFeedPageInfo()[1], selectedLevel);
 		return key;
 	}
 	
@@ -199,36 +200,36 @@ public class Helper {
 		String[] units = context.getResources().getStringArray(R.array.sensor_unit);
 		String unit = units[Arrays.asList(sensors).indexOf(tag)];
 		
-		// FIXME if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit)) {
+		if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit)) {
 									// premission might be null if it's his own feed
 									// tag is the name of sensor from the string list
 									// unit is the unit of sensor value from another list
 			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, tag, sensorID);
 			return true;
-		//} else {
-		//	return false;
-		//}
+		} else {
+			return false;
+		}
 	}
 	
 	/* 4. Feed Page Tab function
 	 * (3) Edit or delete the data
 	 * */
 	public boolean dataDelete(String dataID) {
-		//FIXME if(paH.deleteData(getFeedPageInfo()[1], dataID, getFeedPageInfo()[2])){
+		if(paH.deleteData(getFeedPageInfo()[1], dataID, getFeedPageInfo()[2])){
 			dbH.deleteData(getFeedPageInfo()[1], dataID);
 			return true;
-		//} else {
-		//	return false;
-		//}
+		} else {
+			return false;
+		}
 	}
 
 	public boolean dataEdit(String dataName, String newTags) {
-		// FIXME if(paH.editData(getFeedPageInfo()[1], dataName, newTags, getFeedPageInfo()[2])){
+		if(paH.editData(getFeedPageInfo()[1], dataName, newTags, getFeedPageInfo()[2])){
 			dbH.editDataTitle(getFeedPageInfo()[1], dataName, newTags);
 			return true;
-		//} else {
-			//return false;
-		//}
+		} else {
+			return false;
+		}
 	}
 	
 	/* 4. Feed Page Tab function
@@ -271,8 +272,8 @@ public class Helper {
 	public void reDraw(){
 		Drawable diagram = getDiagram();
 		
-		// TODO Testing on (download diagram from pachube pt.1)
-		diagram = context.getResources().getDrawable(R.drawable.icon);
+		// TODO Testing off (download diagram from pachube pt.1)
+		//diagram = context.getResources().getDrawable(R.drawable.icon);
 		
 		v.setImageDrawable(diagram);
 	}
@@ -295,8 +296,8 @@ public class Helper {
 			para2[1] -= 100;
 		}
 		
-		// TODO Testing on (download diagram from pachube pt.2)
-		Drawable diagram = null; // FIXME = paH.getDiagram(para1, para2);
+		// TODO Testing off (download diagram from pachube pt.2)
+		Drawable diagram = paH.getDiagram(para1, para2);
 		
 		return diagram;
 	}
