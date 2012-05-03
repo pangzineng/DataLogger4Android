@@ -197,12 +197,10 @@ public class FeedPage extends Activity {
 			
 			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
 			check.setChecked(item.getChecked());
-			check.setOnTouchListener(new OnTouchListener() {
+			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					helper.checkData(item.getDataName(), item.getChecked()?false:true);
-					((CheckBox) v.findViewById(R.id.data_item_check)).setChecked(item.getChecked()?false:true);
-					return true;
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					helper.checkData(item.getDataName(), isChecked);
 				}
 			});
 			
