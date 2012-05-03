@@ -1,5 +1,7 @@
 package com.hsr.datalogger;
 
+import com.hsr.datalogger.FeedList.FLFragment;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,9 +54,9 @@ public class Homepage extends Activity {
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
         
-        bar.addTab(bar.newTab().setText("Feed List").setTabListener(new TabListener<FeedList.FLFragment>(this, "FeedList", FeedList.FLFragment.class)));
-        bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(this, "FeedPage", FeedPage.FPFragment.class)));
-        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(this, "FeedData", FeedData.FDFragment.class)));
+        bar.addTab(bar.newTab().setText("Feed List").setTabListener(new TabListener<FeedList.FLFragment>(this, FeedList.FLFragment.class, helper, "FeedList")));
+        bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(this, FeedPage.FPFragment.class, helper, "FeedPage")));
+        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(this, FeedData.FDFragment.class, helper, "FeedData")));
         
         bar.setSelectedNavigationItem(helper.getCurrentTab());
         
@@ -89,10 +91,13 @@ public class Homepage extends Activity {
         private final Bundle mArgs;
         private Fragment mFragment;
 
-        public TabListener(Activity activity, String tag, Class<T> clz) {
+        private Helper helper;
+        
+        public TabListener(Activity activity, Class<T> clz, Helper h, String tag) {
             this(activity, tag, clz, null);
+            helper = h;
         }
-
+        
         public TabListener(Activity activity, String tag, Class<T> clz, Bundle args) {
             mActivity = activity;
             mTag = tag;
@@ -110,7 +115,10 @@ public class Homepage extends Activity {
             }
         }
 
-        public void onTabSelected(Tab tab, FragmentTransaction ft) {
+
+		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        	helper.setCurrentTab(tab.getPosition());
+        	Log.d("pachube debug", "click a tab: " + tab.getPosition());
             if (mFragment == null) {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
                 ft.add(android.R.id.content, mFragment, mTag);
@@ -126,7 +134,7 @@ public class Homepage extends Activity {
         }
 
         public void onTabReselected(Tab tab, FragmentTransaction ft) {
-            Toast.makeText(mActivity, "Reselected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Refresh!", Toast.LENGTH_SHORT).show();
         }
         
 

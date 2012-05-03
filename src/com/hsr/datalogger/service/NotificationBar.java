@@ -48,8 +48,6 @@ public class NotificationBar {
 		nt = new Notification(R.drawable.icon, "Datalogger is updating", System.currentTimeMillis());
 		nt.flags |= Notification.FLAG_AUTO_CANCEL;
 		
-		Log.d("pang", "You just create a noti");
-		
 		Intent noti = new Intent(context, BackgroundUpdate.class);
 		noti.putExtra("STOP", true);
 		pnoti = PendingIntent.getService(context, 0, noti, PendingIntent.FLAG_ONE_SHOT);
@@ -61,7 +59,7 @@ public class NotificationBar {
 	}
 	
 	private void updateTimer(){
-		nt.setLatestEventInfo(context, user + " is updating \"" + FeedName, "\"(" + time + " mintues) Stop in " + (runningTime-time) + " minutes. Click to stop now", pnoti);
+		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " mintues). Click to stop now", pnoti);
 		time ++;
 		if(runningTime-time <0){
 			Log.d("pang", "should close the noti now");

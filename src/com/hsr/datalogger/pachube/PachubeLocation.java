@@ -20,7 +20,6 @@ public class PachubeLocation {
 
 	public PachubeLocation() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void setLat(String lat){

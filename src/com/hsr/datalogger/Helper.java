@@ -390,6 +390,7 @@ public class Helper {
 
 	public String[] getDataListItem(String dataName) {
 		String currentFeed = caH.getCurrentFeedInfo()[0];
+		Log.d("pachube debug", "Helper Line 393, currentFeed==" + currentFeed + " dataName: " + dataName);
 		return dbH.getOneDataInfo(currentFeed, dataName);
 	}
 

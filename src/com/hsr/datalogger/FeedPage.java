@@ -3,10 +3,6 @@ package com.hsr.datalogger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hsr.datalogger.FeedList.EditDeleteFeedDialog;
-import com.hsr.datalogger.FeedList.FeedItem;
-import com.hsr.datalogger.FeedPage.DataItem;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,12 +15,14 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -37,8 +35,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +45,6 @@ public class FeedPage extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.feedpage);
 	}
 	
 	public static class DataItem {
@@ -60,8 +55,9 @@ public class FeedPage extends Activity {
 		
 		public DataItem(Helper helper, String dataName) {
 			String[] info = helper.getDataListItem(dataName);
+			Log.d("pachube debug", "FeedPage Line 56, info.length==" + info.length + "info[1]" + info[1]);
 			tags = info[0];
-			checked = info[1].equals("1")?true:false;
+			checked = (info[1]==null||info[1].equals("0"))?false:true;
 			this.dataName = dataName;
 		}
 
@@ -95,6 +91,7 @@ public class FeedPage extends Activity {
 
 		@Override
 		public List<DataItem> loadInBackground() {
+			Log.d("pachube debug", "FeedPage Line 98");
 			List<String> datas = helper.getDataList();
 			if(datas == null) return null;
 			// TODO Testing off (load data list)
@@ -200,10 +197,12 @@ public class FeedPage extends Activity {
 			
 			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
 			check.setChecked(item.getChecked());
-			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			check.setOnTouchListener(new OnTouchListener() {
 				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					helper.checkData(item.getDataName(), isChecked); 
+				public boolean onTouch(View v, MotionEvent event) {
+					helper.checkData(item.getDataName(), item.getChecked()?false:true);
+					((CheckBox) v.findViewById(R.id.data_item_check)).setChecked(item.getChecked()?false:true);
+					return true;
 				}
 			});
 			
@@ -211,30 +210,31 @@ public class FeedPage extends Activity {
 		}
 	}
 	
-	public static class FPFragment extends ListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<DataItem>>{
+	public static class FPFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<DataItem>>{
 		
 		private static final int ADD_DATASTREAM = 1;
 		private static final int SHARE_FEED = 2;
 		private static final int UPDATE_FEED = 3;
-		private static final int SEARCH_FEED = 4;
 		
 		Context context;
 		Helper helper;
 		DataListAdapter mAdapter;
-		String mCurFilter;
 		
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
-
+			
 			setEmptyText("No Data Stream");
 			setHasOptionsMenu(true);
 			
 			mAdapter = new DataListAdapter(context, helper);
 			setListAdapter(mAdapter);
+			
+			setListShown(false);
+			getLoaderManager().initLoader(0, null, this);
+
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				@Override
@@ -258,13 +258,6 @@ public class FeedPage extends Activity {
 
 			menu.add(Menu.NONE, UPDATE_FEED, Menu.NONE, "Update")
 				.setIcon(android.R.drawable.ic_menu_upload)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			SearchView search = new SearchView(getActivity());
-			search.setOnQueryTextListener(this);
-			menu.add(Menu.NONE, SEARCH_FEED, Menu.NONE, "Search")
-				.setActionView(search)
-				.setIcon(android.R.drawable.ic_menu_search)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
 		
@@ -291,24 +284,10 @@ public class FeedPage extends Activity {
 					DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
 					updateFeedDialog.show(getFragmentManager(), "dialog");
 					return true;
-				case SEARCH_FEED:
 				default:
 					return super.onOptionsItemSelected(item);
 			}
 		}
-
-		@Override
-		public boolean onQueryTextChange(String newText) {
-			mCurFilter = !TextUtils.isEmpty(newText)?newText:null;
-			mAdapter.getFilter().filter(mCurFilter);
-			return true;
-		}
-
-		@Override
-		public boolean onQueryTextSubmit(String query) {
-			return true;
-		}
-
 		
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {

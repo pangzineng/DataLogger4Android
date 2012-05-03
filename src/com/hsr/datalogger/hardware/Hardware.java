@@ -23,7 +23,10 @@ public class Hardware implements SensorEventListener{
         sensorValue = new float[context.getResources().getStringArray(com.hsr.datalogger.R.array.sensor_list).length];
 		mSensor = new SoundMeter();
 		sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+		
 		sensorList = sm.getSensorList(Sensor.TYPE_ALL);
+		
+		mSensor.start();
 		for(int i=0; i<sensorList.size(); i++){
 			sm.registerListener(this, sensorList.get(i), SensorManager.SENSOR_DELAY_GAME);
 		}
@@ -31,6 +34,7 @@ public class Hardware implements SensorEventListener{
 
 	public void close(){
 		sm.unregisterListener(this);
+		mSensor.stop();
 	}
 	
 	public boolean[] getAvailable(){

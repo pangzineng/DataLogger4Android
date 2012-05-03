@@ -37,23 +37,24 @@ public class BackgroundUpdate extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if(intent.hasExtra("STOP")) stopSelf();
-		
-		masterKey = intent.getStringExtra("master");
+		if(intent.hasExtra("STOP")) {
+			stopSelf();
+		} else {
+			masterKey = intent.getStringExtra("master");
 
-		helper = new HelperLight(getApplicationContext(), masterKey);
-		
-		interval = intent.getIntExtra("Interval", 1) * 60000;
-		runningTime = intent.getIntExtra("Running Time", 0);
-		
-		String[] info = intent.getStringArrayExtra("info");
-		username = info[0];
-		feedID = info[1];
-		permission = info[2];
-		
-		mHandler.removeCallbacks(mTask);
-		mHandler.postDelayed(mTask, 100);
-	
+			helper = new HelperLight(getApplicationContext(), masterKey);
+			
+			interval = intent.getIntExtra("Interval", 1) * 60000;
+			runningTime = intent.getIntExtra("Running Time", 0);
+			
+			String[] info = intent.getStringArrayExtra("info");
+			username = info[0];
+			feedID = info[1];
+			permission = info[2];
+			
+			mHandler.removeCallbacks(mTask);
+			mHandler.postDelayed(mTask, 100);
+		}
 		return 1;
 	}
 	
