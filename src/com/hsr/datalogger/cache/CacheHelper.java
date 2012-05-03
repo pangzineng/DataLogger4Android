@@ -22,10 +22,11 @@ public class CacheHelper {
 		return cache.getAutoLogin();
 	}
 	
-	public void setCurrentUser(String[] account){
+	public void setCurrentUser(String[] account, String master){
 		cache.setUsername(account[0]);
-		if(account.length==2){
+		if(account.length>1){
 			cache.setPW(account[1]);
+			cache.setMasterKey(master);
 		}
 	}
 
@@ -36,9 +37,10 @@ public class CacheHelper {
 	public void setAutoLogin(boolean autoL, String[] account){
 		cache.setAutoLogin(autoL, account[0], account[1]);
 	}
-	
-	
 
+	public String getCurrentMasterKey(){
+		return cache.getMaster();
+	}
 	
 	public String[] getCurrentUser(){
 		return new String[]{cache.getUsername(), cache.getPw()};
@@ -75,5 +77,19 @@ public class CacheHelper {
 			cache.setSensorDetectTrigger();
 			return false;
 		}
+	}
+
+	public void setCurrentFeed(String feedID, String title, String permission) {
+		cache.setFeedID(feedID);
+		cache.setFeedName(title);
+		cache.setKey(permission);
+	}
+
+	public void setCurrentTab(int index) {
+		cache.setCurrentTab(index);
+	}
+
+	public void setCurrentData(String dataName) {
+		cache.setDataStream(dataName);
 	}
 }

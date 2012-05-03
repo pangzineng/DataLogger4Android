@@ -36,7 +36,7 @@
 	<string name="edit_feed_name">Rename</string>
 	<string name="edit_feed_status">Change Status</string>
 	<string name="delete_feed">* Delete This Feed</string>
-	<string name="delete_feed_message">Click To Delete This Feed</string>
+	<string name="delete_feed_message">Delete This Feed:</string>
 	<string name="delete_feed_button">Delete</string>
 	<string name="delete_feed_confirm_title">Are you sure you want to delete this feed?</string>
 	
@@ -91,7 +91,7 @@
 	<string name="edit_data_tags">Tags:</string>
 	<string name="edit_data_notice">Notice: Please use \",\" to seperate different tags</string>
 	<string name="delete_data">* Delete This Data Stream</string>
-	<string name="delete_data_message">Click To Delete This Data</string>
+	<string name="delete_data_message">Delete This Data:</string>
 	<string name="delete_data_button">Delete</string>
 	<string name="delete_data_confirm_title">Are you sure you want to delete this data stream?</string>
 	

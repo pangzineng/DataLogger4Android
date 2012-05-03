@@ -12,22 +12,27 @@ public class Cache{
 	SharedPreferences sp;
 	SharedPreferences.Editor editor;
 
+	// FIXME modify all of them to become one setter and getter method only
+	
 	private static final String STORE = "Datalogger for Android Cache";
 	
-	// to be store the last display tab
 	private static final String CURRENT_TAB = "current Tab";
 	
-	// to be shown on the view
 	private static final String CURRENT_USERNAME = "username";
 	private static final String CURRENT_PASSWORD = "password";
+	private static final String CURRENT_MASTERKEY = "masterkey";
+	
 	private static final String AUTO_LOGIN_CHECKED = "auto login";
 	private static final String AUTO_LOGIN_USERNAME = "autoLogin username";
 	private static final String AUTO_LOGIN_PASSWORD = "autoLogin password";
-	private static final String CURRENT_KEY = "key";
+	
 	private static final String CURRENT_FEED_ID = "feed id";
 	private static final String CURRENT_FEED_NAME = "feed name";
+	private static final String CURRENT_KEY = "permission";
+
 	private static final String CURRENT_FEED_DATA = "datastream name";
 	private static final String CURRENT_FEED_DIAGRAM_DURATION = "diagram duration";
+	
 	private static final String CURRENT_ACTION = "next action";
 	
 	// to be store for the first launch
@@ -46,6 +51,10 @@ public class Cache{
 	public static final int ACTION_UPDATE_SENSOR_FEED = 5;
 	public static final int ACTION_UPDATE_CUSTOM_FEED = 6;
 	
+	// for tab memory
+	public static final int TAB_LIST = 0;
+	public static final int TAB_PAGE = 1;
+	public static final int TAB_DATA = 2;
 	
 	public Cache(Context context) {
 		this.context = context;
@@ -69,6 +78,11 @@ public class Cache{
 	
 	public void setPW(String pw){
 		editor.putString(CURRENT_PASSWORD, pw);
+		editor.apply();
+	}
+	
+	public void setMasterKey(String master){
+		editor.putString(CURRENT_MASTERKEY, master);
 		editor.apply();
 	}
 	
@@ -152,6 +166,10 @@ public class Cache{
 	
 	public String getPw(){
 		return sp.getString(CURRENT_PASSWORD, null);
+	}
+	
+	public String getMaster(){
+		return sp.getString(CURRENT_MASTERKEY, null);
 	}
 	
 	public String[] getAutoLogin(){

@@ -12,7 +12,7 @@ public class ServiceHelper {
 		this.context = context;
 	}
 	
-	public void startBackgroundUpdate(String FeedName, int interval, int runningTime, String[] info){
+	public void startBackgroundUpdate(String FeedName, int interval, int runningTime, String[] info, String masterKey){
 		
 		createNotification(FeedName, runningTime, info[0]);
 		
@@ -20,6 +20,7 @@ public class ServiceHelper {
 		startBackground.putExtra("Interval", interval);
 		startBackground.putExtra("Running Time", runningTime);
 		startBackground.putExtra("info", info);
+		startBackground.putExtra("master", masterKey);
 		context.startService(startBackground);
 	}
 	

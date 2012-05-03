@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,13 +32,21 @@ public class Homepage extends Activity {
 	public static final int FEED_DATA = 2;
 	
 	private Helper helper;
+	private static ActionBar bar;
 	
+	public static ActionBar barInstance() {
+		return bar;
+	}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        
         helper = new Helper(this);
-        final ActionBar bar = getActionBar();
+        bar = getActionBar();
 
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
@@ -64,7 +73,7 @@ public class Homepage extends Activity {
         user.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				DialogFragment loginDialog = LoginDialog.newInstance(R.string.login_dialog_title, Homepage.this, helper, v);
+				DialogFragment loginDialog = LoginDialog.newInstance(R.string.login_dialog_title, Homepage.this, helper, v, bar);
 				loginDialog.show(getFragmentManager(), "dialog");
 			}
 		});
@@ -129,14 +138,16 @@ public class Homepage extends Activity {
 		private static Context mContext;
 		private static TextView username;
 		private static Helper helper;
+		private static ActionBar bar;
 		AlertDialog dialog;
 		
-		public static LoginDialog newInstance(int title, Context context, Helper h, View name) {
+		public static LoginDialog newInstance(int title, Context context, Helper h, View name, ActionBar b) {
 			LoginDialog frag = new LoginDialog();
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
 			
+			bar = b;
 			mContext = context;
 			helper = h;
 			username = (TextView) name;
@@ -170,14 +181,14 @@ public class Homepage extends Activity {
 			currentLogout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					AlertDialog confirm = new AlertDialog.Builder(mContext)
+					AlertDialog confirm = new AlertDialog.Builder(getActivity())
 								   .setMessage(R.string.login_logout_confirm)
 								   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
-											// FIXME reload the list (logout)
 											helper.logout();
-											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+											// SOS reload the list (logout)
+											bar.setSelectedNavigationItem(Homepage.FEED_LIST);
 									    	username.setText("guest");
 									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
 									    	dialog.dismiss();
@@ -201,7 +212,7 @@ public class Homepage extends Activity {
 			final EditText loginPW = (EditText)mDialog.findViewById(R.id.login_pw);
 			final CheckBox loginAuto = (CheckBox) mDialog.findViewById(R.id.login_autoCheck);
 			
-			dialog = new AlertDialog.Builder(mContext)
+			dialog = new AlertDialog.Builder(getActivity())
 					   .setIcon(R.drawable.ic_menu_login)
 					   .setTitle(title)
 					   .setView(mDialog)
@@ -215,8 +226,8 @@ public class Homepage extends Activity {
 								String[] account = new String[]{lgName, lgPW};
 								
 								if(helper.login(account, loginAuto.isChecked())){
-									// FIXME reload the list (login)
-									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+									// SOS reload the list (login)
+									bar.setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);
 							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
 								} else {
@@ -236,6 +247,4 @@ public class Homepage extends Activity {
 			return dialog;
 		}
 	}
-
-
 }

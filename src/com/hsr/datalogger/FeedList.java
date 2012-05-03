@@ -22,6 +22,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -61,11 +63,12 @@ public class FeedList extends Activity {
         	FLFragment list = new FLFragment();
             fm.beginTransaction().add(android.R.id.content, list).commit();
         }
-
+        
+        
 	}
-	
+
 	// FIXME this one accept the resource from database and sort it to different attribute for the list to load
-	// FIXME need another loader class to load the list from database and store individually into the FeedItem
+	// need another loader class to load the list from database and store individually into the FeedItem
 	public static class FeedItem {
 		
 		public final static int PUBLIC = 10;
@@ -101,6 +104,11 @@ public class FeedList extends Activity {
 			}
 		}
 
+		@Override
+		public String toString() {
+			return feedName;
+		}
+		
 		public String getFeedName(){
 			return feedName;
 		}
@@ -117,7 +125,7 @@ public class FeedList extends Activity {
 			return feedOwnership;
 		}
 		
-		public int getFeedPremissionLevel(){
+		public int getFeedPermissionLevel(){
 			return feedPermissionLevel;
 		}
 	}
@@ -233,7 +241,7 @@ public class FeedList extends Activity {
 			TextView feedID = (TextView) view.findViewById(R.id.list_feed_id);
 			TextView feedDataCount = (TextView) view.findViewById(R.id.list_feed_data_count);
 			TextView feedOwnership = (TextView) view.findViewById(R.id.list_feed_ownership);
-			ImageView feedPremissionLevel = (ImageView) view.findViewById(R.id.list_feed_premission);
+			ImageView feedPermissionLevel = (ImageView) view.findViewById(R.id.list_feed_permission);
 			
 			feedID.setText(item.getFeedID());
 			feedName.setText(item.getFeedName());
@@ -247,12 +255,12 @@ public class FeedList extends Activity {
 				feedOwnership.setText("None");
 			}
 
-			if(item.getFeedPremissionLevel()==FeedItem.VIEW){
-				feedPremissionLevel.setImageResource(R.drawable.feed_pre_view);
-			} else if (item.getFeedPremissionLevel()==FeedItem.FULL){
-				feedPremissionLevel.setImageResource(R.drawable.feed_pre_all);
+			if(item.getFeedPermissionLevel()==FeedItem.VIEW){
+				feedPermissionLevel.setImageResource(R.drawable.feed_pre_view);
+			} else if (item.getFeedPermissionLevel()==FeedItem.FULL){
+				feedPermissionLevel.setImageResource(R.drawable.feed_pre_all);
 			} else {
-				feedPremissionLevel.setImageResource(R.drawable.feed_pre_error);
+				feedPermissionLevel.setImageResource(R.drawable.feed_pre_error);
 			}
 			
 			return view;
@@ -290,6 +298,10 @@ public class FeedList extends Activity {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+					TextView mid = (TextView) view.findViewById(R.id.list_feed_id);
+					TextView mname = (TextView) view.findViewById(R.id.list_feed_name);
+
+					Log.d("pachube debug", "Long click feed item: " + mid.getText() + " " + mname.getText());
 					DialogFragment editDeletedialog = EditDeleteFeedDialog.newInstance(R.string.edit_delete_dialog_title, getActivity().getApplicationContext(), helper, view);
 					editDeletedialog.show(getFragmentManager(), "dialog");
 					return false;
@@ -309,7 +321,6 @@ public class FeedList extends Activity {
 				.setActionView(search)
 				.setIcon(android.R.drawable.ic_menu_search)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
 		}
 		
 		@Override
@@ -337,12 +348,14 @@ public class FeedList extends Activity {
 			return true;
 		}
 
+		
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {
-			Log.d("pang", "Short click on feed list item, listener in fragment");
-			// FIXME do the list item click here
-			// helper.selectOneFeed(); // store the clicked item info to cache
-			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+			// SOS reload the list (click one feed)
+			TextView mid = (TextView) v.findViewById(R.id.list_feed_id);
+			TextView mname = (TextView) v.findViewById(R.id.list_feed_name);
+			helper.clickOneFeed(mid.getText().toString(), mname.getText().toString());
+			Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
 		}
 		
 		
@@ -377,7 +390,6 @@ public class FeedList extends Activity {
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
-			
 			mContext = context;
 			helper = h;
 			view = v;
@@ -394,16 +406,18 @@ public class FeedList extends Activity {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int title = getArguments().getInt("title");
 			final View mDialog = getEditDeleteFeedView();
-			
 			final EditText newTitle = (EditText) mDialog.findViewById(R.id.edit_feed_new_name);
 			final Switch newOwnership = (Switch) mDialog.findViewById(R.id.edit_feed_new_status);
 			
 			final TextView currentID = (TextView) view.findViewById(R.id.list_feed_id);
-			final ImageView premission = (ImageView) view.findViewById(R.id.list_feed_premission);
-			final String prem = premission.getId()==R.drawable.feed_pre_view?"View":"Full";
+			final ImageView permission = (ImageView) view.findViewById(R.id.list_feed_permission);
+			final String prem = permission.getId()==R.drawable.feed_pre_view?"View":"Full";
+			
+			newTitle.setText(helper.getFeedListItem(currentID.getText().toString())[0]);
 			
 			if(prem.equals("View")){
 				newOwnership.setEnabled(false);
+				newTitle.setEnabled(false);
 			}
 			
 			final Button delete = (Button) mDialog.findViewById(R.id.delete_feed_delete);
@@ -411,12 +425,11 @@ public class FeedList extends Activity {
 				
 				@Override
 				public void onClick(View v) {
-					AlertDialog confirm = new AlertDialog.Builder(mContext)
+					AlertDialog confirm = new AlertDialog.Builder(getActivity())
 					   .setMessage(R.string.delete_feed_confirm_title)
 					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								// FIXME reload the list (delete feed)
 								String id = currentID.getText().toString();
 								boolean local = false;
 								if(prem.equals("View")){
@@ -427,8 +440,8 @@ public class FeedList extends Activity {
 								} else {
 									Toast.makeText(mContext, "Error from pachube server, fail to delete on server side", Toast.LENGTH_LONG).show();
 								}
-
-								getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+								// SOS reload the list (delete feed)
+								Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_LIST);
 							}
 					   	})
 					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
@@ -441,15 +454,13 @@ public class FeedList extends Activity {
 					confirm.show();
 				}
 			});
-			
-			return new AlertDialog.Builder(mContext)
+			return new AlertDialog.Builder(getActivity())
 								  .setIcon(android.R.drawable.ic_menu_edit)
 								  .setView(mDialog)
 								  .setTitle(title)
 								  .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
-											// FIXME reload the list (edit feed)
 											String id = currentID.getText().toString();
 											String nTitle = newTitle.getText().toString();
 											boolean titleOnly = true;
@@ -463,7 +474,8 @@ public class FeedList extends Activity {
 											} else {
 												Toast.makeText(mContext, "Error from pachube server, fail to edit on server side", Toast.LENGTH_LONG).show();
 											}
-											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+											// SOS reload the list (edit feed)
+											Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_LIST);
 										}
 								  })
 								  .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
@@ -575,7 +587,7 @@ public class FeedList extends Activity {
 								}
 								
 								if(result){
-									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
 								}
 							}
 						})

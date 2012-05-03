@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/coloumn_1"
         android:layout_width="fill_parent"
-        android:layout_height="64px"
+        android:layout_height="wrap_content"
 		android:orientation="vertical"        
         android:layout_weight="1">
 	        
@@ -80,10 +80,10 @@
         android:layout_weight="3">
         
         <ImageView
-	        android:id="@+id/list_feed_premission"
+	        android:id="@+id/list_feed_permission"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:contentDescription="premission"
+	        android:contentDescription="permission"
 	        android:src="@drawable/feed_pre_view" />
     </TableRow>
 

@@ -15,15 +15,16 @@ public class HelperLight {
 	HardwareHelper hwH;
 	PachubeHelper paH;
 	
-	public HelperLight(Context context) {
+	public HelperLight(Context context, String masterKey) {
 		dbH = new DatabaseHelper(context);
 		hwH = new HardwareHelper(context);
+		paH = new PachubeHelper(masterKey);
 	}
 	
 	/* 4. Feed Page Tab function & 6. Background function
 	 * (1) update called by background service
 	 * */
-	public boolean update(String feedID, String premission) {
+	public boolean update(String feedID, String permission) {
 		// FIXME 
 		
 		// first get from dbH the selected datastream (name & sensorID)
@@ -38,7 +39,7 @@ public class HelperLight {
 //		// update & clean datapoints table if any
 //			startOfflineUpdate();
 //		// call paH and pass the value
-//			if(paH.update(feedID, premission, dataNames, dataValues)) { // if paH return true, update dbH with new value
+//			if(paH.update(feedID, permission, dataNames, dataValues)) { // if paH return true, update dbH with new value
 //					for(int i=0; i<dataNames.size(); i++){
 //						dbH.editDataValue(feedID, dataNames.get(i), String.valueOf(dataValues[i]));
 //					}
@@ -46,7 +47,7 @@ public class HelperLight {
 //			 		return false;
 //			  }	
 //			} else { // else call dbH and pass the value to offline table
-//				dbH.putOfflineData(feedID, premission, hwH.getSystemTime(), dataNames, dataValues);
+//				dbH.putOfflineData(feedID, permission, hwH.getSystemTime(), dataNames, dataValues);
 //			}
 		
 		return true;
@@ -68,9 +69,9 @@ public class HelperLight {
 		// FIXME
 		String[] dataNames = null;
 		String feedID = null;
-		String premission = null;
+		String permission = null;
 		
-		if(paH.updateOffline(feedID, premission, dataNames, datapoints)){
+		if(paH.updateOffline(feedID, permission, dataNames, datapoints)){
 			dbH.cleanDatapoint();
 			return true;
 		} else {
@@ -78,7 +79,7 @@ public class HelperLight {
 		}
 	}
 
-	// FIXME big problem here,the update needs premission
+	// FIXME big problem here,the update needs permission
 	// if there are more than one feed in the offline storage, it will be big error
 	// need to change the database table, paH passing method, and helper
 	public List<List<String[]>> getOfflineData(){

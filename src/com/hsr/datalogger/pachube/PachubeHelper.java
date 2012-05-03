@@ -3,6 +3,7 @@ package com.hsr.datalogger.pachube;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import android.graphics.drawable.Drawable;
 
 public class PachubeHelper {
@@ -15,6 +16,10 @@ public class PachubeHelper {
 		this.defaultCreateKey 	= PachubeProperty.defaultCreateKey;
 	}
 	
+	public PachubeHelper(String masterKey){
+		this.currentMasterKey = masterKey;
+	}
+	
 	public void setKey(String key){
 		this.currentMasterKey = key;
 	}
@@ -23,21 +28,16 @@ public class PachubeHelper {
 		return this.currentMasterKey;
 	}
 	
-	public boolean login(String[] account){
+	public String login(String[] account){
 		String username = account[0];
 		String password = account[1];
 		try {
-			setKey(Pachube.login(username, password));
-			if ( this.currentMasterKey != null ){
-				return true;
-			}else {
-				return false;
-			}
+			return Pachube.login(username, password);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return false;
+		return null;
 	}
 	
 	public boolean createUser(String username, String password, String fullName){

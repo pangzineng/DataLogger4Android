@@ -15,11 +15,13 @@ public class DatabaseHelper {
 	}
 
 	public List<String> getCurrentFeedList(String username){
-		List<String> feedIDlist = null;
-		feedIDlist = db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID);
-		return feedIDlist;
+		return db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID);
 	}
 	
+	public List<String> getCurrentDataList(String currentFeed) {
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, currentFeed, Database.colDataName);
+	}
+
 	
 	String[] sensors;
 	
@@ -39,13 +41,20 @@ public class DatabaseHelper {
 		db.addFeed(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
 	}
 
-	// FeedTitle, DataCount, Ownership, PremissionLevel
+	// FeedTitle, DataCount, Ownership, PermissionLevel
 	public String[] getOneFeedInfo(String currentUser, String feedID) {
 		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
 		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);
 		String ownership = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colOwnership);
-		String premissionLevel = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colPermissionLevel);
-		return new String[]{name, count, ownership, premissionLevel};
+		String permissionLevel = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colPermissionLevel);
+		return new String[]{name, count, ownership, permissionLevel};
+	}
+	
+	// DataTags, checked
+	public String[] getOneDataInfo(String feedID, String dataName) {
+		String tag = db.getValue(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataTag);
+		String checked = db.getValue(Database.DATASTREAM_INDEX, feedID, dataName, Database.colChecked);
+		return new String[]{tag, checked};
 	}
 
 	public void deleteFeed(String username, String id) {
@@ -64,7 +73,7 @@ public class DatabaseHelper {
 		db.addData(feedID, dataName, "0", tag, String.valueOf(sensorID));
 	}
 
-	public String getPremissionFor(String user, String feedID) {
+	public String getPermissionFor(String user, String feedID) {
 		return db.getValue(Database.FEED_INDEX, user, feedID, Database.colPermission);
 	}
 
@@ -112,14 +121,15 @@ public class DatabaseHelper {
 		db.edit(Database.DATASTREAM_INDEX, feedID, dataName, Database.colDataValue, newValue);
 	}
 
-	public void putOfflineData(String feedID, String premission, Date date, List<String> dataNames, float[] dataValues) {
+	public void putOfflineData(String feedID, String permission, Date date, List<String> dataNames, float[] dataValues) {
 		String time = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")).format(date);
 		for(int i=0; i< dataNames.size(); i++){
-			db.addDatapoint(feedID, premission, dataNames.get(i), time, String.valueOf(dataValues[i]));
+			db.addDatapoint(feedID, permission, dataNames.get(i), time, String.valueOf(dataValues[i]));
 		}
 	}
 
 	public String getFeedTitle(String[] info) {
 		return db.getValue(Database.FEED_INDEX, info[0], info[1], Database.colFeedTitle);
 	}
+
 }

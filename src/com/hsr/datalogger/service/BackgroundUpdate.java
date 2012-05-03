@@ -17,16 +17,17 @@ public class BackgroundUpdate extends Service {
 	private int interval;
 	private int runningTime;
 	
+	private String masterKey;
 	private String username;
 	private String feedID;
-	private String premission;
+	private String permission;
 	
 	private Handler mHandler = new Handler();
 	private Runnable mTask = new Runnable(){
 
 		public void run() {
 			
-			helper.update(feedID, premission);
+			helper.update(feedID, permission);
 
 			runningTime = runningTime - (int)(interval/60000);
 			if(runningTime <= 0) stopSelf();
@@ -37,8 +38,10 @@ public class BackgroundUpdate extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if(intent.hasExtra("STOP")) stopSelf();
-	
-		helper = new HelperLight(getApplicationContext());
+		
+		masterKey = intent.getStringExtra("master");
+
+		helper = new HelperLight(getApplicationContext(), masterKey);
 		
 		interval = intent.getIntExtra("Interval", 1) * 60000;
 		runningTime = intent.getIntExtra("Running Time", 0);
@@ -46,7 +49,7 @@ public class BackgroundUpdate extends Service {
 		String[] info = intent.getStringArrayExtra("info");
 		username = info[0];
 		feedID = info[1];
-		premission = info[2];
+		permission = info[2];
 		
 		mHandler.removeCallbacks(mTask);
 		mHandler.postDelayed(mTask, 100);

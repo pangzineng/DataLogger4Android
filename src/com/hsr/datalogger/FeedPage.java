@@ -1,5 +1,6 @@
 package com.hsr.datalogger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hsr.datalogger.FeedList.EditDeleteFeedDialog;
@@ -11,10 +12,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListFragment;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Loader;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,8 +34,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,9 +53,22 @@ public class FeedPage extends Activity {
 	}
 	
 	public static class DataItem {
-		private String dataName = "";
-		private String tags = "";
 		
+		private String dataName;
+		private String tags;
+		private boolean checked;
+		
+		public DataItem(Helper helper, String dataName) {
+			String[] info = helper.getDataListItem(dataName);
+			tags = info[0];
+			checked = info[1].equals("1")?true:false;
+			this.dataName = dataName;
+		}
+
+		@Override
+		public String toString() {
+			return dataName;
+		}
 		
 		public String getDataName(){
 			return dataName;
@@ -57,6 +78,90 @@ public class FeedPage extends Activity {
 			return tags;
 		}
 		
+		public boolean getChecked(){
+			return checked;
+		}
+	}
+	
+	public static class DataListLoader extends AsyncTaskLoader<List<DataItem>>{
+
+		private Helper helper;
+		List<DataItem> mList;
+		
+		public DataListLoader(Context context, Helper h) {
+			super(context);
+			helper = h;
+		}
+
+		@Override
+		public List<DataItem> loadInBackground() {
+			List<String> datas = helper.getDataList();
+			if(datas == null) return null;
+			// TODO Testing off (load data list)
+			// List<DataItem> entries = new ArrayList<DataItem>(0);
+			List<DataItem> entries = new ArrayList<DataItem>(datas.size());
+			for(int i=0; i<datas.size(); i++){
+				DataItem item = new DataItem(helper, datas.get(i));
+				entries.add(item);
+			}
+			return entries;
+		}
+		
+		@Override
+		public void deliverResult(List<DataItem> data) {
+            mList = data;
+
+            if (isStarted()) {
+                // If the Loader is currently started, we can immediately deliver its results.
+                super.deliverResult(data);
+            }
+		}
+		
+		@Override
+		protected void onStartLoading() {
+            if (mList != null) {
+                // If we currently have a result available, deliver it immediately.
+                deliverResult(mList);
+            }
+
+            // FIXME Start watching for changes in the data.
+//            if (mPackageObserver == null) {
+//                mPackageObserver = new PackageIntentReceiver(this);
+//            }
+
+            if (takeContentChanged() || mList == null) {
+                // If the data has changed since the last time it was loaded
+                // or is not currently available, start a load.
+                forceLoad();
+            }
+		}
+		
+		@Override
+		protected void onStopLoading() {
+			cancelLoad();
+		}
+		
+		@Override
+		protected void onReset() {
+			super.onReset();
+			
+            // Ensure the loader is stopped
+            onStopLoading();
+
+            // At this point we can release the resources associated with 'apps'
+            // if needed.
+            if (mList != null) {
+                mList = null;
+            }
+
+            // FIXME Stop monitoring for changes.
+//            if (mPackageObserver != null) {
+//                getContext().unregisterReceiver(mPackageObserver);
+//                mPackageObserver = null;
+//            }
+
+		}
+
 	}
 	
 	public static class DataListAdapter extends ArrayAdapter<DataItem>{
@@ -78,16 +183,23 @@ public class FeedPage extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
-			final DataItem item = getItem(position);
-			
 			View view = null;
 			if(convertView == null){
 				view = mInflater.inflate(R.layout.list_data_item, parent, false);
 			} else {
 				view = convertView;
 			}
+
+			final DataItem item = getItem(position);
+			
+			TextView dataName = (TextView) view.findViewById(R.id.data_item_name);
+			TextView tags = (TextView) view.findViewById(R.id.data_item_tags);
+			
+			dataName.setText(item.getDataName());
+			tags.setText(item.getTags());
 			
 			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
+			check.setChecked(item.getChecked());
 			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -95,19 +207,21 @@ public class FeedPage extends Activity {
 				}
 			});
 			
-			return super.getView(position, convertView, parent);
+			return view;
 		}
 	}
 	
-	public static class FPFragment extends ListFragment {
+	public static class FPFragment extends ListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<List<DataItem>>{
 		
 		private static final int ADD_DATASTREAM = 1;
 		private static final int SHARE_FEED = 2;
 		private static final int UPDATE_FEED = 3;
+		private static final int SEARCH_FEED = 4;
 		
 		Context context;
 		Helper helper;
 		DataListAdapter mAdapter;
+		String mCurFilter;
 		
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
@@ -145,15 +259,22 @@ public class FeedPage extends Activity {
 			menu.add(Menu.NONE, UPDATE_FEED, Menu.NONE, "Update")
 				.setIcon(android.R.drawable.ic_menu_upload)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			
+			SearchView search = new SearchView(getActivity());
+			search.setOnQueryTextListener(this);
+			menu.add(Menu.NONE, SEARCH_FEED, Menu.NONE, "Search")
+				.setActionView(search)
+				.setIcon(android.R.drawable.ic_menu_search)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
 		
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
 			
-			// check whether user has premission to modify this feed
+			// check whether user has permission to modify this feed
 			// TODO Testing off (switch off functions with paH)
 			if(helper.notFullLevel()){
-				Toast.makeText(context, "You have no premission to control this feed", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "You have no permission to control this feed", Toast.LENGTH_LONG).show();
 				return super.onOptionsItemSelected(item);
 			}
 			
@@ -170,10 +291,53 @@ public class FeedPage extends Activity {
 					DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
 					updateFeedDialog.show(getFragmentManager(), "dialog");
 					return true;
+				case SEARCH_FEED:
 				default:
 					return super.onOptionsItemSelected(item);
 			}
 		}
+
+		@Override
+		public boolean onQueryTextChange(String newText) {
+			mCurFilter = !TextUtils.isEmpty(newText)?newText:null;
+			mAdapter.getFilter().filter(mCurFilter);
+			return true;
+		}
+
+		@Override
+		public boolean onQueryTextSubmit(String query) {
+			return true;
+		}
+
+		
+		@Override
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			TextView dataName = (TextView) v.findViewById(R.id.data_item_name);
+			helper.clickOneData(dataName.getText().toString());
+			Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_DATA);
+		}
+
+		
+		@Override
+		public Loader<List<DataItem>> onCreateLoader(int id, Bundle args) {
+			return new DataListLoader(getActivity(), helper);
+		}
+
+		@Override
+		public void onLoadFinished(Loader<List<DataItem>> loader, List<DataItem> data) {
+			mAdapter.setData(data);
+			if(isResumed()){
+				setListShown(true);
+			} else {
+				setListShownNoAnimation(true);
+			}
+		}
+
+		@Override
+		public void onLoaderReset(Loader<List<DataItem>> arg0) {
+			mAdapter.setData(null);
+		}
+
 	}
 	
 	
@@ -228,7 +392,7 @@ public class FeedPage extends Activity {
 									
 									if(helper.dataCreate(name, sensor, sensorID)){
 										// reload the data list
-										getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+										Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
 									} else {
 										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
 									}
@@ -294,7 +458,7 @@ public class FeedPage extends Activity {
 								if(helper.sendEmail(emailAddress.getText().toString(), selected.getText().toString(), forDialog)){
 									Toast.makeText(mContext, "Email is sent successfully", Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext, "Fail to create premission, or there are no email apps", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Fail to create permission, or there are no email apps", Toast.LENGTH_LONG).show();
 								}
 							}
 						})
@@ -423,7 +587,7 @@ public class FeedPage extends Activity {
 				
 				@Override
 				public void onClick(View v) {
-					AlertDialog confirm = new AlertDialog.Builder(mContext)
+					AlertDialog confirm = new AlertDialog.Builder(getActivity())
 					   .setMessage(R.string.delete_feed_confirm_title)
 					   .setPositiveButton(R.string.dialog_confirm, new OnClickListener() {
 							@Override
@@ -431,10 +595,10 @@ public class FeedPage extends Activity {
 								
 								String dataID = dataName.getText().toString();
 								
-								// FIXME reload the list (delete data)
 								if(helper.dataDelete(dataID)){
 									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
-									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									// SOS reload the list (delete data)
+									Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
 								} else {
 									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
 								}
@@ -451,7 +615,7 @@ public class FeedPage extends Activity {
 				}
 			});
 			
-			return new AlertDialog.Builder(mContext)
+			return new AlertDialog.Builder(getActivity())
 			  .setIcon(android.R.drawable.ic_menu_edit)
 			  .setView(mDialog)
 			  .setTitle(title)
@@ -461,12 +625,12 @@ public class FeedPage extends Activity {
 
 						String dataID = dataName.getText().toString();
 						
-						// FIXME reload the list (edit data)
 						String nTags = newTags.getText().toString();
 
 						if(helper.dataEdit(dataID, nTags)){
 							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
-							getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+							// SOS reload the list (edit data)
+							Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
 						} else {
 							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();
 						}

@@ -183,10 +183,10 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add datapoint
-	public int addDatapoint(String feedID, String premission, String dataName, String timestamp, String value){
+	public int addDatapoint(String feedID, String permission, String dataName, String timestamp, String value){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
-		cv.put(colPermission, premission);
+		cv.put(colPermission, permission);
 		cv.put(colDataName, dataName);
 		cv.put(colDPValue, value);
 		cv.put(colDPTimestamp, timestamp);

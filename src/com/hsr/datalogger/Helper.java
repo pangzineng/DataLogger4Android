@@ -7,7 +7,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.hsr.datalogger.cache.Cache;
 import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.database.DatabaseHelper;
 import com.hsr.datalogger.external.ExternalHelper;
@@ -25,23 +27,25 @@ public class Helper {
 	ServiceHelper srH;
 	ExternalHelper exH;
     PachubeHelper paH;
-	
-	public Helper(Context context) {
+
+    public Helper(Context context) {
 		caH = new CacheHelper(context);
 		dbH = new DatabaseHelper(context);
 		hwH = new HardwareHelper(context);
 		srH = new ServiceHelper(context);
 		exH = new ExternalHelper(context);
-	    paH = new PachubeHelper();
-		
+	    paH = new PachubeHelper(caH.getCurrentMasterKey());
 		this.context = context;
 	}
-	
 	
 	/* 1. Launch of the app
 	 * */
 	public int getCurrentTab(){
 		return caH.getCurrentTab();
+	}
+	
+	public void setCurrentTab(int index){
+		caH.setCurrentTab(index);
 	}
 	
 	/* 2. Handle different cases for login & logout
@@ -50,14 +54,16 @@ public class Helper {
 	public String AutoLoginAccount(){
 		String[] autoAccount = caH.getAutoLogin();
 		if(autoAccount == null){
-			caH.setCurrentUser(new String[]{"guest"});
+			caH.setCurrentUser(new String[]{"guest"}, null);
 			return "guest";
 		} else {
-			if(paH.login(autoAccount)){  // to checked whether user change name&pw somewhere else 
-				caH.setCurrentUser(autoAccount);	
+			String master = paH.login(autoAccount);
+			if(master!=null){  // to checked whether user change name&pw somewhere else 
+				caH.setCurrentUser(autoAccount, master);	
+				paH.setKey(master);
 			 } else {	// this means the name&pw in database for autologin aren't correct, need to remove
 				caH.removeAutoLogin();
-				caH.setCurrentUser(new String[]{"guest"});
+				caH.setCurrentUser(new String[]{"guest"}, null);
 				return null;			
 			 }
 		}
@@ -70,17 +76,19 @@ public class Helper {
 	
 	public void logout(){
 		caH.removeAutoLogin();
-		caH.setCurrentUser(new String[]{"guest"});
+		caH.setCurrentUser(new String[]{"guest"}, null);
 	}
 	
 	public boolean login(String[] account, boolean checked){
-		if(paH.login(account)){  // to checked whether user change name&pw somewhere else
+		String master = paH.login(account);
+		if(master != null){  // to checked whether user change name&pw somewhere else
 				if(checked){
 					caH.setAutoLogin(true, account);
 				} else {
 					caH.removeAutoLogin();
 				}
-				caH.setCurrentUser(account);
+				caH.setCurrentUser(account, master);
+				paH.setKey(master);
 				return true;
 		  }	else {
 			return false;
@@ -99,7 +107,9 @@ public class Helper {
 		String[] user = caH.getCurrentUser();
 		String feedID = paH.createFeed(title, ownership); // should return the feed ID or null if fail
 		if(feedID != null){   
-			dbH.addFeedToList(user[0], feedID, ownership, null, "Full", title, type);
+			dbH.addFeedToList(user[0], feedID, ownership, caH.getCurrentMasterKey(), "Full", title, type);
+			caH.setCurrentFeed(feedID, title, caH.getCurrentMasterKey());
+			setCurrentTab(Cache.TAB_PAGE);
 		} else {	
 			return false;			
 		}
@@ -107,10 +117,11 @@ public class Helper {
 	}
 
 	public boolean feedImport(String feedID, String permission) {
-		String[] feed = paH.getFeed(feedID, permission); // should include feedName and premission level(View, Full), return null if fail
+		String[] feed = paH.getFeed(feedID, permission); // should include feedName and permission level(View, Full), return null if fail
 		String[] user = caH.getCurrentUser();
 		if(feed != null){
 			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor");
+			caH.setCurrentFeed(feedID, feed[0], permission);
 		} else {
 			return false;
 		}
@@ -122,25 +133,25 @@ public class Helper {
 	 * */
 	public boolean feedEdit(String id, String nTitle, boolean titleOnly, String nOwn) {
 		String user = caH.getCurrentUser()[0];
-		String premission = dbH.getPremissionFor(user, id);
+		String permission = dbH.getPermissionFor(user, id);
 		dbH.editFeedTitle(user, id, nTitle);
 		if(titleOnly){
-			return paH.editTitle(id, nTitle, premission);
+			return paH.editTitle(id, nTitle, permission);
 		} else {
 			dbH.editFeedOwn(user, id, nOwn);
-			return paH.editStatus(id, nOwn, premission);
+			return paH.editStatus(id, nOwn, permission);
 		}
 	}
 
 	public boolean feedDelete(String id, boolean local) {
 		String username = caH.getCurrentUser()[0];
-		String premission = dbH.getPremissionFor(username, id);
+		String permission = dbH.getPermissionFor(username, id);
 
 		dbH.deleteFeed(username, id);
 		if(local){
 			return true;
 		} else {
-			return paH.deleteFeed(id, premission); 
+			return paH.deleteFeed(id, permission); 
 		}
 	}
 
@@ -150,14 +161,24 @@ public class Helper {
 	// FIXME FEED LIST LOADING
 	
 	
+	/* 3. Feed List Tab function
+	 * (4) Click on list item (one feed)
+	 * */
+	public void clickOneFeed(String feedID, String title) {
+		String permission = dbH.getPermissionFor(caH.getCurrentUser()[0], feedID);
+		caH.setCurrentFeed(feedID, title, permission);
+		setCurrentTab(Cache.TAB_PAGE);
+	}
+
+	
 	/* 4. Feed Page Tab function
 	 * (0) Feed Page Info 
 	 * */
 	public String[] getFeedPageInfo(){
-		// user, feedID, premission
+		// user, feedID, permission
 		String user = caH.getCurrentUser()[0];
 		String feedID = caH.getCurrentFeedInfo()[0];
-		return new String[]{user, feedID, dbH.getPremissionFor(user, feedID)};
+		return new String[]{user, feedID, dbH.getPermissionFor(user, feedID)};
 	}
 	
 	
@@ -201,7 +222,7 @@ public class Helper {
 		String unit = units[Arrays.asList(sensors).indexOf(tag)];
 		
 		if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit)) {
-									// premission might be null if it's his own feed
+									// permission might be null if it's his own feed
 									// tag is the name of sensor from the string list
 									// unit is the unit of sensor value from another list
 			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, tag, sensorID);
@@ -233,7 +254,7 @@ public class Helper {
 	}
 	
 	/* 4. Feed Page Tab function
-	 * (3) Turn On Feed Update
+	 * (4) Turn On Feed Update
 	 * */
 
 	public void checkData(String dataName, boolean isChecked) {
@@ -246,12 +267,19 @@ public class Helper {
 	
 	public void startBackgroundUpdate(int interval, int runningTime) {
 		// TODO Testing off (switch off functions with paH)
-		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo());
-		//srH.startBackgroundUpdate("feedName", interval, runningTime, new String[]{"username", "feedID", "premission"});
+		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo(), caH.getCurrentMasterKey());
+		//srH.startBackgroundUpdate("feedName", interval, runningTime, new String[]{"username", "feedID", "permission"});
 	}
 	
 
+	/* 4. Feed Page Tab function
+	 * (4) Click on list item (one data)
+	 * */
 
+	public void clickOneData(String dataNames) {
+		caH.setCurrentData(dataNames);
+		setCurrentTab(Cache.TAB_DATA);		
+	}
 
 
 	/* 5. Feed Data Tab function
@@ -309,9 +337,9 @@ public class Helper {
 		String user = caH.getCurrentUser()[0];
 		String feedID = caH.getDataInfoForDiagram()[0];
 		String dataName = caH.getDataInfoForDiagram()[1];
-		String premission = dbH.getPremissionFor(user, feedID);
+		String permission = dbH.getPermissionFor(user, feedID);
 		
-		// stat = paH.getDataStat(feedID, dataName, premission);
+		// stat = paH.getDataStat(feedID, dataName, permission);
 		return stat;
 	}
 
@@ -354,6 +382,18 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+
+	public List<String> getDataList() {
+		String currentFeed = caH.getCurrentFeedInfo()[0];
+		return dbH.getCurrentDataList(currentFeed);
+	}
+
+	public String[] getDataListItem(String dataName) {
+		String currentFeed = caH.getCurrentFeedInfo()[0];
+		return dbH.getOneDataInfo(currentFeed, dataName);
+	}
+
+
 
 
 
