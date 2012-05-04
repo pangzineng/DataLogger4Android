@@ -319,7 +319,8 @@ public class Pachube {
 		out.write(s);
 		out.flush();
 		out.close();
-		
+		if (hr.getResponseCode() == 422)
+			throw new PachubeException("Username has already been taken.");
 		if (hr.getResponseMessage().equalsIgnoreCase("Created")) {			
 			return true;
 		} else {

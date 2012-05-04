@@ -1,10 +1,5 @@
 package com.hsr.datalogger.external;
 
-import java.util.Date;
-
-import com.hsr.datalogger.hardware.DeviceInfo;
-import com.hsr.datalogger.hardware.NetworkCondition;
-
 import android.content.Context;
 import android.widget.ImageView;
 
@@ -23,6 +18,12 @@ public class ExternalHelper {
 
 	public void turnOnLocation(){
 		nl = new LocationReport(context);
+	}
+	
+	// lon, lat, alt
+	public double[] getLocation(){
+		if(nl.getLocation()==null) return new double[]{0,0,0};
+		return new double[]{nl.getLon(),nl.getLat(),nl.getAlt()};
 	}
 	
 	// send permission email

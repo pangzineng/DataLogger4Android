@@ -59,18 +59,41 @@
                 android:layout_weight="1" />
 		
 		</TableRow>
+		
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        	android:layout_below="@+id/tableRow2" >
+            <TextView
+                android:id="@+id/textView5"
+                android:gravity="right"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_feed_update_location"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_weight="1"  />
 
-    <TextView
+            <Button
+                android:id="@+id/edit_feed_update_loc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_feed_update_loc_button"
+                android:layout_weight="1" />
+            
+		</TableRow>
+     
+     <TextView
         android:id="@+id/textView3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tableRow2"
+        android:layout_below="@+id/tableRow3"
         android:text="@string/delete_feed"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 		<TableRow
-            android:id="@+id/tableRow3"
+            android:id="@+id/tableRow4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
         	android:layout_below="@+id/textView3" >

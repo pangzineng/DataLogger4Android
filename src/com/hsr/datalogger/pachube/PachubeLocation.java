@@ -10,16 +10,25 @@ public class PachubeLocation {
 	
 	private double elevation;
 	
-	private Exposure exposure;
+	private Exposure exposure = Exposure.indoor;
 	
-	private Domain domain;
+	private Domain domain = Domain.physical;
 	
-	private Disposition disposition;
-	
-	
+	private Disposition disposition = Disposition.mobile;
 
 	public PachubeLocation() {
-		super();
+		this.name = "Unnamed";
+		this.lat = 0;
+		this.lon = 0;
+		this.elevation = 0;
+	}
+	
+	public PachubeLocation(double[] loc){
+		this.name = "Unnamed";
+		this.lon = loc[0];
+		this.lat = loc[1];
+		this.elevation = loc[2];
+		
 	}
 	
 	public void setLat(String lat){
@@ -46,30 +55,6 @@ public class PachubeLocation {
 		}catch  (Exception c){
 			this.elevation = 0.0;
 		}
-	}
-	
-	public String toXML(){
-		String ret = "";
-		ret = "<location ";
-		
-		if(this.domain != null){
-			ret = ret + "domain=\""+this.domain+"\" ";
-		}
-		
-		if(this.exposure != null){
-			ret = ret + "exposure=\""+ this.exposure + "\" ";
-		}
-		
-		if(this.disposition != null){
-			ret = ret + "disposition=\""+ this.disposition +"\" ";
-		}
-		ret = ret + ">\n\t\t";
-		ret = ret + "<name>"+ this.name + "</name>\n\t\t";
-		ret = ret + "<lat>"+ this.lat + "</lat>\n\t\t";
-		ret = ret + "<lon>"+ this.lon + "</lon>\n\t\t";
-		ret = ret + "<ele>"+ this.elevation + "</ele>\n\t";
-		ret = ret + "</location>";
-		return ret;
 	}
 
 	@Override

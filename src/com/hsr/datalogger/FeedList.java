@@ -1,13 +1,8 @@
 package com.hsr.datalogger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import com.hsr.datalogger.FeedList.FeedItem;
-import com.hsr.datalogger.database.DatabaseHelper;
-
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,10 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -412,6 +404,18 @@ public class FeedList extends Activity {
 			final TextView currentID = (TextView) view.findViewById(R.id.list_feed_id);
 			final ImageView permission = (ImageView) view.findViewById(R.id.list_feed_permission);
 			final String prem = permission.getId()==R.drawable.feed_pre_view?"View":"Full";
+
+			final Button updateLocation = (Button) mDialog.findViewById(R.id.edit_feed_update_loc);
+			updateLocation.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(helper.updateLocation(currentID.getText().toString())){
+						Toast.makeText(mContext, "Location is updated", Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(mContext, "Fail to update location", Toast.LENGTH_LONG).show();
+					}
+				}
+			});
 			
 			newTitle.setText(helper.getFeedListItem(currentID.getText().toString())[0]);
 			

@@ -1,14 +1,11 @@
 package com.hsr.datalogger.service;
 
-import com.hsr.datalogger.Helper;
 import com.hsr.datalogger.HelperLight;
-import com.hsr.datalogger.hardware.HardwareHelper;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 public class BackgroundUpdate extends Service {
 	
@@ -18,7 +15,6 @@ public class BackgroundUpdate extends Service {
 	private int runningTime;
 	
 	private String masterKey;
-	private String username;
 	private String feedID;
 	private String permission;
 	
@@ -53,7 +49,6 @@ public class BackgroundUpdate extends Service {
 			runningTime = intent.getIntExtra("Running Time", 0);
 			
 			String[] info = intent.getStringArrayExtra("info");
-			username = info[0];
 			feedID = info[1];
 			permission = info[2];
 			

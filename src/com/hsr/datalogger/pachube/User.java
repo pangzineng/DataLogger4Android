@@ -60,6 +60,8 @@ public class User {
 	public User(String username, String password){
 		this.username = username;
 		this.password = password;
+		this.roles = new ArrayList<String>();
+		this.feedList = new ArrayList<Feed>();
 	}
 
 	/**
@@ -173,6 +175,15 @@ public class User {
 	public void setRoles(ArrayList<String> roles){
 		this.roles = roles;
 	}
+	
+	/**
+	 * Add a role to list of roles of current user
+	 * @param new role to be added
+	 */
+	public void addRole(String role){
+		this.roles.add(role);
+	}
+	
 	
 	/**
 	 * Gets the list of roles of this user

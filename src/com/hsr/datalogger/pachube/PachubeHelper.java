@@ -1,5 +1,4 @@
 package com.hsr.datalogger.pachube;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -31,19 +30,18 @@ public class PachubeHelper {
 	public String login(String[] account){
 		String username = account[0];
 		String password = account[1];
+		
 		try {
 			return Pachube.login(username, password);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 		}		
 		return null;
 	}
 	
-	public boolean createUser(String username, String password, String fullName){
+	public boolean createUser(String username, String password){
 		User u = new User(username,password);
-		u.setName(fullName);
-		
+		u.addRole("signup_plan");
 		try {
 			return Pachube.createUser(u, defaultCreateKey);
 		} catch (PachubeException e){
@@ -56,11 +54,13 @@ public class PachubeHelper {
 	}
 	
 	public String[] getFeed(String idString, String key){
-		String[] result = new String[2];
+		String[] result = new String[5];
 		int id = Integer.parseInt(idString);
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
+		else if (this.currentMasterKey != null)
+			currentKey = this.currentMasterKey;
 		else 
 			return null;
 		
@@ -73,6 +73,13 @@ public class PachubeHelper {
 					result[1] = "View";
 				else 
 					result[1] = "Full";
+				PachubeLocation loc = f.getLocation();					
+				System.err.println("made it here");
+				if (loc != null){
+					result[2]=String.valueOf(loc.getLon());
+					result[3]=String.valueOf(loc.getLat());
+					result[4]=String.valueOf(loc.getElevation());
+				}
 				return result;
 			}
 		} catch (PachubeException e){
@@ -84,7 +91,7 @@ public class PachubeHelper {
 		return null;
 	}
 	
-	public String createFeed(String title, String isPrivate){
+	public String createFeed(String title, String isPrivate, double[] location){
 		String currentKey;
 		if (this.currentMasterKey != null)
 			currentKey = this.currentMasterKey;
@@ -93,11 +100,17 @@ public class PachubeHelper {
 		
 		try {
 			Feed f = new Feed();
+			
 			f.setTitle(title);
+			
 			if (isPrivate.equalsIgnoreCase("private"))
 				f.setPrivacy(true);
 			else
 				f.setPrivacy(false);
+			
+			PachubeLocation loc = new PachubeLocation(location);
+			f.setLocation(loc);
+			
 			Feed n = Pachube.createFeed(f, currentKey);
 			if (n != null) return Integer.toString(n.getId());
 		} catch (PachubeException e){
@@ -160,6 +173,7 @@ public class PachubeHelper {
 			return false;
 		
 		int id = Integer.parseInt(feedID);
+		
 		try{
 			Feed f = Pachube.getFeed(id, currentKey);
 			f.setPrivacy(newStatus.equalsIgnoreCase("Public")?false:true);
@@ -169,6 +183,31 @@ public class PachubeHelper {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		return false;
+	}
+	
+	public boolean editLocation(String feedID, double[] location, String key){
+		String currentKey;
+		if (key != null) 
+			currentKey = key;
+		else if (this.currentMasterKey != null)
+			currentKey = this.currentMasterKey;
+		else 
+			return false;
+		
+		int id = Integer.parseInt(feedID);
+		
+		try{
+			Feed f = Pachube.getFeed(id, currentKey);
+			PachubeLocation loc = new PachubeLocation(location);
+			f.setLocation(loc);
+			return Pachube.updateFeed(id, PachubeFactory.toFeedXMLWithoutData(f), currentKey);
+		} catch (PachubeException e){
+			System.err.println(e.errorMessage);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 	
@@ -210,7 +249,7 @@ public class PachubeHelper {
 		return null;
 	}
 	
-	public boolean createData(String feedID, String dataID, String key, String tag, String unit){
+	public boolean createData(String feedID, String dataID, String key, String tag, String unit, String symbol){
 		int id = Integer.parseInt(feedID);
 		String currentKey;
 		if (key != null) 
@@ -219,17 +258,63 @@ public class PachubeHelper {
 			currentKey = this.currentMasterKey;
 		else 
 			return false;
-		Data data = new Data(dataID,tag,unit);
+		Data data = new Data(dataID,tag,unit,symbol);
 		
 		try {
 			return Pachube.createDatastream(id, PachubeFactory.toDataXMLWithWrapper(data), currentKey);
 		} catch (PachubeException e){
 			System.err.println(e.errorMessage);
-			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
 		}
+		
+		return false;
+	}
+	
+	public ArrayList<String[]> getAllData(String feedID, String key){
+		int id = Integer.parseInt(feedID);
+		String currentKey;
+		if (key != null) 
+			currentKey = key;
+		else if (this.currentMasterKey != null)
+			currentKey = this.currentMasterKey;
+		else 
+			return null;
+		
+		try {
+			Feed f = Pachube.getFeed(id, currentKey);
+			if (f != null){
+				ArrayList<String[]> datastreams = new ArrayList<String[]>();
+				for (int i=0; i<f.getData().size(); i++){
+					String[] datastream = new String[4];
+					Data d = f.getData().get(i);
+					datastream[0] = d.getId();
+					if (d.hasValue()) 
+						datastream[1] = String.valueOf(d.getValue());
+					else datastream[1] = null;
+					if (d.getTag().size() > 0){
+						datastream[2] = "";
+						for (int j=0; j<d.getTag().size()-1; j++)
+							datastream[2] += d.getTag().get(j) + ",";
+						datastream[2] += d.getTag().get(d.getTag().size()-1);
+					}
+					else datastream[2] = null;
+					if (d.hasSymbol())
+						datastream[3] = d.getSymbol();
+					else datastream[3] = null;
+					
+					datastreams.add(datastream);
+				}
+				
+				return datastreams;
+			}
+		} catch (PachubeException e){
+			System.err.println(e.errorMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public boolean editData(String feedID, String dataID, String newTag, String key){
@@ -306,7 +391,7 @@ public class PachubeHelper {
 		return false;
 	}
 	
-	public boolean updateOffline(String feedID, String key, String[] dataIDs, List<List<String[]>> data){
+	public boolean updateOffline(String feedID, String key, List<String> dataIDs, List<List<String[]>> data){
 		int id = Integer.parseInt(feedID);
 		String currentKey;
 		if (key != null) 
@@ -318,7 +403,7 @@ public class PachubeHelper {
 		
 		try {
 			boolean updated = true;
-			for (int i=0; i<dataIDs.length; i++){
+			for (int i=0; i<dataIDs.size(); i++){
 				List<String[]> dataPointsString = data.get(i);
 				ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 				for (int j=0; j<dataPointsString.size(); j++){
@@ -326,7 +411,7 @@ public class PachubeHelper {
 					DataPoint dp = new DataPoint(point[0],point[1]);
 					dataPoints.add(dp);
 				}
-				if (!Pachube.updateDataPoints(id, dataIDs[i], PachubeFactory.toDataPointXMLWithWrapper(dataPoints), currentKey))
+				if (!Pachube.updateDataPoints(id, dataIDs.get(i), PachubeFactory.toDataPointXMLWithWrapper(dataPoints), currentKey))
 					updated = false;
 			}
 			return updated;

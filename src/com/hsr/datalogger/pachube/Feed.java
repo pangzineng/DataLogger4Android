@@ -59,11 +59,6 @@ public class Feed {
 	 */
 	private ArrayList<Data> data;
 
-	/**
-	 * The key used for this feed.
-	 */
-	private String key;
-
 	private boolean isCreated;
 	
 	/**
@@ -72,6 +67,15 @@ public class Feed {
 	public Feed() {
 		this.data = new ArrayList<Data>();
 		this.isCreated=false;
+		this.id = -1;
+		this.title = null;
+		this.updated = null;
+		this.feed = null;
+		this.description = null;
+		this.website = null;
+		this.email = null;
+		this.isPrivate = false;
+		this.location = new PachubeLocation();
 	}
 
 	/**
@@ -334,22 +338,6 @@ public class Feed {
 	 */
 	public void setData(ArrayList<Data> data) {
 		this.data = data;
-	}
-	
-	/**
-	 * Sets the key to control this feed
-	 * @param key
-	 */
-	public void setKey(String key){
-		this.key = key;
-	}
-	
-	/**
-	 * Gets the control key of this feed
-	 * @return
-	 */
-	public String getKey(){
-		return this.key;
 	}
 	
 	public boolean isCreated(){

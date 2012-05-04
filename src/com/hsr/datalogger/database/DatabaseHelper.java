@@ -1,6 +1,7 @@
 package com.hsr.datalogger.database;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +16,11 @@ public class DatabaseHelper {
 	}
 
 	public List<String> getCurrentFeedList(String username){
-		return db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID);
+		return db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID, false);
 	}
 	
 	public List<String> getCurrentDataList(String currentFeed) {
-		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, currentFeed, Database.colDataName);
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, currentFeed, Database.colDataName, false);
 	}
 
 	
@@ -33,12 +34,12 @@ public class DatabaseHelper {
 	}
 	
 	public String[] getSensorForDevice(){
-		List<String> temp  = db.getAllMatchValue(Database.SENSOR_INDEX, Database.colAvailable, "1", Database.colSensorName);
+		List<String> temp  = db.getAllMatchValue(Database.SENSOR_INDEX, Database.colAvailable, "1", Database.colSensorName, false);
 		return temp.toArray(new String[temp.size()]);
 	}
 	
-	public void addFeedToList(String user, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
-		db.addFeed(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType);
+	public void addFeedToList(String user, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType, String location){
+		db.addFeed(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType, location);
 	}
 
 	// FeedTitle, DataCount, Ownership, PermissionLevel
@@ -69,9 +70,14 @@ public class DatabaseHelper {
 		db.edit(Database.FEED_INDEX, user, id, Database.colOwnership, nOwn);
 	}
 
-	public void addDataToFeed(String feedID, String dataName, String tag, int sensorID) {
-		db.addData(feedID, dataName, "0", tag, String.valueOf(sensorID));
+	public void editFeedLocation(String user, String id, String location) {
+		db.edit(Database.FEED_INDEX, user, id, Database.colLocation, location);
 	}
+
+	public void addDataToFeed(String feedID, String dataName, String value, String tag, int sensorID) {
+		db.addData(feedID, dataName, value, tag, String.valueOf(sensorID));
+	}
+	
 
 	public String getPermissionFor(String user, String feedID) {
 		return db.getValue(Database.FEED_INDEX, user, feedID, Database.colPermission);
@@ -86,15 +92,41 @@ public class DatabaseHelper {
 	}
 
 	public List<String> getOfflineTime(String dataName) {
-		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPTimestamp);
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPTimestamp, false);
 	}
 
 	public List<String> getOfflineValue(String dataName) {
-		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPValue);
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colDataName, dataName, Database.colDPValue, false);
 	}
 	
 	public List<String> getOfflineData(){
-		return db.getAllMatchValue(Database.DATAPOINT_INDEX, null, "DISTINCT", Database.colDataName);
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, null, "DISTINCT", Database.colDataName, false);
+	}
+
+	// offline v2
+	public List<String> getOfflineFeedID(){
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, null, null, Database.colFeedID, true);
+	}
+	
+	public List<String> getOfflinePermission(List<String> feedIDs){
+		List<String> allKeys = new ArrayList<String>();
+		for(int i=0; i<feedIDs.size(); i++){
+			// should at least get one value, because all datapoints has permission associate with in database or in cache (masterkey when feed belong to himself)
+			allKeys.add(db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colFeedID, feedIDs.get(i), Database.colPermission, false).get(0));
+		}
+		return allKeys;
+	}
+	
+	public List<String> getOfflineData(String feedID) {
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colFeedID, feedID, Database.colDataName, true);
+	}
+	
+	public List<String> getOfflineDatapointTime(String feedID, String dataName) {
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colFeedID, feedID, Database.colDataName, dataName, Database.colDPTimestamp, false);
+	}
+	
+	public List<String> getOfflineDatapointValue(String feedID, String dataName) {
+		return db.getAllMatchValue(Database.DATAPOINT_INDEX, Database.colFeedID, feedID, Database.colDataName, dataName, Database.colDPValue, false);
 	}
 
 	public void checkData(String feedID, String dataName, boolean isChecked) {
@@ -102,19 +134,19 @@ public class DatabaseHelper {
 	}
 
 	public int getDataCheckNum(String feedID) {
-		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked).size();
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked, false).size();
 	}
 	
 	public void cleanDatapoint() {
 		db.deleteOfflineData();
 	}
 
-	public List<String> getUpdateDataNames() {
-		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colChecked, "1", Database.colDataName);
+	public List<String> getUpdateDataNames(String feedID) {
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked, "1", Database.colDataName, false);
 	}
 	
-	public List<String> getUpdateDataSensors(){
-		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colChecked, "1", Database.colSensorID);
+	public List<String> getUpdateDataSensors(String feedID){
+		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked, "1", Database.colSensorID, false);
 	}
 
 	public void editDataValue(String feedID, String dataName, String newValue) {
@@ -131,5 +163,18 @@ public class DatabaseHelper {
 	public String getFeedTitle(String[] info) {
 		return db.getValue(Database.FEED_INDEX, info[0], info[1], Database.colFeedTitle);
 	}
+
+	// title, id, owned(Public, Private, None), access(View, Full), location("lon, lat, alt"), datacount
+	public String[] getFeedInfo(String[] feed) {
+		String title = db.getValue(Database.FEED_INDEX, feed[0], feed[1], Database.colFeedTitle);
+		String owned = db.getValue(Database.FEED_INDEX, feed[0], feed[1], Database.colOwnership);
+		String access = db.getValue(Database.FEED_INDEX, feed[0], feed[1], Database.colPermissionLevel);
+		String location = db.getValue(Database.FEED_INDEX, feed[0], feed[1], Database.colLocation);
+		int dataCount = db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feed[1]);
+		
+		return new String[]{title, feed[1], owned, access, location, String.valueOf(dataCount)};
+	}
+
+
 
 }

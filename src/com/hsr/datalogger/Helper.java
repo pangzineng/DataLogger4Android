@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.hsr.datalogger.cache.Cache;
 import com.hsr.datalogger.cache.CacheHelper;
@@ -79,20 +78,29 @@ public class Helper {
 		caH.setCurrentUser(new String[]{"guest"}, null);
 	}
 	
-	public boolean login(String[] account, boolean checked){
+	public boolean login(String[] account, boolean autoL, boolean reg){
+		
+		if(reg){ // check if need to register before perform login
+			if(!paH.createUser(account[0], account[1])){
+				return false;
+			}
+		}
+		
 		String master = paH.login(account);
-		if(master != null){  // to checked whether user change name&pw somewhere else
-				if(checked){
-					caH.setAutoLogin(true, account);
-				} else {
-					caH.removeAutoLogin();
-				}
-				caH.setCurrentUser(account, master);
-				paH.setKey(master);
-				return true;
-		  }	else {
+		if(master != null){  // check if login success
+			
+			if(autoL){ // check if saving account info for auto login is needed
+				caH.setAutoLogin(true, account);
+			} else {
+				caH.removeAutoLogin();
+			}
+			
+			caH.setCurrentUser(account, master);
+			paH.setKey(master);
+			return true;
+		}	else {
 			return false;
-		  }
+		}
 	}
 	
 	/* 3. Feed List Tab function
@@ -105,9 +113,12 @@ public class Helper {
 
 	public boolean feedCreate(String title, String type, String ownership) {
 		String[] user = caH.getCurrentUser();
-		String feedID = paH.createFeed(title, ownership); // should return the feed ID or null if fail
+		double[] loc = exH.getLocation();
+		String location = "(" + loc[0]+", "+loc[1]+", "+loc[2] + ")";
+		
+		String feedID = paH.createFeed(title, ownership, loc); // should return the feed ID or null if fail
 		if(feedID != null){   
-			dbH.addFeedToList(user[0], feedID, ownership, caH.getCurrentMasterKey(), "Full", title, type);
+			dbH.addFeedToList(user[0], feedID, ownership, caH.getCurrentMasterKey(), "Full", title, type, location);
 			caH.setCurrentFeed(feedID, title, caH.getCurrentMasterKey());
 			setCurrentTab(Cache.TAB_PAGE);
 		} else {	
@@ -120,11 +131,20 @@ public class Helper {
 		String[] feed = paH.getFeed(feedID, permission); // should include feedName and permission level(View, Full), return null if fail
 		String[] user = caH.getCurrentUser();
 		if(feed != null){
-			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor");
+			String location = "("+feed[2]+", "+feed[3]+", "+feed[4]+")"; 
+			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor", location);
 			caH.setCurrentFeed(feedID, feed[0], permission);
 		} else {
 			return false;
 		}
+		
+		// import all datas of this feed
+		List<String[]> allData = paH.getAllData(feedID, permission); // {name, value, tag, symbol(sensorID)}
+		for(int i=0; i<allData.size(); i++){
+			String[] oneData = allData.get(i);
+			dbH.addDataToFeed(feedID, oneData[0], oneData[1], oneData[2], Integer.parseInt(oneData[3]));
+		}
+		
 		return true;
 	}
 
@@ -141,6 +161,18 @@ public class Helper {
 			dbH.editFeedOwn(user, id, nOwn);
 			return paH.editStatus(id, nOwn, permission);
 		}
+	}
+
+	public boolean updateLocation(String id) {
+		String user = caH.getCurrentUser()[0];
+		String permission = dbH.getPermissionFor(user, id);
+		double[] loc = exH.getLocation();
+		 if(paH.editLocation(id, loc, permission)){
+			dbH.editFeedLocation(user, id, "(" + loc[0]+", "+loc[1]+", "+loc[2] + ")");
+			return true;
+		 } else {
+		  return false;
+		 }
 	}
 
 	public boolean feedDelete(String id, boolean local) {
@@ -221,11 +253,11 @@ public class Helper {
 		String[] units = context.getResources().getStringArray(R.array.sensor_unit);
 		String unit = units[Arrays.asList(sensors).indexOf(tag)];
 		
-		if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit)) {
+		if(paH.createData(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2], tag, unit, String.valueOf(sensorID))) {
 									// permission might be null if it's his own feed
 									// tag is the name of sensor from the string list
 									// unit is the unit of sensor value from another list
-			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, tag, sensorID);
+			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, "0", tag, sensorID);
 			return true;
 		} else {
 			return false;
@@ -271,9 +303,15 @@ public class Helper {
 		//srH.startBackgroundUpdate("feedName", interval, runningTime, new String[]{"username", "feedID", "permission"});
 	}
 	
+	/* 4. Feed Page Tab function
+	 * (5) Feed Info page
+	 * */
+	public String[] getFeedInfo() {
+		return dbH.getFeedInfo(getFeedPageInfo());
+	}
 
 	/* 4. Feed Page Tab function
-	 * (4) Click on list item (one data)
+	 * (6) Click on list item (one data)
 	 * */
 
 	public void clickOneData(String dataNames) {
@@ -339,7 +377,7 @@ public class Helper {
 		String dataName = caH.getDataInfoForDiagram()[1];
 		String permission = dbH.getPermissionFor(user, feedID);
 		
-		// stat = paH.getDataStat(feedID, dataName, permission);
+		stat = paH.getDataStat(feedID, dataName, permission);
 		return stat;
 	}
 
@@ -393,6 +431,7 @@ public class Helper {
 		Log.d("pachube debug", "Helper Line 393, currentFeed==" + currentFeed + " dataName: " + dataName);
 		return dbH.getOneDataInfo(currentFeed, dataName);
 	}
+
 
 
 

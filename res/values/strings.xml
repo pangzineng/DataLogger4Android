@@ -19,6 +19,7 @@
     <string name="login_name">Username</string>
     <string name="login_pw">Password</string>
     <string name="login_auto">Automatic login for me</string>
+    <string name="login_reg">Register a new account</string>
     
     <!-- FOR add_feed_dialog -->
 	<string name="add_feed_dialog_title">Add Feed to Feed List</string>
@@ -35,6 +36,8 @@
 	<string name="edit_feed">* Edit This Feed</string>
 	<string name="edit_feed_name">Rename</string>
 	<string name="edit_feed_status">Change Status</string>
+	<string name="edit_feed_update_location">Update Feed Location</string>
+	<string name="edit_feed_update_loc_button">Update</string>
 	<string name="delete_feed">* Delete This Feed</string>
 	<string name="delete_feed_message">Delete This Feed:</string>
 	<string name="delete_feed_button">Delete</string>
@@ -47,6 +50,15 @@
 	<string name="share_feed_permission_view">View</string>
 	<string name="share_feed_permission_full">Full</string>
 
+	<!-- FOR feed_info_dialog -->
+	<string name="feed_info_title">Feed Detail</string>
+	<string name="feed_info_feed_name">Title:</string>
+	<string name="feed_info_feed_id">ID:</string>
+	<string name="feed_info_feed_own">Owned:</string>
+	<string name="feed_info_feed_per_level">Access:</string>
+	<string name="feed_info_feed_location">Location (lon, lat, alt):</string>
+	<string name="feed_info_feed_datacount">Data Number:</string>
+	
 	<!-- FOR EmailService: send permission -->
 	<string name="email_title">Friend Permission From Datalogger4Android</string>
 	<string name="email_opening">Dear my friend:\n\nThis email is sent from my Datalogger for Android.\nI would like to share the following feed with you:</string>

@@ -8,6 +8,8 @@ public class Data{
 	private String id;
 
 	private ArrayList<String> tag;
+	
+	private String symbol;
 
 	private Double value;
 	
@@ -19,7 +21,7 @@ public class Data{
 	
 	private ArrayList<DataPoint> points;
 	
-	public Data(String id, String tag, String unit) {
+	public Data(String id, String tag, String unit, String symbol) {
 		this.id = id;
 		this.tag = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(tag, ",");
@@ -30,6 +32,7 @@ public class Data{
 		this.value = null;
 		this.minValue = null;
 		this.maxValue = null;
+		this.symbol = symbol;
 	}
 
 	public Data() {
@@ -40,6 +43,13 @@ public class Data{
 		this.value = null;
 		this.minValue = null;
 		this.maxValue = null;
+		this.symbol = null;
+	}
+	
+	public boolean hasSymbol(){
+		if (this.symbol != null){
+			return true;
+		} else return false;
 	}
 	
 	public boolean hasValue(){
@@ -122,6 +132,16 @@ public class Data{
 		if (maxValue != null) {
 			this.maxValue = Double.parseDouble(maxValue);
 		}
+	}
+	
+	public void setSymbol(String symbol){
+		if (symbol != null) {
+			this.symbol = symbol;
+		}
+	}
+	
+	public String getSymbol(){
+		return this.symbol;
 	}
 	
 	public String getUnit(){

@@ -188,6 +188,7 @@ public class PachubeFactory {
 			}
 
 		}
+		
 		f.setLocation(l);
 
 	}
@@ -287,10 +288,15 @@ public class PachubeFactory {
 
 		if ((ElmntLst = fstElmnt.getElementsByTagName("unit")).getLength() > 0) {
 			Element lstNmElmnt = (Element) ElmntLst.item(0);
-			NodeList lstNm = lstNmElmnt.getChildNodes();
-			Node h = ((Node) lstNm.item(0));
-			if (h != null) 
-				d.setUnit(h.getNodeValue().trim());
+			if (lstNmElmnt != null){
+				NamedNodeMap attr = lstNmElmnt.getAttributes();
+				Node h = attr.getNamedItem("symbol");
+				d.setSymbol(h.getNodeValue().trim());
+				NodeList lstNm = lstNmElmnt.getChildNodes();
+				h = ((Node) lstNm.item(0));
+				if (h != null) 
+					d.setUnit(h.getNodeValue().trim());
+			}
 		}
 		
 		if ((ElmntLst = fstElmnt.getElementsByTagName("datapoints")).getLength() > 0) {
@@ -361,7 +367,7 @@ public class PachubeFactory {
 			ret = ret + "<max_value>" + d.getMaxValue() + "</max_value>\n\t";
 		if (d.hasMin())
 			ret = ret + "<min_value>" + d.getMinValue() + "</min_value>\n\t";
-		ret = ret + "<unit type=\"\" symbol=\"\">" + d.getUnit() + "</unit>\n\t";
+		ret = ret + "<unit type=\"\" symbol=\"" + (d.hasSymbol()?d.getSymbol():"") + "\">" + d.getUnit() + "</unit>\n\t";
 		
 		ret = ret + "</data>";
 		
@@ -388,7 +394,7 @@ public class PachubeFactory {
 			ret = ret + "<description>" + f.getDescription() + "</description>\n\t";
 			ret = ret + "<website>" + f.getWebsite() + "</website>\n\t";
 			if (f.getLocation() != null) {
-				ret = ret + f.getLocation().toXML() + "\n\t";
+				ret = ret + toLocationXML(f.getLocation()) + "\n\t";
 			}
 	
 			for (int i = 0; i < f.getData().size(); i++) {
@@ -402,6 +408,9 @@ public class PachubeFactory {
 			ret = ret + "\n\t<environment>\n\t ";
 			ret = ret + "<title>" + f.getTitle() + "</title>\n\t";
 			ret = ret + "<private>" + Boolean.toString(f.isPrivate()) + "</private>\n\t";
+			if (f.getLocation() != null) {
+				ret = ret + toLocationXML(f.getLocation()) + "\n\t";
+			}
 		}
 		ret = ret + "</environment>\n</eeml>";
 
@@ -427,7 +436,7 @@ public class PachubeFactory {
 		ret = ret + "<description>" + f.getDescription() + "</description>\n\t";
 		ret = ret + "<website>" + f.getWebsite() + "</website>\n\t";
 		if (f.getLocation() != null) {
-			ret = ret + f.getLocation().toXML() + "\n\t";
+			ret = ret + toLocationXML(f.getLocation()) + "\n\t";
 		}
 
 		ret = ret + "</environment>\n</eeml>";
@@ -435,25 +444,54 @@ public class PachubeFactory {
 		return ret;
 	}
 	
+	public static String toLocationXML(PachubeLocation loc){
+		String ret = "";
+		ret = "<location ";
+		
+		if(loc.getDomain() != null){
+			ret = ret + "domain=\""+loc.getDomain()+"\" ";
+		}
+		
+		if(loc.getExposure() != null){
+			ret = ret + "exposure=\""+ loc.getExposure() + "\" ";
+		}
+		
+		if(loc.getDisposition() != null){
+			ret = ret + "disposition=\""+ loc.getDisposition() +"\" ";
+		}
+		ret = ret + ">\n\t\t";
+		ret = ret + "<name>"+ loc.getName() + "</name>\n\t\t";
+		ret = ret + "<lat>"+ loc.getLat() + "</lat>\n\t\t";
+		ret = ret + "<lon>"+ loc.getLon() + "</lon>\n\t\t";
+		ret = ret + "<ele>"+ loc.getElevation() + "</ele>\n\t";
+		ret = ret + "</location>";
+		return ret;
+	}
+	
 	public static String toUserXML(User u){
-		String ret = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<eeml xmlns=\"http://www.eeml.org/xsd/005\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"5\" xsi:schemaLocation=\"http://www.eeml.org/xsd/005 http://www.eeml.org/xsd/005/005.xsd\">";
-
-		ret = ret + "\n\t<user> ";
+		String ret = "";
+		
+		ret = ret + "<user>\n\t";
+		ret = ret + "<login>" + u.getUsername() + "</login>\n\t";
+		ret = ret + "<password>" + u.getPassword() + "</password>\n\t";
+		
+		/*ret = ret + "\n\t<user> ";
 		ret = ret + "\n\t<about>" + u.getAbout() + "</about>\n\t";
 		ret = ret + "<full_name>" + u.getName() + "</full_name>\n\t";
 		ret = ret + "<email>" + u.getEmail() + "</email>\n\t";
 		ret = ret + "<password>" + u.getPassword() + "</password>\n\t";
-		ret = ret + "<time_zone>"+ u.getTimezone() + "</time_zone>\n\t";
+		ret = ret + "<time_zone>"+ u.getTimezone() + "</time_zone>\n\t";*/
+		
 		ret = ret + "<roles>\n\t";
 		for (int i = 0; i < u.getRoles().size(); i++) {
 			if (i == u.getRoles().size() - 1) {
-				ret = ret + "<role>" + u.getRoles().get(i) + "<\role>\n";
+				ret = ret + "<role>" + u.getRoles().get(i) + "</role>\n";
 			} else {
-				ret = ret + "<role>" + u.getRoles().get(i) + "<\role>\n\t";
+				ret = ret + "<role>" + u.getRoles().get(i) + "</role>\n\t";
 			}
 		}
-		ret = ret + "</roles>\n\t";
-		ret = ret + "</user>\n</eeml>";
+		ret = ret + "</roles>\n";
+		ret = ret + "</user>";
 
 		return ret;
 	}

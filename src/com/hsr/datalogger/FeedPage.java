@@ -20,9 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -213,6 +211,7 @@ public class FeedPage extends Activity {
 		private static final int ADD_DATASTREAM = 1;
 		private static final int SHARE_FEED = 2;
 		private static final int UPDATE_FEED = 3;
+		private static final int FEED_INFO = 4;
 		
 		Context context;
 		Helper helper;
@@ -257,6 +256,10 @@ public class FeedPage extends Activity {
 			menu.add(Menu.NONE, UPDATE_FEED, Menu.NONE, "Update")
 				.setIcon(android.R.drawable.ic_menu_upload)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			
+			menu.add(Menu.NONE, FEED_INFO, Menu.NONE, "Info")
+				.setIcon(android.R.drawable.ic_menu_info_details)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
 		
 		@Override
@@ -282,6 +285,9 @@ public class FeedPage extends Activity {
 					DialogFragment updateFeedDialog = UpdateFeedDialog.newInstance(R.string.update_feed, context, helper);
 					updateFeedDialog.show(getFragmentManager(), "dialog");
 					return true;
+				case FEED_INFO:
+					DialogFragment feedInfoDialog = FeedInfoDialog.newInstance(R.string.feed_info_title, context, helper);
+					feedInfoDialog.show(getFragmentManager(), "dialog");
 				default:
 					return super.onOptionsItemSelected(item);
 			}
@@ -317,6 +323,64 @@ public class FeedPage extends Activity {
 
 	}
 	
+	public static class FeedInfoDialog extends DialogFragment{
+
+		private static Context mContext;
+		private static Helper helper;
+
+		public static DialogFragment newInstance(int title, Context context, Helper h) {
+			FeedInfoDialog frag = new FeedInfoDialog();
+			Bundle args = new Bundle();
+			args.putInt("title", title);
+			frag.setArguments(args);
+			
+			mContext = context;
+			helper = h;
+			
+			return frag;
+		}
+		
+		public static View getFeedInfoView(){
+			LayoutInflater inflater = LayoutInflater.from(mContext);
+			View feedInfodialog = inflater.inflate(R.layout.feed_info_dialog, null);
+			return feedInfodialog;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			int title = getArguments().getInt("title");
+			final View mDialog = getFeedInfoView();
+
+			// title, id, owned(Public, Private, None), access(View, Full), location("lon, lat, alt"), datacount
+			String[] info = helper.getFeedInfo();
+			
+			TextView Ftitle = (TextView) mDialog.findViewById(R.id.feed_info_feedTitle);
+			TextView Fid = (TextView) mDialog.findViewById(R.id.feed_info_feedID);
+			TextView Fown = (TextView) mDialog.findViewById(R.id.feed_info_owned);
+			TextView Faccess = (TextView) mDialog.findViewById(R.id.feed_info_premiLevel);
+			TextView FdataC = (TextView) mDialog.findViewById(R.id.feed_info_dataCount);
+			TextView Flocation = (TextView) mDialog.findViewById(R.id.feed_info_location);
+			
+			Ftitle.setText(info[0]);
+			Fid.setText(info[1]);
+			Fown.setText(info[2]);
+			Faccess.setText(info[3]);
+			Flocation.setText(info[4]);
+			FdataC.setText(info[5]);
+			
+			return new AlertDialog.Builder(getActivity())
+						.setIcon(android.R.drawable.ic_menu_info_details)
+						.setTitle(title)
+						.setView(mDialog)
+						.setNeutralButton(R.string.dialog_confirm, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						})
+						.create();
+		}
+	}
 	
 	public static class AddDatastreamDialog extends DialogFragment {
 

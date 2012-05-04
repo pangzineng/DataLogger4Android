@@ -1,7 +1,5 @@
 package com.hsr.datalogger;
 
-import com.hsr.datalogger.FeedList.FLFragment;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,15 +13,12 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -219,6 +214,7 @@ public class Homepage extends Activity {
 			final EditText loginName = (EditText)mDialog.findViewById(R.id.login_username);
 			final EditText loginPW = (EditText)mDialog.findViewById(R.id.login_pw);
 			final CheckBox loginAuto = (CheckBox) mDialog.findViewById(R.id.login_autoCheck);
+			final CheckBox loginReg = (CheckBox) mDialog.findViewById(R.id.login_register);
 			
 			dialog = new AlertDialog.Builder(getActivity())
 					   .setIcon(R.drawable.ic_menu_login)
@@ -233,7 +229,7 @@ public class Homepage extends Activity {
 								String lgPW = loginPW.getText().toString();
 								String[] account = new String[]{lgName, lgPW};
 								
-								if(helper.login(account, loginAuto.isChecked())){
+								if(helper.login(account, loginAuto.isChecked(), loginReg.isChecked())){
 									// SOS reload the list (login)
 									bar.setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);

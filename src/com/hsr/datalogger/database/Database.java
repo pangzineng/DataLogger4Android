@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
@@ -25,6 +24,7 @@ public class Database extends SQLiteOpenHelper {
 	static final String colOwnership = "FeedOwnerShip"; // Public, Private, None
 	static final String colPermissionLevel = "FeedPermissionLevel"; // Full, View
 	static final String colPermission = "FeedPermissionKey"; // key, Null
+	static final String colLocation = "FeedLocation";
 	
 	static final String datastreamTable = "FeedDataStreams";
 	static final String colDataName = "FeedDataStreamName";	// Key
@@ -86,7 +86,8 @@ public class Database extends SQLiteOpenHelper {
 				           colPermission + " TEXT, "  + 
 				           colPermissionLevel+ " TEXT, " + 
 				           colFeedTitle + " TEXT NOT NULL, " +
-				           colFeedType + " TEXT NOT NULL, " + 
+				           colFeedType + " TEXT NOT NULL, " +
+				           colLocation + " TEXT, " +
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
@@ -149,7 +150,7 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add feed
-	public int addFeed(String username, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType){
+	public int addFeed(String username, String feedID, String ownership, String permission, String permissionLevel, String feedTitle, String feedType, String location){
 		ContentValues cv = new ContentValues();
 		cv.put(colUsername, username);
 		cv.put(colFeedID, feedID);
@@ -158,6 +159,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(colPermissionLevel, permissionLevel);
 		cv.put(colFeedTitle, feedTitle);
 		cv.put(colFeedType, feedType);
+		cv.put(colLocation, location);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long rowID = db.insert(feedTable, colFeedID, cv);
@@ -206,7 +208,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(colAvailable, available);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
-		long log = db.insert(sensorTable, colSensorID, cv);
+		db.insert(sensorTable, colSensorID, cv);
 		db.close();
 	}
 	
@@ -385,7 +387,7 @@ public class Database extends SQLiteOpenHelper {
 		return cur.getCount();
 	}
 		
-	public List<String> getAllMatchValue(int tableIndex, String keyName, String keyValue, String toGetCol){
+	public List<String> getAllMatchValue(int tableIndex, String keyName, String keyValue, String toGetCol, boolean isDistinct){
 		
 		List<String> allValues = new ArrayList<String>();
 		
@@ -412,15 +414,17 @@ public class Database extends SQLiteOpenHelper {
 		Cursor cur = null;
 		String query = "";
 
+		if(isDistinct){
+			query += "SELECT DISTINCT ";
+		} else {
+			query += "SELECT ";
+		}
+		
 		if(keyName == null){
-			if(keyValue.equals("DISTINCT")){
-				query = "SELECT DISTINCT " + toGetCol + " FROM " + tableName;
-			} else {
-				query = "SELECT * FROM " + tableName;
-			}
+			query += toGetCol + " FROM " + tableName;
 			cur = db.rawQuery(query, null);
 		} else {
-			query = "SELECT * FROM " + tableName + " WHERE " + keyName + " =?";
+			query += toGetCol + " FROM " + tableName + " WHERE " + keyName + " =?";
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
 				
@@ -437,5 +441,59 @@ public class Database extends SQLiteOpenHelper {
 		return allValues;
 	}
 	
-	
+	// v2 for offline data only
+	public List<String> getAllMatchValue(int tableIndex, String keyName1, String keyValue1, String keyName2, String keyValue2, String toGetCol, boolean isDistinct){
+		
+		List<String> allValues = new ArrayList<String>();
+		
+		String tableName = "";
+		switch(tableIndex){
+			case ACCOUNT_INDEX:
+				tableName = accountTable;
+				break;
+			case FEED_INDEX:
+				tableName = feedTable;
+				break;
+			case DATASTREAM_INDEX:
+				tableName = datastreamTable;
+				break;
+			case DATAPOINT_INDEX:
+				tableName = datapointTable;
+				break;
+			case SENSOR_INDEX:
+				tableName = sensorTable;
+				break;
+		}
+		
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cur = null;
+		String query = "";
+
+		if(isDistinct){
+			query += "SELECT DISTINCT ";
+		} else {
+			query += "SELECT ";
+		}
+		
+		if(keyName1 == null){
+			query += toGetCol + " FROM " + tableName;
+			cur = db.rawQuery(query, null);
+		} else {
+			query += toGetCol + " FROM " + tableName + " WHERE " + keyName1 + " =? AND " + keyName2 + " =?";
+			cur = db.rawQuery(query, new String[]{keyValue1, keyValue2});
+		}
+				
+		if(cur == null || cur.moveToFirst() == false) return null;
+		
+		int colIndex = cur.getColumnIndex(toGetCol);
+		
+		while(cur.isAfterLast() != true){
+			allValues.add(cur.getString(colIndex));
+			cur.moveToNext();
+		}
+		
+		db.close();
+		return allValues;
+	}
+
 }
