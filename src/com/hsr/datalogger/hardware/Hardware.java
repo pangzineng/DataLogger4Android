@@ -47,7 +47,8 @@ public class Hardware implements SensorEventListener{
 	}
 	
 	public double getSoundValue(){
-		return mSensor.getdB();
+		double sound = mSensor.getdB();
+		return sound<0?0:sound;
 	}
 
 	public float getSensorValue(int SensorType){

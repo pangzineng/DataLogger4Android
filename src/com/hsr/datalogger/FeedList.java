@@ -47,7 +47,7 @@ public class FeedList extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		Log.d("pachube101", "FeedList: onCreate");
         FragmentManager fm = getFragmentManager();
 
         // Create the list fragment and add it as our sole content.
@@ -59,8 +59,22 @@ public class FeedList extends Activity {
         
 	}
 
-	// FIXME this one accept the resource from database and sort it to different attribute for the list to load
-	// need another loader class to load the list from database and store individually into the FeedItem
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("pachube101", "FeedList: onResume");
+	}
+	@Override
+	protected void onPause() {
+    	super.onPause();
+		Log.d("pachube101", "FeedList: onPause");
+	};
+	@Override
+	protected void onDestroy() {
+    	super.onDestroy();
+		Log.d("pachube101", "FeedList: onDestroy");
+	};
+
 	public static class FeedItem {
 		
 		public final static int PUBLIC = 10;
@@ -160,10 +174,11 @@ public class FeedList extends Activity {
 
 		@Override
 		protected void onStartLoading() {
-            if (mList != null) {
-                // If we currently have a result available, deliver it immediately.
-                deliverResult(mList);
-            }
+			// FIXME try loading solution
+//            if (mList != null) {
+//                // If we currently have a result available, deliver it immediately.
+//                deliverResult(mList);
+//            }
 
             // FIXME Start watching for changes in the data.
 //            if (mPackageObserver == null) {
@@ -272,7 +287,7 @@ public class FeedList extends Activity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			
+			Log.d("pachube101", "FLFragment: onActivityCreated");
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
 			
@@ -281,24 +296,36 @@ public class FeedList extends Activity {
 			
 			mAdapter = new FeedListAdapter(getActivity());
 			setListAdapter(mAdapter);
-			
 			setListShown(false);
-			
-			getLoaderManager().initLoader(0, null, this);
+			helper.initFeedListLoader(getLoaderManager(), this);
+			//getLoaderManager().initLoader(0, null, this);
 			
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				@Override
 				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-					TextView mid = (TextView) view.findViewById(R.id.list_feed_id);
-					TextView mname = (TextView) view.findViewById(R.id.list_feed_name);
-
-					Log.d("pachube debug", "Long click feed item: " + mid.getText() + " " + mname.getText());
 					DialogFragment editDeletedialog = EditDeleteFeedDialog.newInstance(R.string.edit_delete_dialog_title, getActivity().getApplicationContext(), helper, view);
 					editDeletedialog.show(getFragmentManager(), "dialog");
 					return false;
 				}
 			});
+		}
+		@Override
+		public void onResume() {
+			super.onResume();
+			Log.d("pachube101", "FLFragment: onResume");
+		}
+		
+		@Override
+		public void onPause() {
+			super.onPause();
+			Log.d("pachube101", "FLFragment: onPause");
+		}
+		
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			Log.d("pachube101", "FLFragment: onDestroy");
 		}
 		
 		@Override
@@ -347,7 +374,9 @@ public class FeedList extends Activity {
 			TextView mid = (TextView) v.findViewById(R.id.list_feed_id);
 			TextView mname = (TextView) v.findViewById(R.id.list_feed_name);
 			helper.clickOneFeed(mid.getText().toString(), mname.getText().toString());
-			Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
+			helper.reloadAllList();
+			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+			Log.d("pachube101", "FLFragment: onListItemClick (click one feed)");
 		}
 		
 		
@@ -445,7 +474,8 @@ public class FeedList extends Activity {
 									Toast.makeText(mContext, "Error from pachube server, fail to delete on server side", Toast.LENGTH_LONG).show();
 								}
 								// SOS reload the list (delete feed)
-								Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_LIST);
+								helper.reloadAllList();
+								getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 							}
 					   	})
 					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
@@ -479,7 +509,8 @@ public class FeedList extends Activity {
 												Toast.makeText(mContext, "Error from pachube server, fail to edit on server side", Toast.LENGTH_LONG).show();
 											}
 											// SOS reload the list (edit feed)
-											Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_LIST);
+											helper.reloadAllList();
+											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 										}
 								  })
 								  .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
@@ -591,7 +622,8 @@ public class FeedList extends Activity {
 								}
 								
 								if(result){
-									Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									helper.reloadDataList();
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 								}
 							}
 						})
@@ -604,6 +636,4 @@ public class FeedList extends Activity {
 					   .create();
 		}
 	}
-
-
 }

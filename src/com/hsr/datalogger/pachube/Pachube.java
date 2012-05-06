@@ -286,7 +286,7 @@ public class Pachube {
 	 */
 	public static InputStream showGraph(int feedID, String streamID, int width, int height, String duration, int timezone) throws IOException{
 		URL graph = new URL("http://api.pachube.com/v2/feeds/" + feedID + "/datastreams/"
-				+ streamID + ".png?width=" + width + "&height=" + height + "&colour=#000000" 
+				+ streamID + ".png?width=" + width + "&height=" + height + "&colour=%23000000" 
 				+ "&duration=" + duration + "&show_axis_labels=true&detailed_grid=true&timezone=" + timezone);
 		
 		InputStream in = (InputStream) graph.getContent();

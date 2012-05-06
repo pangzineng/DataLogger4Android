@@ -82,9 +82,6 @@ public class HelperLight {
 	}
 
 	
-	// FIXME big problem here,the update needs permission
-	// if there are more than one feed in the offline storage, it will be big error
-	// need to change the database table, paH passing method, and helper
 	public boolean getOfflineData(){
 		
 		// FYI

@@ -161,35 +161,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
         
     </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow5"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tableRow4" >
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/feed_info_feed_location"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/feed_info_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(47, 8, 360)"
-            android:textStyle="bold"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </TableRow>
-
+    
     <ProgressBar
         android:id="@+id/progressBar3"
         style="?android:attr/progressBarStyleHorizontal"
@@ -199,6 +171,52 @@
         android:focusable="false"
         android:clickable="false"
         android:progress="40"
-        android:layout_below="@+id/tableRow5" />
+        android:layout_below="@+id/tableRow4" />
+    
+    <TableRow
+        android:id="@+id/tableRow5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/progressBar3" >
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/feed_info_feed_location"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </TableRow>
+
+    <TextView
+        android:id="@+id/feed_info_location"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="(47, 8, 360)"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_below="@+id/tableRow5"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:focusable="false"
+        android:clickable="false"
+        android:progress="20"
+        android:layout_below="@+id/feed_info_location" />
 
 </RelativeLayout>

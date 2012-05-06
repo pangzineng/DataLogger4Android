@@ -43,7 +43,24 @@ public class FeedPage extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("pachube101", "FeedPage: onCreate");
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("pachube101", "FeedPage: onResume");
+	}
+	@Override
+	protected void onPause() {
+    	super.onPause();
+		Log.d("pachube101", "FeedPage: onPause");
+	};
+	@Override
+	protected void onDestroy() {
+    	super.onDestroy();
+		Log.d("pachube101", "FeedPage: onDestroy");
+	};
 	
 	public static class DataItem {
 		
@@ -53,7 +70,6 @@ public class FeedPage extends Activity {
 		
 		public DataItem(Helper helper, String dataName) {
 			String[] info = helper.getDataListItem(dataName);
-			Log.d("pachube debug", "FeedPage Line 56, info.length==" + info.length + "info[1]" + info[1]);
 			tags = info[0];
 			checked = (info[1]==null||info[1].equals("0"))?false:true;
 			this.dataName = dataName;
@@ -89,7 +105,7 @@ public class FeedPage extends Activity {
 
 		@Override
 		public List<DataItem> loadInBackground() {
-			Log.d("pachube debug", "FeedPage Line 98");
+			Log.d("pachube101", "DataListLoader: loadInBackground");
 			List<String> datas = helper.getDataList();
 			if(datas == null) return null;
 			// TODO Testing off (load data list)
@@ -104,6 +120,7 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public void deliverResult(List<DataItem> data) {
+			Log.d("pachube101", "DataListLoader: deliverResult");
             mList = data;
 
             if (isStarted()) {
@@ -114,6 +131,7 @@ public class FeedPage extends Activity {
 		
 		@Override
 		protected void onStartLoading() {
+			Log.d("pachube101", "DataListLoader: onStartLoading");
             if (mList != null) {
                 // If we currently have a result available, deliver it immediately.
                 deliverResult(mList);
@@ -195,6 +213,15 @@ public class FeedPage extends Activity {
 			
 			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
 			check.setChecked(item.getChecked());
+			
+//			check.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					Log.d("pachube debug", "click");
+//					helper.checkData(item.getDataName(), item.getChecked()?false:true);
+//				}
+//			});
+			
 			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -220,6 +247,7 @@ public class FeedPage extends Activity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
+			Log.d("pachube101", "FPFragment: onActivityCreated");
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
 			
@@ -230,7 +258,9 @@ public class FeedPage extends Activity {
 			setListAdapter(mAdapter);
 			
 			setListShown(false);
-			getLoaderManager().initLoader(0, null, this);
+
+			helper.initFeedPageLoader(getLoaderManager(), this);
+			//getLoaderManager().initLoader(0, null, this);
 
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -241,6 +271,24 @@ public class FeedPage extends Activity {
 					return false;
 				}
 			});
+		}
+		
+		@Override
+		public void onResume() {
+			super.onResume();
+			Log.d("pachube101", "FPFragment: onResume");
+		}
+		
+		@Override
+		public void onPause() {
+			super.onPause();
+			Log.d("pachube101", "FPFragment: onPause");
+		}
+		
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			Log.d("pachube101", "FPFragment: onDestroy");
 		}
 		
 		@Override
@@ -297,17 +345,20 @@ public class FeedPage extends Activity {
 		public void onListItemClick(ListView l, View v, int position, long id) {
 			TextView dataName = (TextView) v.findViewById(R.id.data_item_name);
 			helper.clickOneData(dataName.getText().toString());
-			Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_DATA);
+			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_DATA);
+			Log.d("pachube101", "FPFragment: onListItemClick (click one data)");
 		}
 
 		
 		@Override
 		public Loader<List<DataItem>> onCreateLoader(int id, Bundle args) {
+			Log.d("pachube101", "FPFragment: onCreateLoader");
 			return new DataListLoader(getActivity(), helper);
 		}
 
 		@Override
 		public void onLoadFinished(Loader<List<DataItem>> loader, List<DataItem> data) {
+			Log.d("pachube101", "FPFragment: onLoadFinished");
 			mAdapter.setData(data);
 			if(isResumed()){
 				setListShown(true);
@@ -433,7 +484,8 @@ public class FeedPage extends Activity {
 									
 									if(helper.dataCreate(name, sensor, sensorID)){
 										// reload the data list
-										Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
+										Log.d("pachube101", "AddDatastreamDialog: onClick (add one data)");
+										getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 									} else {
 										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
 									}
@@ -639,7 +691,8 @@ public class FeedPage extends Activity {
 								if(helper.dataDelete(dataID)){
 									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
 									// SOS reload the list (delete data)
-									Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									helper.reloadAllList();
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 								} else {
 									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
 								}
@@ -671,7 +724,8 @@ public class FeedPage extends Activity {
 						if(helper.dataEdit(dataID, nTags)){
 							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
 							// SOS reload the list (edit data)
-							Homepage.barInstance().setSelectedNavigationItem(Homepage.FEED_PAGE);
+							helper.reloadAllList();
+							getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 						} else {
 							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();
 						}

@@ -22,6 +22,7 @@ public class ExternalHelper {
 	
 	// lon, lat, alt
 	public double[] getLocation(){
+		turnOnLocation();
 		if(nl.getLocation()==null) return new double[]{0,0,0};
 		return new double[]{nl.getLon(),nl.getLat(),nl.getAlt()};
 	}

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,8 +29,24 @@ public class FeedData extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("pachube101", "FeedData: onCreate");
 	}
-	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("pachube101", "FeedData: onResume");
+	}
+	@Override
+	protected void onPause() {
+    	super.onPause();
+		Log.d("pachube101", "FeedData: onPause");
+	};
+	@Override
+	protected void onDestroy() {
+    	super.onDestroy();
+		Log.d("pachube101", "FeedData: onDestroy");
+	};
+
 	public static class FDFragment extends Fragment {
 		
 		private static final int EDIT_DIAGRAM = 1;
@@ -45,6 +62,7 @@ public class FeedData extends Activity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
+			Log.d("pachube101", "FDFragment: onActivityCreated");
 			setHasOptionsMenu(true);
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
@@ -67,6 +85,23 @@ public class FeedData extends Activity {
 			
 			helper.tempStore(diagram);
 			helper.reDraw();
+		}
+		@Override
+		public void onResume() {
+			super.onResume();
+			Log.d("pachube101", "FDFragment: onResume");
+		}
+		
+		@Override
+		public void onPause() {
+			super.onPause();
+			Log.d("pachube101", "FDFragment: onPause");
+		}
+		
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			Log.d("pachube101", "FDFragment: onDestroy");
 		}
 		
 		@Override
@@ -241,5 +276,4 @@ public class FeedData extends Activity {
 					   .create();
 		}
 	}
-
 }

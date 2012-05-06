@@ -29,21 +29,16 @@ public class Homepage extends Activity {
 	public static final int FEED_DATA = 2;
 	
 	private Helper helper;
-	private static ActionBar bar;
-	
-	public static ActionBar barInstance() {
-		return bar;
-	}
 
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        Log.d("pachube101", "Homepage: onCreate");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         
         helper = new Helper(this);
-        bar = getActionBar();
+        ActionBar bar = getActionBar();
 
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
@@ -70,7 +65,7 @@ public class Homepage extends Activity {
         user.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				DialogFragment loginDialog = LoginDialog.newInstance(R.string.login_dialog_title, Homepage.this, helper, v, bar);
+				DialogFragment loginDialog = LoginDialog.newInstance(R.string.login_dialog_title, Homepage.this, helper, v);
 				loginDialog.show(getFragmentManager(), "dialog");
 			}
 		});
@@ -78,7 +73,23 @@ public class Homepage extends Activity {
 		bar.setDisplayOptions(bar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM);
     }
     
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	Log.d("pachube101", "Homepage: onResume");
+    }
     
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	Log.d("pachube101", "Homepage: onPause");
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	Log.d("pachube101", "Homepage: onDestroy");
+    }
     public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
         private final Activity mActivity;
         private final String mTag;
@@ -112,8 +123,8 @@ public class Homepage extends Activity {
 
 
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			Log.d("pachube101", "TabListener: onTabSelected");
         	helper.setCurrentTab(tab.getPosition());
-        	Log.d("pachube debug", "click a tab: " + tab.getPosition());
             if (mFragment == null) {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
                 ft.add(android.R.id.content, mFragment, mTag);
@@ -135,22 +146,19 @@ public class Homepage extends Activity {
 
     }
 
-
 	public static class LoginDialog extends DialogFragment {
 
 		private static Context mContext;
 		private static TextView username;
 		private static Helper helper;
-		private static ActionBar bar;
 		AlertDialog dialog;
 		
-		public static LoginDialog newInstance(int title, Context context, Helper h, View name, ActionBar b) {
+		public static LoginDialog newInstance(int title, Context context, Helper h, View name) {
 			LoginDialog frag = new LoginDialog();
 			Bundle args = new Bundle();
 			args.putInt("title", title);
 			frag.setArguments(args);
 			
-			bar = b;
 			mContext = context;
 			helper = h;
 			username = (TextView) name;
@@ -191,7 +199,8 @@ public class Homepage extends Activity {
 										public void onClick(DialogInterface dialog, int which) {
 											helper.logout();
 											// SOS reload the list (logout)
-											bar.setSelectedNavigationItem(Homepage.FEED_LIST);
+											helper.reloadAllList();
+											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									    	username.setText("guest");
 									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
 									    	dialog.dismiss();
@@ -231,7 +240,8 @@ public class Homepage extends Activity {
 								
 								if(helper.login(account, loginAuto.isChecked(), loginReg.isChecked())){
 									// SOS reload the list (login)
-									bar.setSelectedNavigationItem(Homepage.FEED_LIST);
+									helper.reloadAllList();
+									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);
 							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
 								} else {

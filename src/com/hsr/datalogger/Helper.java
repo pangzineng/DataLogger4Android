@@ -3,11 +3,14 @@ package com.hsr.datalogger;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.LoaderManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.hsr.datalogger.FeedList.FLFragment;
+import com.hsr.datalogger.FeedPage.FPFragment;
 import com.hsr.datalogger.cache.Cache;
 import com.hsr.datalogger.cache.CacheHelper;
 import com.hsr.datalogger.database.DatabaseHelper;
@@ -37,7 +40,8 @@ public class Helper {
 		this.context = context;
 	}
 	
-	/* 1. Launch of the app
+	/* 1. Launch of the application
+	 * (1) initialize tab
 	 * */
 	public int getCurrentTab(){
 		return caH.getCurrentTab();
@@ -47,6 +51,40 @@ public class Helper {
 		caH.setCurrentTab(index);
 	}
 	
+	/* 1. Launch of the application
+	 * (2) reload the list
+	 * */
+	LoaderManager lmFeed;
+	FLFragment flf;
+	boolean isFLinit = false;
+	LoaderManager lmData;
+	FPFragment fpf;
+	boolean isFPinit = false;
+	//FIXME
+	public void initFeedListLoader(LoaderManager loaderManager, FLFragment fLFragment) {
+		lmFeed = loaderManager;
+		flf = fLFragment;
+		lmFeed.initLoader(0, null, flf);
+	}
+	
+	public void initFeedPageLoader(LoaderManager loaderManager, FPFragment fPFragment){
+		lmData = loaderManager;
+		fpf = fPFragment;
+		lmData.initLoader(1, null, fpf);
+	}
+	
+	public void reloadFeedList(){
+		lmFeed.initLoader(0, null, flf);
+	}
+	
+	public void reloadDataList(){
+		lmData.initLoader(1, null, fpf);
+	}
+	
+	public void reloadAllList(){
+		lmFeed.initLoader(0, null, flf);
+		lmData.initLoader(1, null, fpf);
+	}
 	/* 2. Handle different cases for login & logout
 	 * (1) action bar title
 	 * */
@@ -190,9 +228,16 @@ public class Helper {
 	/* 3. Feed List Tab function
 	 * (3) Load the feed list from database
 	 * */
-	// FIXME FEED LIST LOADING
-	
-	
+	public String[] getFeedListItem(String feedID) {
+		String currentUser = caH.getCurrentUser()[0];
+		return dbH.getOneFeedInfo(currentUser, feedID);
+	}
+
+	public List<String> getFeedList() {
+		String currentUser = caH.getCurrentUser()[0];
+		return dbH.getCurrentFeedList(currentUser);
+	}
+
 	/* 3. Feed List Tab function
 	 * (4) Click on list item (one feed)
 	 * */
@@ -311,7 +356,20 @@ public class Helper {
 	}
 
 	/* 4. Feed Page Tab function
-	 * (6) Click on list item (one data)
+	 * (6) load the data list from database
+	 * */
+	public List<String> getDataList() {
+		String currentFeed = caH.getCurrentFeedInfo()[0];
+		return dbH.getCurrentDataList(currentFeed);
+	}
+
+	public String[] getDataListItem(String dataName) {
+		String currentFeed = caH.getCurrentFeedInfo()[0];
+		return dbH.getOneDataInfo(currentFeed, dataName);
+	}
+
+	/* 4. Feed Page Tab function
+	 * (7) Click on list item (one data)
 	 * */
 
 	public void clickOneData(String dataNames) {
@@ -401,54 +459,4 @@ public class Helper {
 		//return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
 		return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
 	}
-	
-	
-	//===============================================================================================
-	
-
-
-	/* For the feed list in the first tab
-	 * */
-	
-	public String[] getFeedListItem(String feedID) {
-		String currentUser = caH.getCurrentUser()[0];
-		return dbH.getOneFeedInfo(currentUser, feedID);
-	}
-
-
-	public List<String> getFeedList() {
-		String currentUser = caH.getCurrentUser()[0];
-		return dbH.getCurrentFeedList(currentUser);
-	}
-
-	public List<String> getDataList() {
-		String currentFeed = caH.getCurrentFeedInfo()[0];
-		return dbH.getCurrentDataList(currentFeed);
-	}
-
-	public String[] getDataListItem(String dataName) {
-		String currentFeed = caH.getCurrentFeedInfo()[0];
-		Log.d("pachube debug", "Helper Line 393, currentFeed==" + currentFeed + " dataName: " + dataName);
-		return dbH.getOneDataInfo(currentFeed, dataName);
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
