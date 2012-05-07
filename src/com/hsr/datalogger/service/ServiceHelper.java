@@ -24,6 +24,7 @@ public class ServiceHelper {
 		context.startService(startBackground);
 	}
 	
+	// never used
 	public void stopBackgroundUpdate(){
 		
 		closeNoti();

@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, Home page!</string>
-    <string name="app_name">Datalogger4Android</string>
+    <string name="app_name">DataLogger</string>
     
     <!-- FOR all dialog buttons -->
     <string name="dialog_confirm">Submit</string>

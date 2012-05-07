@@ -92,4 +92,25 @@ public class CacheHelper {
 	public void setCurrentData(String dataName) {
 		cache.setDataStream(dataName);
 	}
+
+	public void closeListLoader() {
+		cache.setInitFL(false);
+		cache.setInitFP(false);
+	}
+
+	public void setInitFL(boolean b) {
+		cache.setInitFL(b);
+	}
+
+	public void setInitFP(boolean b) {
+		cache.setInitFP(b);
+	}
+
+	public boolean getInitFL() {
+		return cache.getInitFL();
+	}
+
+	public boolean getIniFP() {
+		return cache.getInitFP();
+	}
 }

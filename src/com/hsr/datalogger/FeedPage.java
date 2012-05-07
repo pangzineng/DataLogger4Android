@@ -214,20 +214,21 @@ public class FeedPage extends Activity {
 			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
 			check.setChecked(item.getChecked());
 			
-//			check.setOnClickListener(new View.OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					Log.d("pachube debug", "click");
-//					helper.checkData(item.getDataName(), item.getChecked()?false:true);
-//				}
-//			});
-			
-			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			check.setOnClickListener(new View.OnClickListener() {
 				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					helper.checkData(item.getDataName(), isChecked);
+				public void onClick(View v) {
+					helper.checkData(item.getDataName(), item.getChecked()?false:true);
+					Log.d("pachube debug", "Click " + item.getDataName() + ": " + item.getChecked());
 				}
 			});
+			
+//			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//				@Override
+//				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//					Log.d("pachube wtf", "Checked: " + item.getDataName()+ "" + isChecked);
+//					helper.checkData(item.getDataName(), isChecked);
+//				}
+//			});
 			
 			return view;
 		}
@@ -259,7 +260,7 @@ public class FeedPage extends Activity {
 			
 			setListShown(false);
 
-			helper.initFeedPageLoader(getLoaderManager(), this);
+			//helper.initFeedPageLoader(getLoaderManager(), this);
 			//getLoaderManager().initLoader(0, null, this);
 
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -276,6 +277,7 @@ public class FeedPage extends Activity {
 		@Override
 		public void onResume() {
 			super.onResume();
+			helper.initFeedPageLoader(getLoaderManager(), this);
 			Log.d("pachube101", "FPFragment: onResume");
 		}
 		
@@ -297,14 +299,14 @@ public class FeedPage extends Activity {
 				.setIcon(android.R.drawable.ic_menu_add)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		
+			menu.add(Menu.NONE, UPDATE_FEED, Menu.NONE, "Update")
+				.setIcon(android.R.drawable.ic_menu_upload)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
 			menu.add(Menu.NONE, SHARE_FEED, Menu.NONE, "Share")
 				.setIcon(android.R.drawable.ic_menu_share)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-			menu.add(Menu.NONE, UPDATE_FEED, Menu.NONE, "Update")
-				.setIcon(android.R.drawable.ic_menu_upload)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
 			menu.add(Menu.NONE, FEED_INFO, Menu.NONE, "Info")
 				.setIcon(android.R.drawable.ic_menu_info_details)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -485,7 +487,7 @@ public class FeedPage extends Activity {
 									if(helper.dataCreate(name, sensor, sensorID)){
 										// reload the data list
 										Log.d("pachube101", "AddDatastreamDialog: onClick (add one data)");
-										getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+										helper.reloadDataList();
 									} else {
 										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
 									}
@@ -691,8 +693,7 @@ public class FeedPage extends Activity {
 								if(helper.dataDelete(dataID)){
 									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
 									// SOS reload the list (delete data)
-									helper.reloadAllList();
-									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									helper.reloadDataList();
 								} else {
 									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
 								}
@@ -724,8 +725,7 @@ public class FeedPage extends Activity {
 						if(helper.dataEdit(dataID, nTags)){
 							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
 							// SOS reload the list (edit data)
-							helper.reloadAllList();
-							getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+							helper.reloadDataList();
 						} else {
 							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();
 						}

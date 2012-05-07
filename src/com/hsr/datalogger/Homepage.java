@@ -42,7 +42,6 @@ public class Homepage extends Activity {
 
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
-
         
         bar.addTab(bar.newTab().setText("Feed List").setTabListener(new TabListener<FeedList.FLFragment>(this, FeedList.FLFragment.class, helper, "FeedList")));
         bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(this, FeedPage.FPFragment.class, helper, "FeedPage")));
@@ -88,8 +87,9 @@ public class Homepage extends Activity {
     @Override
     protected void onDestroy() {
     	super.onDestroy();
-    	Log.d("pachube101", "Homepage: onDestroy");
+    	helper.closeListLoader(); 
     }
+    
     public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
         private final Activity mActivity;
         private final String mTag;
@@ -199,8 +199,7 @@ public class Homepage extends Activity {
 										public void onClick(DialogInterface dialog, int which) {
 											helper.logout();
 											// SOS reload the list (logout)
-											helper.reloadAllList();
-											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+											helper.reloadFeedList();
 									    	username.setText("guest");
 									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
 									    	dialog.dismiss();
@@ -240,7 +239,7 @@ public class Homepage extends Activity {
 								
 								if(helper.login(account, loginAuto.isChecked(), loginReg.isChecked())){
 									// SOS reload the list (login)
-									helper.reloadAllList();
+									helper.reloadFeedList();
 									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);
 							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();

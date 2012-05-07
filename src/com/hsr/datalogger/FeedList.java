@@ -185,11 +185,11 @@ public class FeedList extends Activity {
 //                mPackageObserver = new PackageIntentReceiver(this);
 //            }
 
-            if (takeContentChanged() || mList == null) {
+//            if (takeContentChanged() || mList == null) {
                 // If the data has changed since the last time it was loaded
                 // or is not currently available, start a load.
                 forceLoad();
-            }
+//            }
 		}
 		
 		@Override
@@ -297,7 +297,7 @@ public class FeedList extends Activity {
 			mAdapter = new FeedListAdapter(getActivity());
 			setListAdapter(mAdapter);
 			setListShown(false);
-			helper.initFeedListLoader(getLoaderManager(), this);
+			//helper.initFeedListLoader(getLoaderManager(), this);
 			//getLoaderManager().initLoader(0, null, this);
 			
 			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -313,6 +313,7 @@ public class FeedList extends Activity {
 		@Override
 		public void onResume() {
 			super.onResume();
+			helper.initFeedListLoader(getLoaderManager(), this);
 			Log.d("pachube101", "FLFragment: onResume");
 		}
 		
@@ -374,7 +375,7 @@ public class FeedList extends Activity {
 			TextView mid = (TextView) v.findViewById(R.id.list_feed_id);
 			TextView mname = (TextView) v.findViewById(R.id.list_feed_name);
 			helper.clickOneFeed(mid.getText().toString(), mname.getText().toString());
-			helper.reloadAllList();
+			helper.reloadFeedList();
 			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
 			Log.d("pachube101", "FLFragment: onListItemClick (click one feed)");
 		}
@@ -474,8 +475,7 @@ public class FeedList extends Activity {
 									Toast.makeText(mContext, "Error from pachube server, fail to delete on server side", Toast.LENGTH_LONG).show();
 								}
 								// SOS reload the list (delete feed)
-								helper.reloadAllList();
-								getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+								helper.reloadFeedList();
 							}
 					   	})
 					   .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {
@@ -509,8 +509,7 @@ public class FeedList extends Activity {
 												Toast.makeText(mContext, "Error from pachube server, fail to edit on server side", Toast.LENGTH_LONG).show();
 											}
 											// SOS reload the list (edit feed)
-											helper.reloadAllList();
-											getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+											helper.reloadFeedList();
 										}
 								  })
 								  .setNegativeButton(R.string.dialog_cancel, new OnClickListener() {

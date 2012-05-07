@@ -134,7 +134,9 @@ public class DatabaseHelper {
 	}
 
 	public int getDataCheckNum(String feedID) {
-		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked, false).size();
+		List<String> all = db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, feedID, Database.colChecked, "1", Database.colDataName, true);
+		if(all==null) return 0;
+		return all.size();
 	}
 	
 	public void cleanDatapoint() {

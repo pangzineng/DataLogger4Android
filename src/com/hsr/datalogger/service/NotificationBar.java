@@ -41,7 +41,7 @@ public class NotificationBar {
 		time = 0;
 		this.context = context;
 		this.FeedName = FeedName;
-		this.runningTime = runningTime + 1;
+		this.runningTime = runningTime;
 		this.user = user;
 		
 		nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -51,27 +51,28 @@ public class NotificationBar {
 		Intent noti = new Intent(context, BackgroundUpdate.class);
 		noti.putExtra("STOP", true);
 		pnoti = PendingIntent.getService(context, 0, noti, PendingIntent.FLAG_ONE_SHOT);
-		
+
 		updateTimer();
 		mHandler.removeCallbacks(mTask);
 		mHandler.postDelayed(mTask, 60000);
-
 	}
 	
 	private void updateTimer(){
 		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " mintues). Click to stop now", pnoti);
 		time ++;
-		if(runningTime-time <0){
+		Log.d("pachube debug","Runtime: " + runningTime + " time: " + time + " (runningTime-time): " + (runningTime-time));
+		if(runningTime-time <=0){
 			Log.d("pang", "should close the noti now");
-			Intent closeBackground = new Intent(context, BackgroundUpdate.class);
-			closeBackground.putExtra("STOP", true);
-			context.startService(closeBackground);
+//			Intent closeBackground = new Intent(context, BackgroundUpdate.class);
+//			closeBackground.putExtra("STOP", true);
+//			context.startService(closeBackground);
 			closeNoti();
 		} else {
 			nm.notify(NOTI_ID, nt);
 		}
 	}
 	
+	// FIXME bug here: if user click the noti, noti will close itself, this method won't run, the handler will continue to run
 	public void closeNoti(){
 		mHandler.removeCallbacks(mTask);
 		nm.cancel(NOTI_ID);

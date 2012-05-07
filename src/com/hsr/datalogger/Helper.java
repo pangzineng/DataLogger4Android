@@ -54,37 +54,42 @@ public class Helper {
 	/* 1. Launch of the application
 	 * (2) reload the list
 	 * */
-	LoaderManager lmFeed;
-	FLFragment flf;
-	boolean isFLinit = false;
-	LoaderManager lmData;
-	FPFragment fpf;
-	boolean isFPinit = false;
+	private static LoaderManager lmFeed;
+	private static FLFragment flf;
+	private static LoaderManager lmData;
+	private static FPFragment fpf;
+	
 	//FIXME
 	public void initFeedListLoader(LoaderManager loaderManager, FLFragment fLFragment) {
 		lmFeed = loaderManager;
 		flf = fLFragment;
-		lmFeed.initLoader(0, null, flf);
+		lmFeed.restartLoader(0, null, flf);
+		caH.setInitFL(true);
 	}
 	
 	public void initFeedPageLoader(LoaderManager loaderManager, FPFragment fPFragment){
 		lmData = loaderManager;
 		fpf = fPFragment;
-		lmData.initLoader(1, null, fpf);
+		lmData.restartLoader(1, null, fpf);
+		caH.setInitFP(true);
 	}
 	
 	public void reloadFeedList(){
-		lmFeed.initLoader(0, null, flf);
+		if(caH.getInitFL()){
+			lmFeed.restartLoader(0, null, flf);
+		}
 	}
 	
 	public void reloadDataList(){
-		lmData.initLoader(1, null, fpf);
+		if(caH.getIniFP()){
+			lmData.restartLoader(1, null, fpf);
+		}
 	}
 	
-	public void reloadAllList(){
-		lmFeed.initLoader(0, null, flf);
-		lmData.initLoader(1, null, fpf);
+	public void closeListLoader() {
+		caH.closeListLoader(); 
 	}
+
 	/* 2. Handle different cases for login & logout
 	 * (1) action bar title
 	 * */
@@ -255,6 +260,7 @@ public class Helper {
 		// user, feedID, permission
 		String user = caH.getCurrentUser()[0];
 		String feedID = caH.getCurrentFeedInfo()[0];
+		Log.d("pachube wtf", "Current user: " + user + " Current feedID: " + feedID);
 		return new String[]{user, feedID, dbH.getPermissionFor(user, feedID)};
 	}
 	
@@ -459,4 +465,5 @@ public class Helper {
 		//return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
 		return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
 	}
+
 }

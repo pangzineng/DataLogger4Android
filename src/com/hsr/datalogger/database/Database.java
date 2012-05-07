@@ -342,7 +342,10 @@ public class Database extends SQLiteOpenHelper {
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cur = db.rawQuery(query, new String[]{key1, key2});
-		if(cur == null || cur.moveToFirst() == false) return null;
+		if(cur == null || cur.moveToFirst() == false) {
+			db.close();
+			return null;
+		}
 		String result = cur.getString(cur.getColumnIndex(colName));
 		db.close();
 
@@ -382,7 +385,10 @@ public class Database extends SQLiteOpenHelper {
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
 		
-		if(cur == null || cur.moveToFirst() != true) return 0;
+		if(cur == null || cur.moveToFirst() != true) {
+			db.close();
+			return 0;
+		}
 		db.close();
 		return cur.getCount();
 	}
@@ -428,8 +434,10 @@ public class Database extends SQLiteOpenHelper {
 			cur = db.rawQuery(query, new String[]{keyValue});
 		}
 				
-		if(cur == null || cur.moveToFirst() == false) return null;
-		
+		if(cur == null || cur.moveToFirst() == false) {
+			db.close();
+			return null;
+		}
 		int colIndex = cur.getColumnIndex(toGetCol);
 		
 		while(cur.isAfterLast() != true){
@@ -441,7 +449,7 @@ public class Database extends SQLiteOpenHelper {
 		return allValues;
 	}
 	
-	// v2 for offline data only
+	// v2
 	public List<String> getAllMatchValue(int tableIndex, String keyName1, String keyValue1, String keyName2, String keyValue2, String toGetCol, boolean isDistinct){
 		
 		List<String> allValues = new ArrayList<String>();
@@ -483,7 +491,10 @@ public class Database extends SQLiteOpenHelper {
 			cur = db.rawQuery(query, new String[]{keyValue1, keyValue2});
 		}
 				
-		if(cur == null || cur.moveToFirst() == false) return null;
+		if(cur == null || cur.moveToFirst() == false){
+			db.close();
+			return null;
+		}
 		
 		int colIndex = cur.getColumnIndex(toGetCol);
 		

@@ -26,7 +26,7 @@ public class BackgroundUpdate extends Service {
 			helper.update(feedID, permission);
 
 			runningTime = runningTime - (int)(interval/60000);
-			if(runningTime <= 0) {
+			if(runningTime < 0) {
 				mHandler.removeCallbacks(mTask);
 				helper.closeBackground();
 				stopSelf();
@@ -56,11 +56,6 @@ public class BackgroundUpdate extends Service {
 			mHandler.postDelayed(mTask, 100);
 		}
 		return 1;
-	}
-	
-	@Override
-	public void onDestroy() {
-		helper.closeBackground();
 	}
 
 	@Override

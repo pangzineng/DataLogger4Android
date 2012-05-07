@@ -18,6 +18,9 @@ public class Cache{
 	
 	private static final String CURRENT_TAB = "current Tab";
 	
+	private static final String INIT_FEED_LIST = "initialize feed list";
+	private static final String INIT_DATA_LIST = "initialize data list";
+	
 	private static final String CURRENT_USERNAME = "username";
 	private static final String CURRENT_PASSWORD = "password";
 	private static final String CURRENT_MASTERKEY = "masterkey";
@@ -71,6 +74,16 @@ public class Cache{
 		editor.apply();
 	}
 
+	public void setInitFL(boolean init){
+		editor.putBoolean(INIT_FEED_LIST, init);
+		editor.apply();
+	}
+	
+	public void setInitFP(boolean init){
+		editor.putBoolean(INIT_DATA_LIST, init);
+		editor.apply();
+	}
+	
 	public void setUsername(String name){
 		editor.putString(CURRENT_USERNAME, name);
 		editor.apply();
@@ -158,6 +171,14 @@ public class Cache{
 	
 	public int getCurrentTab(){
 		return sp.getInt(CURRENT_TAB, 0);
+	}
+	
+	public boolean getInitFL(){
+		return sp.getBoolean(INIT_FEED_LIST, false);
+	}
+	
+	public boolean getInitFP(){
+		return sp.getBoolean(INIT_DATA_LIST, false);
 	}
 	
 	public String getUsername(){
