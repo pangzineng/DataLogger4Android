@@ -32,8 +32,6 @@ public class NotificationBar {
 		}
 		
 	};
-
-	
 	
 	public NotificationBar(Context context, String FeedName, int runningTime, String user) {
 		

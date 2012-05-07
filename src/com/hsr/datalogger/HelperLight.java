@@ -56,7 +56,7 @@ public class HelperLight {
 		hwH.stopListenToSensor();
 	}
 	
-	/* 4. Feed Page Tab function
+	/* 4. Feed Page Tab function & 6. Background function
 	 * (3) Clean Offline Data (when network is on)
 	 * */
 	List<String> allFeedID;
@@ -82,12 +82,6 @@ public class HelperLight {
 
 	
 	public boolean getOfflineData(){
-		
-		// FYI
-//		List<List<List<String[]>>> allFeed = new ArrayList<List<List<String[]>>>();
-//		List<List<String[]>> allDataOfOneFeed = new ArrayList<List<String[]>>();
-//		List<String[]> allDatapointsOfOneData = new ArrayList<String[]>();
-//		String[] oneDatapoint = new String[]{"time", "value"};
 		
 		allFeedID = dbH.getOfflineFeedID();
 		if(allFeedID==null) return false;
@@ -122,6 +116,10 @@ public class HelperLight {
 		}
 		
 		return true;
+	}
+
+	public void removeNoti() {
+		
 	}
 
 }

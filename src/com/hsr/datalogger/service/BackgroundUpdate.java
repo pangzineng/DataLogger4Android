@@ -39,6 +39,7 @@ public class BackgroundUpdate extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if(intent.hasExtra("STOP")) {
+			helper.removeNoti();
 			stopSelf();
 		} else {
 			masterKey = intent.getStringExtra("master");
