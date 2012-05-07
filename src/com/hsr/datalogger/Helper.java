@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.hsr.datalogger.FeedList.FLFragment;
@@ -59,7 +58,6 @@ public class Helper {
 	private static LoaderManager lmData;
 	private static FPFragment fpf;
 	
-	//FIXME
 	public void initFeedListLoader(LoaderManager loaderManager, FLFragment fLFragment) {
 		lmFeed = loaderManager;
 		flf = fLFragment;
@@ -260,7 +258,6 @@ public class Helper {
 		// user, feedID, permission
 		String user = caH.getCurrentUser()[0];
 		String feedID = caH.getCurrentFeedInfo()[0];
-		Log.d("pachube wtf", "Current user: " + user + " Current feedID: " + feedID);
 		return new String[]{user, feedID, dbH.getPermissionFor(user, feedID)};
 	}
 	
@@ -349,9 +346,7 @@ public class Helper {
 	}
 	
 	public void startBackgroundUpdate(int interval, int runningTime) {
-		// TODO Testing off (switch off functions with paH)
 		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo(), caH.getCurrentMasterKey());
-		//srH.startBackgroundUpdate("feedName", interval, runningTime, new String[]{"username", "feedID", "permission"});
 	}
 	
 	/* 4. Feed Page Tab function
@@ -401,10 +396,6 @@ public class Helper {
 
 	public void reDraw(){
 		Drawable diagram = getDiagram();
-		
-		// TODO Testing off (download diagram from pachube pt.1)
-		//diagram = context.getResources().getDrawable(R.drawable.icon);
-		
 		v.setImageDrawable(diagram);
 	}
 	
@@ -426,7 +417,6 @@ public class Helper {
 			para2[1] -= 100;
 		}
 		
-		// TODO Testing off (download diagram from pachube pt.2)
 		Drawable diagram = paH.getDiagram(para1, para2);
 		
 		return diagram;
@@ -460,9 +450,6 @@ public class Helper {
 	 * (3) share via email with diagram attachment
 	 * */
 	public boolean sendDiagramEmail(String address, String description, Context dialog, ImageView diagram){
-		
-		// TODO Testing off (send diagram with info) 
-		//return exH.sendDiagramEmail(address, new String[]{"Office", "250250", "Peter Pang", "noise level"}, description, dialog, diagram);
 		return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
 	}
 

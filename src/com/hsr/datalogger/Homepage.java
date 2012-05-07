@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +32,6 @@ public class Homepage extends Activity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("pachube101", "Homepage: onCreate");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         
@@ -70,18 +68,6 @@ public class Homepage extends Activity {
 		});
 
 		bar.setDisplayOptions(bar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM);
-    }
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	Log.d("pachube101", "Homepage: onResume");
-    }
-    
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	Log.d("pachube101", "Homepage: onPause");
     }
     
     @Override
@@ -123,7 +109,6 @@ public class Homepage extends Activity {
 
 
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			Log.d("pachube101", "TabListener: onTabSelected");
         	helper.setCurrentTab(tab.getPosition());
             if (mFragment == null) {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
@@ -198,7 +183,6 @@ public class Homepage extends Activity {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
 											helper.logout();
-											// SOS reload the list (logout)
 											helper.reloadFeedList();
 									    	username.setText("guest");
 									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
@@ -238,7 +222,6 @@ public class Homepage extends Activity {
 								String[] account = new String[]{lgName, lgPW};
 								
 								if(helper.login(account, loginAuto.isChecked(), loginReg.isChecked())){
-									// SOS reload the list (login)
 									helper.reloadFeedList();
 									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);

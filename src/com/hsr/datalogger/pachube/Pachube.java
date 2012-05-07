@@ -12,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import android.util.Base64;
-import android.util.Log;
 
 public class Pachube {
 
@@ -143,7 +142,6 @@ public class Pachube {
 	 * @throws IOException 
 	 */
 	public static boolean createDatastream(int feed, String s, String key) throws PachubeException, IOException {
-		Log.d("pachube101", "Pachube.java: feed==" + feed + " stream==" + s + " key==" + key);
 		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
 				+ feed + "/datastreams.xml").openConnection());
 		hr.setRequestMethod("POST");

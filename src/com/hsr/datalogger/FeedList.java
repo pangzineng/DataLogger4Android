@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,7 +46,6 @@ public class FeedList extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("pachube101", "FeedList: onCreate");
         FragmentManager fm = getFragmentManager();
 
         // Create the list fragment and add it as our sole content.
@@ -58,22 +56,6 @@ public class FeedList extends Activity {
         
         
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.d("pachube101", "FeedList: onResume");
-	}
-	@Override
-	protected void onPause() {
-    	super.onPause();
-		Log.d("pachube101", "FeedList: onPause");
-	};
-	@Override
-	protected void onDestroy() {
-    	super.onDestroy();
-		Log.d("pachube101", "FeedList: onDestroy");
-	};
 
 	public static class FeedItem {
 		
@@ -151,8 +133,7 @@ public class FeedList extends Activity {
 		public List<FeedItem> loadInBackground() {
 			List<String> feeds = helper.getFeedList();
 			if(feeds == null) return null;
-			// TODO Testing off (load feed list)
-			// List<FeedItem> entries = new ArrayList<FeedItem>(0);
+
 			List<FeedItem> entries = new ArrayList<FeedItem>(feeds.size());
 			for(int i=0; i<feeds.size(); i++){
 				FeedItem item = new FeedItem(helper, feeds.get(i));
@@ -174,22 +155,7 @@ public class FeedList extends Activity {
 
 		@Override
 		protected void onStartLoading() {
-			// FIXME try loading solution
-//            if (mList != null) {
-//                // If we currently have a result available, deliver it immediately.
-//                deliverResult(mList);
-//            }
-
-            // FIXME Start watching for changes in the data.
-//            if (mPackageObserver == null) {
-//                mPackageObserver = new PackageIntentReceiver(this);
-//            }
-
-//            if (takeContentChanged() || mList == null) {
-                // If the data has changed since the last time it was loaded
-                // or is not currently available, start a load.
-                forceLoad();
-//            }
+            forceLoad();
 		}
 		
 		@Override
@@ -204,18 +170,10 @@ public class FeedList extends Activity {
             // Ensure the loader is stopped
             onStopLoading();
 
-            // At this point we can release the resources associated with 'apps'
-            // if needed.
+            // At this point we can release the resources associated if needed.
             if (mList != null) {
                 mList = null;
             }
-
-            // FIXME Stop monitoring for changes.
-//            if (mPackageObserver != null) {
-//                getContext().unregisterReceiver(mPackageObserver);
-//                mPackageObserver = null;
-//            }
-
 		}
 	}
 	
@@ -287,7 +245,6 @@ public class FeedList extends Activity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			Log.d("pachube101", "FLFragment: onActivityCreated");
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
 			
@@ -314,19 +271,6 @@ public class FeedList extends Activity {
 		public void onResume() {
 			super.onResume();
 			helper.initFeedListLoader(getLoaderManager(), this);
-			Log.d("pachube101", "FLFragment: onResume");
-		}
-		
-		@Override
-		public void onPause() {
-			super.onPause();
-			Log.d("pachube101", "FLFragment: onPause");
-		}
-		
-		@Override
-		public void onDestroy() {
-			super.onDestroy();
-			Log.d("pachube101", "FLFragment: onDestroy");
 		}
 		
 		@Override
@@ -371,13 +315,11 @@ public class FeedList extends Activity {
 		
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {
-			// SOS reload the list (click one feed)
 			TextView mid = (TextView) v.findViewById(R.id.list_feed_id);
 			TextView mname = (TextView) v.findViewById(R.id.list_feed_name);
 			helper.clickOneFeed(mid.getText().toString(), mname.getText().toString());
 			helper.reloadFeedList();
 			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
-			Log.d("pachube101", "FLFragment: onListItemClick (click one feed)");
 		}
 		
 		
@@ -474,7 +416,6 @@ public class FeedList extends Activity {
 								} else {
 									Toast.makeText(mContext, "Error from pachube server, fail to delete on server side", Toast.LENGTH_LONG).show();
 								}
-								// SOS reload the list (delete feed)
 								helper.reloadFeedList();
 							}
 					   	})
@@ -508,7 +449,6 @@ public class FeedList extends Activity {
 											} else {
 												Toast.makeText(mContext, "Error from pachube server, fail to edit on server side", Toast.LENGTH_LONG).show();
 											}
-											// SOS reload the list (edit feed)
 											helper.reloadFeedList();
 										}
 								  })

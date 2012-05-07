@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Loader;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +26,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -43,24 +40,7 @@ public class FeedPage extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("pachube101", "FeedPage: onCreate");
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.d("pachube101", "FeedPage: onResume");
-	}
-	@Override
-	protected void onPause() {
-    	super.onPause();
-		Log.d("pachube101", "FeedPage: onPause");
-	};
-	@Override
-	protected void onDestroy() {
-    	super.onDestroy();
-		Log.d("pachube101", "FeedPage: onDestroy");
-	};
 	
 	public static class DataItem {
 		
@@ -105,11 +85,9 @@ public class FeedPage extends Activity {
 
 		@Override
 		public List<DataItem> loadInBackground() {
-			Log.d("pachube101", "DataListLoader: loadInBackground");
 			List<String> datas = helper.getDataList();
 			if(datas == null) return null;
-			// TODO Testing off (load data list)
-			// List<DataItem> entries = new ArrayList<DataItem>(0);
+
 			List<DataItem> entries = new ArrayList<DataItem>(datas.size());
 			for(int i=0; i<datas.size(); i++){
 				DataItem item = new DataItem(helper, datas.get(i));
@@ -120,7 +98,6 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public void deliverResult(List<DataItem> data) {
-			Log.d("pachube101", "DataListLoader: deliverResult");
             mList = data;
 
             if (isStarted()) {
@@ -131,22 +108,7 @@ public class FeedPage extends Activity {
 		
 		@Override
 		protected void onStartLoading() {
-			Log.d("pachube101", "DataListLoader: onStartLoading");
-            if (mList != null) {
-                // If we currently have a result available, deliver it immediately.
-                deliverResult(mList);
-            }
-
-            // FIXME Start watching for changes in the data.
-//            if (mPackageObserver == null) {
-//                mPackageObserver = new PackageIntentReceiver(this);
-//            }
-
-            if (takeContentChanged() || mList == null) {
-                // If the data has changed since the last time it was loaded
-                // or is not currently available, start a load.
-                forceLoad();
-            }
+            forceLoad();
 		}
 		
 		@Override
@@ -161,18 +123,10 @@ public class FeedPage extends Activity {
             // Ensure the loader is stopped
             onStopLoading();
 
-            // At this point we can release the resources associated with 'apps'
-            // if needed.
+            // At this point we can release the resources associated if needed.
             if (mList != null) {
                 mList = null;
             }
-
-            // FIXME Stop monitoring for changes.
-//            if (mPackageObserver != null) {
-//                getContext().unregisterReceiver(mPackageObserver);
-//                mPackageObserver = null;
-//            }
-
 		}
 
 	}
@@ -218,7 +172,6 @@ public class FeedPage extends Activity {
 				@Override
 				public void onClick(View v) {
 					helper.checkData(item.getDataName(), item.getChecked()?false:true);
-					Log.d("pachube debug", "Click " + item.getDataName() + ": " + item.getChecked());
 				}
 			});
 			
@@ -248,7 +201,6 @@ public class FeedPage extends Activity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			Log.d("pachube101", "FPFragment: onActivityCreated");
 			context = getActivity().getApplicationContext();
 			helper = new Helper(context);
 			
@@ -278,21 +230,8 @@ public class FeedPage extends Activity {
 		public void onResume() {
 			super.onResume();
 			helper.initFeedPageLoader(getLoaderManager(), this);
-			Log.d("pachube101", "FPFragment: onResume");
 		}
-		
-		@Override
-		public void onPause() {
-			super.onPause();
-			Log.d("pachube101", "FPFragment: onPause");
-		}
-		
-		@Override
-		public void onDestroy() {
-			super.onDestroy();
-			Log.d("pachube101", "FPFragment: onDestroy");
-		}
-		
+
 		@Override
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 			menu.add(Menu.NONE, ADD_DATASTREAM , Menu.NONE, "Add Datastream")
@@ -315,8 +254,6 @@ public class FeedPage extends Activity {
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
 			
-			// check whether user has permission to modify this feed
-			// TODO Testing off (switch off functions with paH)
 			if(helper.notFullLevel()){
 				Toast.makeText(context, "You have no permission to control this feed", Toast.LENGTH_LONG).show();
 				return super.onOptionsItemSelected(item);
@@ -348,19 +285,16 @@ public class FeedPage extends Activity {
 			TextView dataName = (TextView) v.findViewById(R.id.data_item_name);
 			helper.clickOneData(dataName.getText().toString());
 			getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_DATA);
-			Log.d("pachube101", "FPFragment: onListItemClick (click one data)");
 		}
 
 		
 		@Override
 		public Loader<List<DataItem>> onCreateLoader(int id, Bundle args) {
-			Log.d("pachube101", "FPFragment: onCreateLoader");
 			return new DataListLoader(getActivity(), helper);
 		}
 
 		@Override
 		public void onLoadFinished(Loader<List<DataItem>> loader, List<DataItem> data) {
-			Log.d("pachube101", "FPFragment: onLoadFinished");
 			mAdapter.setData(data);
 			if(isResumed()){
 				setListShown(true);
@@ -486,7 +420,6 @@ public class FeedPage extends Activity {
 									
 									if(helper.dataCreate(name, sensor, sensorID)){
 										// reload the data list
-										Log.d("pachube101", "AddDatastreamDialog: onClick (add one data)");
 										helper.reloadDataList();
 									} else {
 										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
@@ -599,7 +532,7 @@ public class FeedPage extends Activity {
 			final View mDialog = getUpdateFeedView();
 			
 			TextView selected = (TextView) mDialog.findViewById(R.id.update_selected_num);
-			// TODO Testing off (switch off functions with paH)
+
 			int num = helper.getSelectedDataNum();
 			if(num<=0){
 				return new AlertDialog.Builder(forDialog)
@@ -692,7 +625,6 @@ public class FeedPage extends Activity {
 								
 								if(helper.dataDelete(dataID)){
 									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
-									// SOS reload the list (delete data)
 									helper.reloadDataList();
 								} else {
 									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
@@ -724,7 +656,6 @@ public class FeedPage extends Activity {
 
 						if(helper.dataEdit(dataID, nTags)){
 							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
-							// SOS reload the list (edit data)
 							helper.reloadDataList();
 						} else {
 							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();

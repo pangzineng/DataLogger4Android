@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 public class NotificationBar {
 
@@ -60,19 +59,14 @@ public class NotificationBar {
 	private void updateTimer(){
 		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " minutes). Click to stop now", pnoti);
 		time ++;
-		Log.d("pachube debug","Runtime: " + runningTime + " time: " + time + " (runningTime-time): " + (runningTime-time));
 		if(runningTime-time <=0){
-			Log.d("pang", "should close the noti now");
-//			Intent closeBackground = new Intent(context, BackgroundUpdate.class);
-//			closeBackground.putExtra("STOP", true);
-//			context.startService(closeBackground);
 			closeNoti();
 		} else {
 			nm.notify(NOTI_ID, nt);
 		}
 	}
 	
-	// FIXME bug here: if user click the noti, noti will close itself, this method won't run, the handler will continue to run
+	// FIXME [bug]: if user click the noti, noti will close itself, this method won't run, the handler will continue to run
 	public void closeNoti(){
 		mHandler.removeCallbacks(mTask);
 		nm.cancel(NOTI_ID);

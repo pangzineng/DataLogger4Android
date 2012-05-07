@@ -12,7 +12,7 @@ public class Cache{
 	SharedPreferences sp;
 	SharedPreferences.Editor editor;
 
-	// FIXME modify all of them to become one setter and getter method only
+	// FIXME [redundant]: merge all of them to become one setter and getter method only
 	
 	private static final String STORE = "Datalogger for Android Cache";
 	

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 
 public class HardwareHelper {
 
@@ -30,13 +29,11 @@ public class HardwareHelper {
 		float[] values = new float[sensors.size()];
 		for(int i=0; i<sensors.size(); i++){
 			int index = Integer.parseInt(sensors.get(i));
-			Log.d("pachube debug", "hwH Lin 35, sensor index: " + index);
 			if(index==0) {
 				values[i] = (float)hw.getSoundValue();
 			} else {
 				values[i] = (float)hw.getSensorValue(index);
 			}
-			Log.d("pachube debug", "hwH Lin 40, sensor value: " + values[i]);
 		}
 		return values;
 	}

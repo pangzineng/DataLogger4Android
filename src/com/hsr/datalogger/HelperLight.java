@@ -8,7 +8,6 @@ import com.hsr.datalogger.hardware.HardwareHelper;
 import com.hsr.datalogger.pachube.PachubeHelper;
 
 import android.content.Context;
-import android.util.Log;
 
 public class HelperLight {
 
@@ -26,13 +25,10 @@ public class HelperLight {
 	 * (1) update called by background service
 	 * */
 	public boolean update(String feedID, String permission) {
-		// FIXME 
 		
 		// first get from dbH the selected datastream (name & sensorID)
 		List<String> dataNames = dbH.getUpdateDataNames(feedID);
 		List<String> sensors = dbH.getUpdateDataSensors(feedID);
-
-		Log.d("pachube update", "dataNames: " + dataNames + " sensors: " + sensors);
 		
 		// second get from hwH the value matching the data list
 		float[] dataValues = hwH.getSensorValue(sensors);
