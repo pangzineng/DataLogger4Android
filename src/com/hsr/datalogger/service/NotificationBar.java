@@ -58,7 +58,7 @@ public class NotificationBar {
 	}
 	
 	private void updateTimer(){
-		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " mintues). Click to stop now", pnoti);
+		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " minutes). Click to stop now", pnoti);
 		time ++;
 		Log.d("pachube debug","Runtime: " + runningTime + " time: " + time + " (runningTime-time): " + (runningTime-time));
 		if(runningTime-time <=0){
