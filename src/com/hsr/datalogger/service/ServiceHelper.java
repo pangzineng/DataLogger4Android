@@ -1,5 +1,7 @@
 package com.hsr.datalogger.service;
 
+import com.hsr.datalogger.Helper;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,7 +14,7 @@ public class ServiceHelper {
 		this.context = context;
 	}
 	
-	public void startBackgroundUpdate(String FeedName, int interval, int runningTime, String[] info, String masterKey){
+	public void startBackgroundUpdate(String FeedName, int interval, int runningTime, String[] info){
 		
 		createNotification(FeedName, runningTime, info[0]);
 		
@@ -20,7 +22,6 @@ public class ServiceHelper {
 		startBackground.putExtra("Interval", interval);
 		startBackground.putExtra("Running Time", runningTime);
 		startBackground.putExtra("info", info);
-		startBackground.putExtra("master", masterKey);
 		context.startService(startBackground);
 	}
 	
@@ -38,7 +39,7 @@ public class ServiceHelper {
 		noti = new NotificationBar(context, FeedName, runningTime, user);
 	}
 	
-	private void closeNoti(){
-		noti.closeNoti();
+	public void closeNoti(){
+		noti.closeNotification();
 	}
 }

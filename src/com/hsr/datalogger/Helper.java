@@ -1,5 +1,6 @@
 package com.hsr.datalogger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -345,8 +346,10 @@ public class Helper {
 		return dbH.getDataCheckNum(getFeedPageInfo()[1]);
 	}
 	
+	public static HelperLight helperL;
 	public void startBackgroundUpdate(int interval, int runningTime) {
-		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo(), caH.getCurrentMasterKey());
+		helperL = new HelperLight(context, caH.getCurrentMasterKey(), srH);
+		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo());
 	}
 	
 	/* 4. Feed Page Tab function

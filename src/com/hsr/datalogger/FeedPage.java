@@ -13,6 +13,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,6 +43,12 @@ public class FeedPage extends Activity {
 		super.onCreate(savedInstanceState);
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
+
 	public static class DataItem {
 		
 		private String dataName;

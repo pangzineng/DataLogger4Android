@@ -11,6 +11,7 @@ import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.LayoutInflater;
@@ -69,7 +70,13 @@ public class Homepage extends Activity {
 
 		bar.setDisplayOptions(bar.getDisplayOptions() ^ ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM);
     }
-    
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
+
     @Override
     protected void onDestroy() {
     	super.onDestroy();

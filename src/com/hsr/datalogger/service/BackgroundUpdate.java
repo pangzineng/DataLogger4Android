@@ -1,5 +1,6 @@
 package com.hsr.datalogger.service;
 
+import com.hsr.datalogger.Helper;
 import com.hsr.datalogger.HelperLight;
 
 import android.app.Service;
@@ -14,7 +15,7 @@ public class BackgroundUpdate extends Service {
 	private int interval;
 	private int runningTime;
 	
-	private String masterKey;
+	//private String masterKey;
 	private String feedID;
 	private String permission;
 	
@@ -39,12 +40,11 @@ public class BackgroundUpdate extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if(intent.hasExtra("STOP")) {
-			helper.removeNoti();
+			helper.closeBackground();
+			helper.closeNoti();
 			stopSelf();
 		} else {
-			masterKey = intent.getStringExtra("master");
-
-			helper = new HelperLight(getApplicationContext(), masterKey);
+			helper = Helper.helperL;
 			
 			interval = intent.getIntExtra("Interval", 1) * 60000;
 			runningTime = intent.getIntExtra("Running Time", 0);
@@ -54,7 +54,7 @@ public class BackgroundUpdate extends Service {
 			permission = info[2];
 			
 			mHandler.removeCallbacks(mTask);
-			mHandler.postDelayed(mTask, 100);
+			mHandler.postDelayed(mTask, 10);
 		}
 		return 1;
 	}

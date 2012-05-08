@@ -14,6 +14,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.content.Loader;
 import android.os.Bundle;
 import android.text.Editable;
@@ -55,6 +56,12 @@ public class FeedList extends Activity {
         }
         
         
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
 	public static class FeedItem {

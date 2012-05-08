@@ -22,7 +22,7 @@ public class NotificationBar {
 	int runningTime;
 	String user;
 	
-	int time;
+	private int time;
 	private Handler mHandler = new Handler();
 	private Runnable mTask = new Runnable(){
 
@@ -57,15 +57,15 @@ public class NotificationBar {
 	private void updateTimer(){
 		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " minutes). Click to stop now", pnoti);
 		time ++;
-		if(runningTime-time <=0){
-			closeNoti();
+		if(runningTime-time < 0){
+			closeNotification();
 		} else {
 			nm.notify(NOTI_ID, nt);
 		}
 	}
 	
 	// FIXME [bug]: if user click the noti, noti will close itself, this method won't run, the handler will continue to run
-	public void closeNoti(){
+	public void closeNotification(){
 		mHandler.removeCallbacks(mTask);
 		nm.cancel(NOTI_ID);
 	}

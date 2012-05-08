@@ -6,19 +6,24 @@ import java.util.List;
 import com.hsr.datalogger.database.DatabaseHelper;
 import com.hsr.datalogger.hardware.HardwareHelper;
 import com.hsr.datalogger.pachube.PachubeHelper;
+import com.hsr.datalogger.service.ServiceHelper;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class HelperLight {
 
 	DatabaseHelper dbH;
 	HardwareHelper hwH;
 	PachubeHelper paH;
+	ServiceHelper srH;
 	
-	public HelperLight(Context context, String masterKey) {
+	public HelperLight(Context context, String masterKey, ServiceHelper s) {
 		dbH = new DatabaseHelper(context);
 		hwH = new HardwareHelper(context);
 		paH = new PachubeHelper(masterKey);
+		srH = s;
 	}
 	
 	/* 4. Feed Page Tab function & 6. Background function
@@ -55,7 +60,10 @@ public class HelperLight {
 	public void closeBackground() {
 		hwH.stopListenToSensor();
 	}
-	
+
+	public void closeNoti(){
+		srH.closeNoti();
+	}
 	/* 4. Feed Page Tab function & 6. Background function
 	 * (3) Clean Offline Data (when network is on)
 	 * */
@@ -117,9 +125,4 @@ public class HelperLight {
 		
 		return true;
 	}
-
-	public void removeNoti() {
-		
-	}
-
 }

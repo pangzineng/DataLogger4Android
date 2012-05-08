@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +31,12 @@ public class FeedData extends Activity {
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
+	
 	public static class FDFragment extends Fragment {
 		
 		private static final int EDIT_DIAGRAM = 1;

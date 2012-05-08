@@ -16,16 +16,20 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity android:name=".Homepage"
-            	  android:label="@string/app_name">
+            	  android:label="@string/app_name"
+            	  android:screenOrientation="portrait">
 	            <intent-filter>
 	                <action android:name="android.intent.action.MAIN" />
 	
 	                <category android:name="android.intent.category.LAUNCHER" />
 	            </intent-filter>
         </activity>
-        <activity android:name=".FeedList"></activity>
-        <activity android:name=".FeedPage"></activity>
-        <activity android:name=".FeedData"></activity>
+        <activity android:name=".FeedList"
+            	  android:screenOrientation="portrait"></activity>
+        <activity android:name=".FeedPage"
+            	  android:screenOrientation="portrait"></activity>
+        <activity android:name=".FeedData"
+            	  android:screenOrientation="portrait"></activity>
         <service android:name=".service.BackgroundUpdate"></service>
     </application>
 
