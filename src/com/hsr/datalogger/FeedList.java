@@ -3,6 +3,9 @@ package com.hsr.datalogger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hsr.datalogger.Homepage.TabListener;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -336,7 +339,19 @@ public class FeedList extends Activity {
 		}
 
 		@Override
-		public void onLoadFinished(Loader<List<FeedItem>> loader,	List<FeedItem> data) {
+		public void onLoadFinished(Loader<List<FeedItem>> loader, List<FeedItem> data) {
+			ActionBar bar = getActivity().getActionBar();
+			if(data==null||data.size()==0){
+				bar.removeTabAt(2);
+				bar.removeTabAt(1);
+			} else {
+				if(bar.getTabCount()==2){
+			        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(getActivity(), FeedData.FDFragment.class, helper, "FeedData")));
+				} else if(bar.getTabCount()==1){
+			        bar.addTab(bar.newTab().setText("Feed Page").setTabListener(new TabListener<FeedPage.FPFragment>(getActivity(), FeedPage.FPFragment.class, helper, "FeedPage")));
+			        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(getActivity(), FeedData.FDFragment.class, helper, "FeedData")));
+				}
+			}
 			mAdapter.setData(data);
 			if(isResumed()){
 				setListShown(true);
@@ -568,8 +583,7 @@ public class FeedList extends Activity {
 								}
 								
 								if(result){
-									helper.reloadDataList();
-									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+									helper.reloadFeedList();
 								}
 							}
 						})

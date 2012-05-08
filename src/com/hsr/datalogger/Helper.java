@@ -240,6 +240,11 @@ public class Helper {
 		String currentUser = caH.getCurrentUser()[0];
 		return dbH.getCurrentFeedList(currentUser);
 	}
+	
+	public int getFeedListNum(){
+		String currentUser = caH.getCurrentUser()[0];
+		return dbH.getCurrentFeedListNumber(currentUser);
+	}
 
 	/* 3. Feed List Tab function
 	 * (4) Click on list item (one feed)
@@ -366,6 +371,11 @@ public class Helper {
 		return dbH.getCurrentDataList(currentFeed);
 	}
 
+	public int getDataListNum(){
+		String currentFeed = caH.getCurrentFeedInfo()[0];
+		return dbH.getCurrentDataListNumber(currentFeed);
+	}
+	
 	public String[] getDataListItem(String dataName) {
 		String currentFeed = caH.getCurrentFeedInfo()[0];
 		return dbH.getOneDataInfo(currentFeed, dataName);
@@ -424,17 +434,17 @@ public class Helper {
 		return diagram;
 	}
 
-	public String[] getDiagramStat() {
-		// current, unit, max, min
-		String[] stat = new String[4];
-		
-		String user = caH.getCurrentUser()[0];
-		String feedID = caH.getDataInfoForDiagram()[0];
+	public String[] getDiagramInfo() {
 		String dataName = caH.getDataInfoForDiagram()[1];
-		String permission = dbH.getPermissionFor(user, feedID);
-		
-		stat = paH.getDataStat(feedID, dataName, permission);
-		return stat;
+		String feedName = dbH.getFeedTitle(getFeedPageInfo());
+		return new String[]{feedName, dataName};
+	}
+
+	public String[] getDiagramStat() {
+		String dataName = caH.getDataInfoForDiagram()[1];
+
+		//current, unit, max, min
+		return paH.getDataStat(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2]);
 	}
 
 	/* 5. Feed Data Tab function
@@ -454,5 +464,4 @@ public class Helper {
 	public boolean sendDiagramEmail(String address, String description, Context dialog, ImageView diagram){
 		return exH.sendDiagramEmail(address, caH.getInfoForEmail(), description, dialog, diagram);
 	}
-
 }

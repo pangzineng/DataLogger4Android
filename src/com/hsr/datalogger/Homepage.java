@@ -55,6 +55,7 @@ public class Homepage extends Activity {
         String autoCheck = helper.AutoLoginAccount();
         if(autoCheck == null){
         	user.setText("guest");
+        	// TODO [refactor]: collect all the toasts and put inside one toast class
         	Toast.makeText(this, "You auto login password had change, auto login failed", Toast.LENGTH_LONG).show();
         } else {
             user.setText(autoCheck);
@@ -116,7 +117,9 @@ public class Homepage extends Activity {
 
 
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			
         	helper.setCurrentTab(tab.getPosition());
+        	
             if (mFragment == null) {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
                 ft.add(android.R.id.content, mFragment, mTag);

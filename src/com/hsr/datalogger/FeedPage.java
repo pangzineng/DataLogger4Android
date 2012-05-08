@@ -3,6 +3,9 @@ package com.hsr.datalogger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hsr.datalogger.Homepage.TabListener;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -217,7 +220,6 @@ public class FeedPage extends Activity {
 			mAdapter = new DataListAdapter(context, helper);
 			setListAdapter(mAdapter);
 			
-			setListShown(false);
 
 			//helper.initFeedPageLoader(getLoaderManager(), this);
 			//getLoaderManager().initLoader(0, null, this);
@@ -236,6 +238,8 @@ public class FeedPage extends Activity {
 		@Override
 		public void onResume() {
 			super.onResume();
+			setListShown(false);
+			
 			helper.initFeedPageLoader(getLoaderManager(), this);
 		}
 
@@ -302,6 +306,15 @@ public class FeedPage extends Activity {
 
 		@Override
 		public void onLoadFinished(Loader<List<DataItem>> loader, List<DataItem> data) {
+			ActionBar bar = getActivity().getActionBar();
+			if(data==null||data.size()==0){
+				bar.removeTabAt(2);
+			} else {
+				if(bar.getTabCount()==2){
+			        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(getActivity(), FeedData.FDFragment.class, helper, "FeedData")));
+				}
+			}
+
 			mAdapter.setData(data);
 			if(isResumed()){
 				setListShown(true);

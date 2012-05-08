@@ -60,17 +60,30 @@ public class FeedData extends Activity {
 			
 			diagram = (ImageView) view.findViewById(R.id.data_diagram);
 
+			TextView feedname = (TextView) view.findViewById(R.id.diagram_stat_feedname);
+			TextView dataname = (TextView) view.findViewById(R.id.diagram_stat_dataname);
+			
 			TextView current = (TextView) view.findViewById(R.id.diagram_stat_current);
 			TextView unit = (TextView) view.findViewById(R.id.diagram_stat_unit);
 			TextView max = (TextView) view.findViewById(R.id.diagram_stat_max);
 			TextView min = (TextView) view.findViewById(R.id.diagram_stat_min);
 			
 			String[] stat = helper.getDiagramStat();
+			String[] info = helper.getDiagramInfo();
 			
-			current.setText(stat[0]);
+			feedname.setText(info[0]);
+			dataname.setText(info[1]);
+			
+			//cut the number to less digits
+			double cu = Double.parseDouble(stat[0]==null?"0":stat[0]);
+			double ma = Double.parseDouble(stat[2]==null?"0":stat[2]);
+			double mi = Double.parseDouble(stat[3]==null?"0":stat[3]);
+			
+			
+			current.setText(String.format("%.5f", cu));
 			unit.setText(stat[1]);
-			max.setText(stat[2]);
-			min.setText(stat[3]);
+			max.setText(String.format("%.5f", ma));
+			min.setText(String.format("%.5f", mi));
 			
 			helper.tempStore(diagram);
 			helper.reDraw();

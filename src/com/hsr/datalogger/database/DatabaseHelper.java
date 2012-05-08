@@ -19,10 +19,17 @@ public class DatabaseHelper {
 		return db.getAllMatchValue(Database.FEED_INDEX, Database.colUsername, username, Database.colFeedID, false);
 	}
 	
+	public int getCurrentFeedListNumber(String username){
+		return db.getRowNum(Database.FEED_INDEX, Database.colUsername, username);
+	}
+	
 	public List<String> getCurrentDataList(String currentFeed) {
 		return db.getAllMatchValue(Database.DATASTREAM_INDEX, Database.colFeedID, currentFeed, Database.colDataName, false);
 	}
 
+	public int getCurrentDataListNumber(String currentFeed) {
+		return db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, currentFeed);
+	}
 	
 	String[] sensors;
 	

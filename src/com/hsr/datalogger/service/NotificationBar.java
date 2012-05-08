@@ -64,7 +64,6 @@ public class NotificationBar {
 		}
 	}
 	
-	// FIXME [bug]: if user click the noti, noti will close itself, this method won't run, the handler will continue to run
 	public void closeNotification(){
 		mHandler.removeCallbacks(mTask);
 		nm.cancel(NOTI_ID);
