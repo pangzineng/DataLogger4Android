@@ -9,8 +9,6 @@ import com.hsr.datalogger.pachube.PachubeHelper;
 import com.hsr.datalogger.service.ServiceHelper;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 public class HelperLight {
 

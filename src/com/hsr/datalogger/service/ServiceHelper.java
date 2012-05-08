@@ -1,7 +1,5 @@
 package com.hsr.datalogger.service;
 
-import com.hsr.datalogger.Helper;
-
 import android.content.Context;
 import android.content.Intent;
 
