@@ -342,8 +342,12 @@ public class FeedList extends Activity {
 		public void onLoadFinished(Loader<List<FeedItem>> loader, List<FeedItem> data) {
 			ActionBar bar = getActivity().getActionBar();
 			if(data==null||data.size()==0){
-				bar.removeTabAt(2);
-				bar.removeTabAt(1);
+				if(bar.getTabCount()==3){
+					bar.removeTabAt(2);
+					bar.removeTabAt(1);
+				} else if(bar.getTabCount()==2){
+					bar.removeTabAt(1);
+				}
 			} else {
 				if(bar.getTabCount()==2){
 			        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(getActivity(), FeedData.FDFragment.class, helper, "FeedData")));
