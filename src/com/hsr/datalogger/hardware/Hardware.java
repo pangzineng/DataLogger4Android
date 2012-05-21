@@ -26,7 +26,6 @@ public class Hardware implements SensorEventListener{
 		
 		sensorList = sm.getSensorList(Sensor.TYPE_ALL);
 		
-		mSensor.start();
 		for(int i=0; i<sensorList.size(); i++){
 			sm.registerListener(this, sensorList.get(i), SensorManager.SENSOR_DELAY_GAME);
 		}
@@ -34,7 +33,7 @@ public class Hardware implements SensorEventListener{
 
 	public void close(){
 		sm.unregisterListener(this);
-		mSensor.stop();
+		mSensor.destroy();
 	}
 	
 	public boolean[] getAvailable(){
@@ -47,7 +46,9 @@ public class Hardware implements SensorEventListener{
 	}
 	
 	public double getSoundValue(){
+		mSensor.start();
 		double sound = mSensor.getdB();
+		mSensor.stop();
 		return sound<0?0:sound;
 	}
 

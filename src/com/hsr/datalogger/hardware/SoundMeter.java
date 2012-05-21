@@ -5,36 +5,33 @@ import java.io.IOException;
 import android.media.MediaRecorder;
 
 public class SoundMeter {
-    static final private double EMA_FILTER = 0.6;
-
-    private MediaRecorder mRecorder = null;
-    private double mEMA = 0.0;
+    private MediaRecorder mRecorder = new MediaRecorder();
 
     public void start(){
-            if (mRecorder == null) {
-                mRecorder = new MediaRecorder();
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                mRecorder.setOutputFile("/dev/null"); 
-                try {
-					mRecorder.prepare();
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mRecorder.setOutputFile("/dev/null"); 
+            try {
+				mRecorder.prepare();
                 mRecorder.start();
-                mEMA = 0.0;
-            }
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     }
     
     public void stop() {
             if (mRecorder != null) {
                     mRecorder.stop();       
-                    mRecorder.release();
-                    mRecorder = null;
+                    mRecorder.reset();
             }
+    }
+    
+    public void destroy(){
+        mRecorder.release();
+        mRecorder = null;
     }
     
     public double getdB() {
@@ -43,11 +40,5 @@ public class SoundMeter {
             else
                     return 0;
 
-    }
-
-    public double getAmplitudeEMA() {
-            double amp = getdB();
-            mEMA = EMA_FILTER * amp + (1.0 - EMA_FILTER) * mEMA;
-            return mEMA;
     }
 }
