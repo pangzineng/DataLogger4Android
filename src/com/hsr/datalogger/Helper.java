@@ -183,7 +183,7 @@ public class Helper {
 		List<String[]> allData = paH.getAllData(feedID, permission); // {name, value, tag, symbol(sensorID)}
 		for(int i=0; i<allData.size(); i++){
 			String[] oneData = allData.get(i);
-			dbH.addDataToFeed(feedID, oneData[0], oneData[1], oneData[2], Integer.parseInt(oneData[3]));
+			dbH.addDataToFeed(feedID, oneData[0], oneData[1], oneData[2], Integer.parseInt(oneData[3]), false);
 		}
 		
 		return true;
@@ -310,7 +310,7 @@ public class Helper {
 									// permission might be null if it's his own feed
 									// tag is the name of sensor from the string list
 									// unit is the unit of sensor value from another list
-			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, "0", tag, sensorID);
+			dbH.addDataToFeed(getFeedPageInfo()[1], dataName, "0", tag, sensorID, true);
 			return true;
 		} else {
 			return false;
@@ -344,6 +344,7 @@ public class Helper {
 
 	public void checkData(String dataName, boolean isChecked) {
 		dbH.checkData(getFeedPageInfo()[1], dataName, isChecked);
+		reloadDataList();
 	}
 	
 	public int getSelectedDataNum() {
@@ -352,6 +353,7 @@ public class Helper {
 	
 	public static HelperLight helperL;
 	public void startBackgroundUpdate(int interval, int runningTime) {
+		dbH.checkFeedRunning(getFeedPageInfo(), true);
 		helperL = new HelperLight(context, caH.getCurrentMasterKey(), srH);
 		srH.startBackgroundUpdate(dbH.getFeedTitle(getFeedPageInfo()), interval, runningTime, getFeedPageInfo());
 	}

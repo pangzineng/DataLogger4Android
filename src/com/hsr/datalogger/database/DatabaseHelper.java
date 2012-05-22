@@ -49,13 +49,14 @@ public class DatabaseHelper {
 		db.addFeed(user, feedID, ownership, permission, permissionLevel, feedTitle, feedType, location);
 	}
 
-	// FeedTitle, DataCount, Ownership, PermissionLevel
+	// FeedTitle, DataCount, Ownership, PermissionLevel, running 
 	public String[] getOneFeedInfo(String currentUser, String feedID) {
 		String name = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colFeedTitle);
 		String count = ""+db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feedID);
 		String ownership = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colOwnership);
 		String permissionLevel = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colPermissionLevel);
-		return new String[]{name, count, ownership, permissionLevel};
+		String running = db.getValue(Database.FEED_INDEX, currentUser, feedID, Database.colRunning);
+		return new String[]{name, count, ownership, permissionLevel, running==null?"0":running};
 	}
 	
 	// DataTags, checked
@@ -81,8 +82,8 @@ public class DatabaseHelper {
 		db.edit(Database.FEED_INDEX, user, id, Database.colLocation, location);
 	}
 
-	public void addDataToFeed(String feedID, String dataName, String value, String tag, int sensorID) {
-		db.addData(feedID, dataName, value, tag, String.valueOf(sensorID));
+	public void addDataToFeed(String feedID, String dataName, String value, String tag, int sensorID, boolean isChecked) {
+		db.addData(feedID, dataName, value, tag, String.valueOf(sensorID), isChecked?"1":"0");
 	}
 	
 
@@ -182,6 +183,10 @@ public class DatabaseHelper {
 		int dataCount = db.getRowNum(Database.DATASTREAM_INDEX, Database.colFeedID, feed[1]);
 		
 		return new String[]{title, feed[1], owned, access, location, String.valueOf(dataCount)};
+	}
+
+	public void checkFeedRunning(String[] info, boolean running) {
+		db.edit(Database.FEED_INDEX, info[0], info[1], Database.colRunning, running?"1":"0");
 	}
 
 

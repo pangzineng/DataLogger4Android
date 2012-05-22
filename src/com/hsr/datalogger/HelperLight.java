@@ -27,7 +27,10 @@ public class HelperLight {
 	/* 4. Feed Page Tab function & 6. Background function
 	 * (1) update called by background service
 	 * */
-	public boolean update(String feedID, String permission) {
+	public boolean update(String[] info) {
+		
+		String feedID = info[1];
+		String permission = info[2];
 		
 		// first get from dbH the selected datastream (name & sensorID)
 		List<String> dataNames = dbH.getUpdateDataNames(feedID);
@@ -55,7 +58,8 @@ public class HelperLight {
 		return true;
 	}
 
-	public void closeBackground() {
+	public void closeBackground(String[] info) {
+		dbH.checkFeedRunning(info, false);
 		hwH.stopListenToSensor();
 	}
 

@@ -25,12 +25,13 @@ public class Database extends SQLiteOpenHelper {
 	static final String colPermissionLevel = "FeedPermissionLevel"; // Full, View
 	static final String colPermission = "FeedPermissionKey"; // key, Null
 	static final String colLocation = "FeedLocation";
+	static final String colRunning = "CheckFeedRunning";
 	
 	static final String datastreamTable = "FeedDataStreams";
 	static final String colDataName = "FeedDataStreamName";	// Key
 	static final String colDataValue = "FeedDataStreamCurrentValue";
 	static final String colDataTag = "FeedDataTag";			// This will match the sensor type
-	static final String colChecked = "CheckedForUpdate";
+	static final String colChecked = "CheckForUpdate";
 	
 	static final String datapointTable = "DataPoints";
   //static final String colDataIndex = "Feed Data Index";	// Key
@@ -88,6 +89,7 @@ public class Database extends SQLiteOpenHelper {
 				           colFeedTitle + " TEXT NOT NULL, " +
 				           colFeedType + " TEXT NOT NULL, " +
 				           colLocation + " TEXT, " +
+				           colRunning + " TEXT, " + 
 				           "PRIMARY KEY (" + colUsername + ", " + colFeedID +"));"
 					);
 	
@@ -160,6 +162,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(colFeedTitle, feedTitle);
 		cv.put(colFeedType, feedType);
 		cv.put(colLocation, location);
+		cv.put(colRunning, "0");
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long rowID = db.insert(feedTable, colFeedID, cv);
@@ -169,13 +172,14 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	// Add data
-	public int addData(String feedID, String dataName, String currentValue, String dataTag, String sensorID){
+	public int addData(String feedID, String dataName, String currentValue, String dataTag, String sensorID, String checked){
 		ContentValues cv = new ContentValues();
 		cv.put(colFeedID, feedID);
 		cv.put(colDataName, dataName);
 		cv.put(colDataValue, currentValue);
 		cv.put(colDataTag, dataTag);
 		cv.put(colSensorID, sensorID);
+		cv.put(colChecked, checked);
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		long rowID = db.insert(datastreamTable, colDataName, cv);

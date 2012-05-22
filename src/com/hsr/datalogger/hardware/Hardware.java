@@ -32,8 +32,8 @@ public class Hardware implements SensorEventListener{
 	}
 
 	public void close(){
+		mSensor.stop();
 		sm.unregisterListener(this);
-		mSensor.destroy();
 	}
 	
 	public boolean[] getAvailable(){
@@ -48,7 +48,6 @@ public class Hardware implements SensorEventListener{
 	public double getSoundValue(){
 		mSensor.start();
 		double sound = mSensor.getdB();
-		mSensor.stop();
 		return sound<0?0:sound;
 	}
 

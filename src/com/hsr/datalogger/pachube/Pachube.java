@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import android.util.Base64;
+import android.util.Log;
 
 public class Pachube {
 
@@ -66,6 +67,8 @@ public class Pachube {
 		out.flush();
 		out.close();
 
+		Log.d("beta", "create feed response: " + hr.getResponseMessage());
+		
 		if (hr.getResponseMessage().equalsIgnoreCase("Created")) {
 			String[] a = hr.getHeaderField("Location").split("/");
 			Feed n = getFeed(Integer.parseInt(a[a.length - 1]), key);
@@ -152,6 +155,8 @@ public class Pachube {
 		out.write(s);
 		out.flush();
 		out.close();
+		
+		Log.d("beta", "create data response: " + hr.getResponseMessage());
 		
 		if (hr.getResponseMessage().equalsIgnoreCase("Created")) {
 			return true;

@@ -11,11 +11,11 @@
  	
  	<!-- FOR login_dialog -->
  	<string name="login_dialog_title">Manage Account</string>
- 	<string name="login_logout_title">* Logout current account</string>
+ 	<string name="login_logout_title">Logout current account</string>
  	<string name="login_logout_current">You are: </string>
  	<string name="login_logout_button">Logout</string>
  	<string name="login_logout_confirm">You will log out and become guest, are you sure to log out?</string>
- 	<string name="login_title">* Login/Switch to another account</string>
+ 	<string name="login_title">Login/Switch to another account</string>
     <string name="login_name">Username</string>
     <string name="login_pw">Password</string>
     <string name="login_auto">Automatic login for me</string>
@@ -23,22 +23,22 @@
     
     <!-- FOR add_feed_dialog -->
 	<string name="add_feed_dialog_title">Add Feed to Feed List</string>
-	<string name="add_feed_choose_exist">* Import From Existing Feed</string>
+	<string name="add_feed_choose_exist">Import From Existing Feed</string>
 	<string name="add_feed_exist_id">Feed ID</string>
 	<string name="add_feed_exist_key">Permission</string>
-	<string name="add_feed_choose_new">* Create New Feed</string>
+	<string name="add_feed_choose_new">Create New Feed</string>
 	<string name="add_feed_new_title">Name</string>
 	<string name="add_feed_new_type">Type</string>
  	<string name="add_feed_new_status">Status</string>
  	
 	<!-- FOR edit_delete_feed_dialog -->
 	<string name="edit_delete_dialog_title">Modify This Feed</string>
-	<string name="edit_feed">* Edit This Feed</string>
+	<string name="edit_feed">Edit This Feed</string>
 	<string name="edit_feed_name">Rename</string>
 	<string name="edit_feed_status">Change Status</string>
 	<string name="edit_feed_update_location">Update Feed Location</string>
 	<string name="edit_feed_update_loc_button">Update</string>
-	<string name="delete_feed">* Delete This Feed</string>
+	<string name="delete_feed">Delete This Feed</string>
 	<string name="delete_feed_message">Delete This Feed:</string>
 	<string name="delete_feed_button">Delete</string>
 	<string name="delete_feed_confirm_title">Are you sure you want to delete this feed?</string>
@@ -99,10 +99,10 @@
 	
 	<!-- FOR edit_delete_data_dialog -->
 	<string name="edit_data_dialog_title">Modify This Data</string>
-	<string name="edit_data">* Edit This Data Stream</string>
+	<string name="edit_data">Edit This Data Stream</string>
 	<string name="edit_data_tags">Tags:</string>
 	<string name="edit_data_notice">Notice: Please use \",\" to seperate different tags</string>
-	<string name="delete_data">* Delete This Data Stream</string>
+	<string name="delete_data">Delete This Data Stream</string>
 	<string name="delete_data_message">Delete This Data:</string>
 	<string name="delete_data_button">Delete</string>
 	<string name="delete_data_confirm_title">Are you sure you want to delete this data stream?</string>
@@ -121,11 +121,11 @@
 		<item>Sound</item>
 		<item>Accelerometer</item>
 		<item>Magnetic Field</item>
-		<item>Orientation(deprecated)</item>
+		<item>Orientation (deprecated)</item>
 		<item>Gyroscope</item>
 		<item>Light</item>
 		<item>Pressure</item>
-		<item>Temperature(deprecated)</item>
+		<item>Temperature (deprecated)</item>
 		<item>Proximity</item>
 		<item>Gravity</item>
 		<item>Linear Acceleration</item>

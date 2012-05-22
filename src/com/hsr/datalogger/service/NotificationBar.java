@@ -55,7 +55,7 @@ public class NotificationBar {
 	}
 	
 	private void updateTimer(){
-		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "(" + time + "/"+ (runningTime-time) + " minutes). Click to stop now", pnoti);
+		nt.setLatestEventInfo(context, user + ":\"" + FeedName + "\"", "Running since " + time + " min. "+ (runningTime-time) + " min left. Click to stop now", pnoti);
 		time ++;
 		if(runningTime-time < 0){
 			closeNotification();

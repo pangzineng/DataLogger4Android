@@ -81,6 +81,7 @@ public class FeedList extends Activity {
 		private final String feedDataCount;
 		private final int feedOwnership;
 		private final int feedPermissionLevel;
+		private final boolean feedRunning;
 				
 		public FeedItem(Helper helper, String ID) {
 			String[] info = helper.getFeedListItem(ID);
@@ -100,6 +101,8 @@ public class FeedList extends Activity {
 			} else {
 				feedPermissionLevel = FULL;
 			}
+			
+			feedRunning = info[4].compareTo("1")==0?true:false;
 		}
 
 		@Override
@@ -125,6 +128,10 @@ public class FeedList extends Activity {
 		
 		public int getFeedPermissionLevel(){
 			return feedPermissionLevel;
+		}
+		
+		public boolean getRunning(){
+			return feedRunning;
 		}
 	}
 	
@@ -217,10 +224,12 @@ public class FeedList extends Activity {
 			TextView feedDataCount = (TextView) view.findViewById(R.id.list_feed_data_count);
 			TextView feedOwnership = (TextView) view.findViewById(R.id.list_feed_ownership);
 			ImageView feedPermissionLevel = (ImageView) view.findViewById(R.id.list_feed_permission);
+			TextView feedRunning = (TextView) view.findViewById(R.id.list_feed_running);
 			
 			feedID.setText(item.getFeedID());
 			feedName.setText(item.getFeedName());
 			feedDataCount.setText(item.getDataCount());
+			feedRunning.setText(item.getRunning()?" (Running)":"");
 			
 			if(item.getFeedOwnerShip()==FeedItem.PUBLIC){
 				feedOwnership.setText("Public");

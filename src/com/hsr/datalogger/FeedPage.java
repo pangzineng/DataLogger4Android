@@ -19,6 +19,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.pm.ActivityInfo;
 import android.content.Loader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,10 +28,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -175,24 +180,32 @@ public class FeedPage extends Activity {
 			dataName.setText(item.getDataName());
 			tags.setText(item.getTags());
 			
-			CheckBox check = (CheckBox) view.findViewById(R.id.data_item_check);
-			check.setChecked(item.getChecked());
+			final ImageView check = (ImageView) view.findViewById(R.id.data_item_check);
+			check.setImageResource(item.getChecked()?R.drawable.check_on:R.drawable.check_off);
 			
 			check.setOnClickListener(new View.OnClickListener() {
+				
 				@Override
 				public void onClick(View v) {
+					check.setImageResource(item.getChecked()?R.drawable.check_on:R.drawable.check_off);
 					helper.checkData(item.getDataName(), item.getChecked()?false:true);
 				}
 			});
 			
-//			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			check.setOnClickListener(new View.OnClickListener() {
 //				@Override
-//				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//					Log.d("pachube wtf", "Checked: " + item.getDataName()+ "" + isChecked);
-//					helper.checkData(item.getDataName(), isChecked);
+//				public void onClick(View v) {
+//					helper.checkData(item.getDataName(), item.getChecked()?false:true);
 //				}
 //			});
 			
+//			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//				@Override
+//				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//					Log.d("beta", "Checked: " + item.getDataName()+ "" + isChecked);
+//					helper.checkData(item.getDataName(), isChecked);
+//				}
+//			});
 			return view;
 		}
 	}
@@ -308,7 +321,9 @@ public class FeedPage extends Activity {
 		public void onLoadFinished(Loader<List<DataItem>> loader, List<DataItem> data) {
 			ActionBar bar = getActivity().getActionBar();
 			if(data==null||data.size()==0){
-				bar.removeTabAt(2);
+				if(bar.getTabCount()==3){
+					bar.removeTabAt(2);
+				}
 			} else {
 				if(bar.getTabCount()==2){
 			        bar.addTab(bar.newTab().setText("Feed Data").setTabListener(new TabListener<FeedData.FDFragment>(getActivity(), FeedData.FDFragment.class, helper, "FeedData")));
@@ -424,7 +439,19 @@ public class FeedPage extends Activity {
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, helper.setSensorForDevice());
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			sp.setAdapter(adapter);
-						
+			sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+					dataName.setText(parent.getItemAtPosition(position).toString());
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> parent) {
+					dataName.setText("Sound");
+				}
+			});
+			
 			return new AlertDialog.Builder(getActivity())
 					   .setIcon(android.R.drawable.ic_menu_add)
 					   .setTitle(title)
