@@ -32,11 +32,11 @@ public class Cache{
 	private static final String CURRENT_FEED_ID = "feed id";
 	private static final String CURRENT_FEED_NAME = "feed name";
 	private static final String CURRENT_KEY = "permission";
-
+	private static final String CURRENT_FEED_ACCESS = "can access feed";
+	
 	private static final String CURRENT_FEED_DATA = "datastream name";
 	private static final String CURRENT_FEED_DIAGRAM_DURATION = "diagram duration";
-	
-	private static final String CURRENT_ACTION = "next action";
+	private static final String CURRENT_FEED_DATA_ACCESS = "can access diagram";
 	
 	// to be store for the first launch
 	private static final String SENSOR_DETECTED = "detect sensor trigger";
@@ -45,14 +45,6 @@ public class Cache{
 	private static final String SELECT_SENSORS = "selected update sensor";
 	private static final String SELECT_SENSORS_NUM = "selected sensor number";
 	
-	// to be recognize by activity if needed
-	public static final int ACTION_EDIT_PROFILE = 0;
-	public static final int ACTION_ADD_SENSOR_FEED = 1;
-	public static final int ACTION_ADD_CUSTOM_FEED = 2;
-	public static final int ACTION_EDIT_SENSOR_FEED = 3;
-	public static final int ACTION_EDIT_CUSTOM_FEED = 4;
-	public static final int ACTION_UPDATE_SENSOR_FEED = 5;
-	public static final int ACTION_UPDATE_CUSTOM_FEED = 6;
 	
 	// for tab memory
 	public static final int TAB_LIST = 0;
@@ -113,11 +105,6 @@ public class Cache{
 		editor.apply();
 	}
 	
-	public void setKey(String key){
-		editor.putString(CURRENT_KEY, key);
-		editor.apply();
-	}
-	
 	public void setFeedID(String fID){
 		editor.putString(CURRENT_FEED_ID, fID);
 		editor.apply();
@@ -125,6 +112,11 @@ public class Cache{
 	
 	public void setFeedName(String fName){
 		editor.putString(CURRENT_FEED_NAME, fName);
+		editor.apply();
+	}
+	
+	public void setFeedAccess(boolean now){
+		editor.putBoolean(CURRENT_FEED_ACCESS, now);
 		editor.apply();
 	}
 	
@@ -138,13 +130,12 @@ public class Cache{
 		editor.apply();
 	}
 	
-	public void setAction(int choice){
-		editor.putInt("Action", choice);
+	public void setDiagramAccess(boolean now){
+		editor.putBoolean(CURRENT_FEED_DATA_ACCESS, now);
 		editor.apply();
 	}
 	
 	public void setSelectedSensor(int[] selected){
-		
 		setSelectedSensorNum(selected);
 		
 		StringBuilder builder = new StringBuilder();
@@ -190,7 +181,7 @@ public class Cache{
 	}
 	
 	public String getMaster(){
-		return sp.getString(CURRENT_MASTERKEY, null);
+		return sp.getString(CURRENT_MASTERKEY, "EppoRYwcGi-QRG0ieqk-XOlgAv2SAKxNRmM4cGRWMkNEST0g");
 	}
 	
 	public String[] getAutoLogin(){
@@ -213,6 +204,10 @@ public class Cache{
 		return sp.getString(CURRENT_FEED_NAME, null);
 	}
 	
+	public boolean getFeedAccess(){
+		return sp.getBoolean(CURRENT_FEED_ACCESS, false);
+	}
+	
 	public String getDatastream(){
 		return sp.getString(CURRENT_FEED_DATA, null);
 	}
@@ -221,8 +216,8 @@ public class Cache{
 		return sp.getString(CURRENT_FEED_DIAGRAM_DURATION, null);
 	}
 	
-	public int getAction(){
-		return sp.getInt(CURRENT_ACTION, -1);
+	public boolean getDiagramAccess(){
+		return sp.getBoolean(CURRENT_FEED_DATA_ACCESS, false);
 	}
 	
 	public int[] getSelectedSensor(){

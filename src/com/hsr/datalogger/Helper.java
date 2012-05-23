@@ -1,5 +1,6 @@
 package com.hsr.datalogger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,6 +96,7 @@ public class Helper {
 		String[] autoAccount = caH.getAutoLogin();
 		if(autoAccount == null){
 			caH.setCurrentUser(new String[]{"guest"}, null);
+			paH.setKey("EppoRYwcGi-QRG0ieqk-XOlgAv2SAKxNRmM4cGRWMkNEST0g");
 			return "guest";
 		} else {
 			String master = paH.login(autoAccount);
@@ -104,6 +106,7 @@ public class Helper {
 			 } else {	// this means the name&pw in database for autologin aren't correct, need to remove
 				caH.removeAutoLogin();
 				caH.setCurrentUser(new String[]{"guest"}, null);
+				paH.setKey("EppoRYwcGi-QRG0ieqk-XOlgAv2SAKxNRmM4cGRWMkNEST0g");
 				return null;			
 			 }
 		}
@@ -117,6 +120,7 @@ public class Helper {
 	public void logout(){
 		caH.removeAutoLogin();
 		caH.setCurrentUser(new String[]{"guest"}, null);
+		paH.setKey("EppoRYwcGi-QRG0ieqk-XOlgAv2SAKxNRmM4cGRWMkNEST0g");
 	}
 	
 	public boolean login(String[] account, boolean autoL, boolean reg){
@@ -160,8 +164,7 @@ public class Helper {
 		String feedID = paH.createFeed(title, ownership, loc); // should return the feed ID or null if fail
 		if(feedID != null){   
 			dbH.addFeedToList(user[0], feedID, ownership, caH.getCurrentMasterKey(), "Full", title, type, location);
-			caH.setCurrentFeed(feedID, title, caH.getCurrentMasterKey());
-			setCurrentTab(Cache.TAB_PAGE);
+			caH.setCurrentFeed(feedID, title);
 		} else {	
 			return false;			
 		}
@@ -174,7 +177,7 @@ public class Helper {
 		if(feed != null){
 			String location = "("+feed[2]+", "+feed[3]+", "+feed[4]+")"; 
 			dbH.addFeedToList(user[0], feedID, "None", permission, feed[1], feed[0], "Sensor", location);
-			caH.setCurrentFeed(feedID, feed[0], permission);
+			caH.setCurrentFeed(feedID, feed[0]);
 		} else {
 			return false;
 		}
@@ -220,11 +223,19 @@ public class Helper {
 		String username = caH.getCurrentUser()[0];
 		String permission = dbH.getPermissionFor(username, id);
 
-		dbH.deleteFeed(username, id);
+		int result = dbH.deleteFeed(username, id);
 		if(local){
-			return true;
+			if(result!=0){
+				caH.checkoffCurrentFeedState(getFeedPageInfo());
+				return true;
+			}
+			return false;
 		} else {
-			return paH.deleteFeed(id, permission); 
+			if(paH.deleteFeed(id, permission)){
+				caH.checkoffCurrentFeedState(getFeedPageInfo());
+				return true;
+			}
+			return false; 
 		}
 	}
 
@@ -250,8 +261,7 @@ public class Helper {
 	 * (4) Click on list item (one feed)
 	 * */
 	public void clickOneFeed(String feedID, String title) {
-		String permission = dbH.getPermissionFor(caH.getCurrentUser()[0], feedID);
-		caH.setCurrentFeed(feedID, title, permission);
+		caH.setCurrentFeed(feedID, title);
 		setCurrentTab(Cache.TAB_PAGE);
 	}
 
@@ -277,8 +287,7 @@ public class Helper {
 	}
 	
 	private String createPermission(String selectedLevel){
-		String key = paH.createKey(getFeedPageInfo()[1], selectedLevel);
-		return key;
+		return paH.createKey(getFeedPageInfo()[1], selectedLevel);
 	}
 	
 	/* 4. Feed Page Tab function
@@ -323,6 +332,7 @@ public class Helper {
 	public boolean dataDelete(String dataID) {
 		if(paH.deleteData(getFeedPageInfo()[1], dataID, getFeedPageInfo()[2])){
 			dbH.deleteData(getFeedPageInfo()[1], dataID);
+			caH.checkoffCurrentDiagramState(getFeedPageInfo(), dataID);
 			return true;
 		} else {
 			return false;
@@ -369,8 +379,12 @@ public class Helper {
 	 * (6) load the data list from database
 	 * */
 	public List<String> getDataList() {
-		String currentFeed = caH.getCurrentFeedInfo()[0];
-		return dbH.getCurrentDataList(currentFeed);
+		if(caH.getFeedAccess()){
+			String currentFeed = caH.getCurrentFeedInfo()[0];
+			return dbH.getCurrentDataList(currentFeed);
+		} else {
+			return Arrays.asList(new String[]{"NOT_ALLOWED"});
+		}
 	}
 
 	public int getDataListNum(){
@@ -392,6 +406,13 @@ public class Helper {
 		setCurrentTab(Cache.TAB_DATA);		
 	}
 
+
+	/* 5. Feed Data Tab function
+	 * (0) check whether to show any diagram
+	 * */
+	public boolean canReachCurrentDataDiagram() {
+		return caH.getDiagramAccess();
+	}
 
 	/* 5. Feed Data Tab function
 	 * (1) display the diagram

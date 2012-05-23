@@ -22,8 +22,6 @@ public class BackgroundUpdate extends Service {
 	private Runnable mTask = new Runnable(){
 
 		public void run() {
-			
-			helper.update(info);
 
 			runningTime = runningTime - (int)(interval/60000);
 			if(runningTime < 0) {
@@ -31,6 +29,7 @@ public class BackgroundUpdate extends Service {
 				helper.closeBackground(info);
 				stopSelf();
 			} else {
+				helper.update(info);
 				mHandler.postDelayed(mTask, interval);
 			}
 		}		

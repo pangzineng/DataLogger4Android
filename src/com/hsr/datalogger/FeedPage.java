@@ -92,16 +92,23 @@ public class FeedPage extends Activity {
 
 		private Helper helper;
 		List<DataItem> mList;
+		FPFragment frag;
 		
-		public DataListLoader(Context context, Helper h) {
+		public DataListLoader(Context context, Helper h, FPFragment fpFragment) {
 			super(context);
 			helper = h;
+			frag = fpFragment;
 		}
 
 		@Override
 		public List<DataItem> loadInBackground() {
 			List<String> datas = helper.getDataList();
-			if(datas == null) return null;
+			if(datas == null) {
+				return null;
+			} else if (datas.size()==1&&datas.get(0).equals("NOT_ALLOWED")){
+				frag.setEmptyText("You did not select any feed.");
+				return null;
+			}
 
 			List<DataItem> entries = new ArrayList<DataItem>(datas.size());
 			for(int i=0; i<datas.size(); i++){
@@ -314,7 +321,7 @@ public class FeedPage extends Activity {
 		
 		@Override
 		public Loader<List<DataItem>> onCreateLoader(int id, Bundle args) {
-			return new DataListLoader(getActivity(), helper);
+			return new DataListLoader(getActivity(), helper, this);
 		}
 
 		@Override

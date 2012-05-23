@@ -1,7 +1,5 @@
 package com.hsr.datalogger;
 
-import java.net.HttpURLConnection;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,8 +44,6 @@ public class FeedData extends Activity {
 		Helper helper;
 
 		private ImageView diagram;
-
-		HttpURLConnection urlc = null;
 		
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
@@ -58,35 +54,38 @@ public class FeedData extends Activity {
 			
 			View view = getView();
 			
-			diagram = (ImageView) view.findViewById(R.id.data_diagram);
+			//if current data is not reachable, do not load anything
+			if(helper.canReachCurrentDataDiagram()){
+				diagram = (ImageView) view.findViewById(R.id.data_diagram);
 
-			TextView feedname = (TextView) view.findViewById(R.id.diagram_stat_feedname);
-			TextView dataname = (TextView) view.findViewById(R.id.diagram_stat_dataname);
-			
-			TextView current = (TextView) view.findViewById(R.id.diagram_stat_current);
-			TextView unit = (TextView) view.findViewById(R.id.diagram_stat_unit);
-			TextView max = (TextView) view.findViewById(R.id.diagram_stat_max);
-			TextView min = (TextView) view.findViewById(R.id.diagram_stat_min);
-			
-			String[] stat = helper.getDiagramStat();
-			String[] info = helper.getDiagramInfo();
-			
-			feedname.setText(info[0]);
-			dataname.setText(info[1]);
-			
-			//cut the number to less digits
-			double cu = Double.parseDouble(stat[0]==null?"0":stat[0]);
-			double ma = Double.parseDouble(stat[2]==null?"0":stat[2]);
-			double mi = Double.parseDouble(stat[3]==null?"0":stat[3]);
-			
-			
-			current.setText(String.format("%.5f", cu));
-			unit.setText(stat[1]);
-			max.setText(String.format("%.5f", ma));
-			min.setText(String.format("%.5f", mi));
-			
-			helper.tempStore(diagram);
-			helper.reDraw();
+				TextView feedname = (TextView) view.findViewById(R.id.diagram_stat_feedname);
+				TextView dataname = (TextView) view.findViewById(R.id.diagram_stat_dataname);
+				
+				TextView current = (TextView) view.findViewById(R.id.diagram_stat_current);
+				TextView unit = (TextView) view.findViewById(R.id.diagram_stat_unit);
+				TextView max = (TextView) view.findViewById(R.id.diagram_stat_max);
+				TextView min = (TextView) view.findViewById(R.id.diagram_stat_min);
+				
+				String[] stat = helper.getDiagramStat();
+				String[] info = helper.getDiagramInfo();
+				
+				feedname.setText(info[0]);
+				dataname.setText(info[1]);
+				
+				//cut the number to less digits
+				double cu = Double.parseDouble(stat[0]==null?"0":stat[0]);
+				double ma = Double.parseDouble(stat[2]==null?"0":stat[2]);
+				double mi = Double.parseDouble(stat[3]==null?"0":stat[3]);
+				
+				
+				current.setText(String.format("%.5f", cu));
+				unit.setText(stat[1]);
+				max.setText(String.format("%.5f", ma));
+				min.setText(String.format("%.5f", mi));
+				
+				helper.tempStore(diagram);
+				helper.reDraw();
+			}
 		}
 		
 		@Override

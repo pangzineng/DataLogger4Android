@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 public class PachubeHelper {
 	//private String defaultViewKey;
 	private String defaultCreateKey;
-	private String currentMasterKey; //MasterKey for current User (can achieve only by login)
+	private static String currentMasterKey; //MasterKey for current User (can achieve only by login)
 	
 	public PachubeHelper(){
 		//this.defaultViewKey 	= PachubeProperty.defaultViewKey;
@@ -16,15 +16,15 @@ public class PachubeHelper {
 	}
 	
 	public PachubeHelper(String masterKey){
-		this.currentMasterKey = masterKey;
+		currentMasterKey = masterKey;
 	}
 	
 	public void setKey(String key){
-		this.currentMasterKey = key;
+		currentMasterKey = key;
 	}
 	
 	public String getKey(){
-		return this.currentMasterKey;
+		return currentMasterKey;
 	}
 	
 	public String login(String[] account){
@@ -59,8 +59,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return null;
 		
@@ -93,8 +93,8 @@ public class PachubeHelper {
 	
 	public String createFeed(String title, String isPrivate, double[] location){
 		String currentKey;
-		if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return null;
 		
@@ -125,8 +125,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -145,8 +145,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -167,8 +167,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -190,8 +190,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -229,8 +229,8 @@ public class PachubeHelper {
 	
 	public String createKey(String feedID, String permission){
 		String currentKey;
-		if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else
 			return null;
 		int id = Integer.parseInt(feedID);
@@ -254,8 +254,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		Data data = new Data(dataID,tag,unit,symbol);
@@ -276,8 +276,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return null;
 		
@@ -322,8 +322,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		try {
@@ -347,8 +347,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		try {
@@ -367,8 +367,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -396,8 +396,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return false;
 		
@@ -429,8 +429,8 @@ public class PachubeHelper {
 		String currentKey;
 		if (key != null) 
 			currentKey = key;
-		else if (this.currentMasterKey != null)
-			currentKey = this.currentMasterKey;
+		else if (currentMasterKey != null)
+			currentKey = currentMasterKey;
 		else 
 			return null;
 		String[] result = new String[4];

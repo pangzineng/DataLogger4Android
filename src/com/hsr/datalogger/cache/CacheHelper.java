@@ -23,10 +23,15 @@ public class CacheHelper {
 	}
 	
 	public void setCurrentUser(String[] account, String master){
+		cache.setFeedAccess(false);
+		cache.setDiagramAccess(false);
 		cache.setUsername(account[0]);
 		if(account.length>1){
 			cache.setPW(account[1]);
 			cache.setMasterKey(master);
+		} else {
+			cache.setPW("");
+			cache.setMasterKey("EppoRYwcGi-QRG0ieqk-XOlgAv2SAKxNRmM4cGRWMkNEST0g");
 		}
 	}
 
@@ -79,17 +84,19 @@ public class CacheHelper {
 		}
 	}
 
-	public void setCurrentFeed(String feedID, String title, String permission) {
+	public void setCurrentFeed(String feedID, String title) {
+		cache.setFeedAccess(true);
+		cache.setDiagramAccess(false);
 		cache.setFeedID(feedID);
 		cache.setFeedName(title);
-		cache.setKey(permission);
 	}
-
+	
 	public void setCurrentTab(int index) {
 		cache.setCurrentTab(index);
 	}
 
 	public void setCurrentData(String dataName) {
+		cache.setDiagramAccess(true);
 		cache.setDataStream(dataName);
 	}
 
@@ -112,5 +119,37 @@ public class CacheHelper {
 
 	public boolean getIniFP() {
 		return cache.getInitFP();
+	}
+	
+	
+	public void checkoffCurrentDiagramState(String[] info, String dataID) {
+		if(info[0].equalsIgnoreCase(cache.getUsername())&&
+			info[1].equalsIgnoreCase(cache.getFeedID())&&
+			dataID.equalsIgnoreCase(cache.getDatastream())){
+			cache.setDiagramAccess(false);
+		}
+	}
+	
+	public void setDiagramAccess(boolean now){
+		cache.setDiagramAccess(now);
+	}
+
+	public boolean getDiagramAccess() {
+		return cache.getDiagramAccess();
+	}
+	
+	public void checkoffCurrentFeedState(String[] info){
+		if(info[0].equalsIgnoreCase(cache.getUsername())&&info[1].equalsIgnoreCase(cache.getFeedID())){
+			cache.setFeedAccess(false);
+			cache.setDiagramAccess(false);
+		}
+	}
+	
+	public void setFeedAccess(boolean now){
+		cache.setFeedAccess(now);
+	}
+	
+	public boolean getFeedAccess(){
+		return cache.getFeedAccess();
 	}
 }

@@ -28,7 +28,7 @@ public class Pachube {
 	 * @throws MalformedURLException 
 	 */
 	public static Feed getFeed(int feed, String key) throws PachubeException, MalformedURLException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + ".xml").openConnection());
 		hr.setRequestProperty("X-PachubeApiKey", key);
 
@@ -57,7 +57,7 @@ public class Pachube {
 	 * @throws NumberFormatException 
 	 */
 	public static Feed createFeed(Feed f, String key) throws PachubeException, NumberFormatException, MalformedURLException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds.xml").openConnection());
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds.xml").openConnection());
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
 		hr.setRequestProperty("X-PachubeApiKey", key);
@@ -91,7 +91,7 @@ public class Pachube {
 	 * @throws MalformedURLException 
 	 */
 	public static boolean updateFeed(int feed, String f, String key) throws PachubeException, MalformedURLException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + ".xml").openConnection());
 		hr.setRequestMethod("PUT");
 		hr.setDoOutput(true);
@@ -121,7 +121,7 @@ public class Pachube {
 	 * @throws PachubeException 
 	 */
 	public static boolean deleteFeed(int feed, String key) throws PachubeException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + ".xml").openConnection());
 		hr.setRequestMethod("DELETE");
 		hr.setRequestProperty("X-PachubeApiKey", key);
@@ -145,7 +145,7 @@ public class Pachube {
 	 * @throws IOException 
 	 */
 	public static boolean createDatastream(int feed, String s, String key) throws PachubeException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + "/datastreams.xml").openConnection());
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
@@ -178,7 +178,7 @@ public class Pachube {
 	 * @throws PachubeException 
 	 */
 	public static boolean deleteDatastream(int feed, String datastream, String key) throws MalformedURLException, IOException, PachubeException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + "/datastreams/" + datastream + ".xml").openConnection());
 		hr.setRequestMethod("DELETE");
 		hr.setRequestProperty("X-PachubeApiKey", key);
@@ -202,7 +202,7 @@ public class Pachube {
 	 * @throws PachubeException
 	 */
 	public static boolean updateDatastream(int feed, String dataID, String s, String key) throws IOException, PachubeException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + "/datastreams/" + dataID + ".xml").openConnection());
 		hr.setRequestMethod("PUT");
 		hr.setDoOutput(true);
@@ -231,7 +231,7 @@ public class Pachube {
 	 * @throws PachubeException 
 	 */
 	public static boolean updateDataPoints(int feed, String dataID, String s, String key) throws IOException, PachubeException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + "/datastreams/" + dataID + "/datapoints.xml").openConnection());
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
@@ -261,7 +261,7 @@ public class Pachube {
 	 * @throws PachubeException 
 	 */
 	public static Data getDatastream(int feed, String dataID, String key) throws MalformedURLException, IOException, PachubeException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/feeds/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/feeds/"
 				+ feed + "/datastreams/" + dataID + ".xml").openConnection());
 		hr.setRequestProperty("X-PachubeApiKey", key);
 
@@ -288,7 +288,7 @@ public class Pachube {
 	 * @throws IOException 
 	 */
 	public static InputStream showGraph(int feedID, String streamID, int width, int height, String duration, int timezone) throws IOException{
-		URL graph = new URL("http://api.pachube.com/v2/feeds/" + feedID + "/datastreams/"
+		URL graph = new URL("http://api.cosm.com/v2/feeds/" + feedID + "/datastreams/"
 				+ streamID + ".png?width=" + width + "&height=" + height + "&colour=%23000000" 
 				+ "&duration=" + duration + "&show_axis_labels=true&detailed_grid=true&timezone=" + timezone);
 		
@@ -312,7 +312,7 @@ public class Pachube {
 	 * @throws MalformedURLException 
 	 */
 	public static boolean createUser(User u, String key) throws PachubeException, MalformedURLException, IOException, ParserConfigurationException, SAXException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/users.xml").openConnection());
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/users.xml").openConnection());
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
 		hr.setRequestProperty("X-PachubeApiKey", key);
@@ -344,7 +344,7 @@ public class Pachube {
 	 * @throws MalformedURLException 
 	 */
 	public static boolean updateUser(String login, String s, String key) throws PachubeException, MalformedURLException, IOException {
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/users/"
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/users/"
 				+ login + ".xml").openConnection());
 		hr.setRequestMethod("PUT");
 		hr.setDoOutput(true);
@@ -372,7 +372,7 @@ public class Pachube {
 	 * @throws IOException
 	 */
 	public static boolean createMasterKey(String username, String password, String keyRequest) throws IOException{
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/keys.xml")).openConnection();	
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/keys.xml")).openConnection();	
 		String encoding = Base64.encodeToString((username+":"+password).getBytes(),Base64.DEFAULT);
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
@@ -390,7 +390,7 @@ public class Pachube {
 	}
 	
 	public static boolean createSharingKey(String key, String keyRequest) throws IOException{
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/keys.xml")).openConnection();	
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/keys.xml")).openConnection();	
 		hr.setRequestMethod("POST");
 		hr.setDoOutput(true);
 		hr.setRequestProperty("X-PachubeApiKey", key);
@@ -422,7 +422,7 @@ public class Pachube {
 	 * @throws IOException
 	 */
 	public static String getKey(String username, String password, String keyName) throws ParserConfigurationException, SAXException, IOException{
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/keys.xml")).openConnection();	
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/keys.xml")).openConnection();	
 		String encoding = Base64.encodeToString((username+":"+password).getBytes(),Base64.DEFAULT);
 		hr.setRequestProperty ("Authorization", "Basic " + encoding.trim());
 		
@@ -433,7 +433,7 @@ public class Pachube {
 	}
 	
 	public static String getKey(String key, String keyName) throws ParserConfigurationException, SAXException, IOException{
-		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.pachube.com/v2/keys.xml")).openConnection();	
+		HttpURLConnection hr = (HttpURLConnection) (new URL("http://api.cosm.com/v2/keys.xml")).openConnection();	
 		hr.setRequestProperty("X-PachubeApiKey", key);
 		
 		if (hr.getResponseCode() == 200)

@@ -66,8 +66,8 @@ public class DatabaseHelper {
 		return new String[]{tag, checked};
 	}
 
-	public void deleteFeed(String username, String id) {
-		db.deleteRow(Database.FEED_INDEX, username, id);
+	public int deleteFeed(String username, String id) {
+		return db.deleteRow(Database.FEED_INDEX, username, id);
 	}
 
 	public void editFeedTitle(String user, String id, String nTitle) {
