@@ -56,7 +56,7 @@ public class Homepage extends Activity {
         if(autoCheck == null){
         	user.setText("guest");
         	// TODO [refactor]: collect all the toasts and put inside one toast class
-        	Toast.makeText(this, "You auto login password had change, auto login failed", Toast.LENGTH_LONG).show();
+        	Toast.makeText(this, "Login failed, your auto login password has changed", Toast.LENGTH_LONG).show();
         } else {
             user.setText(autoCheck);
         }
@@ -84,6 +84,22 @@ public class Homepage extends Activity {
     	helper.closeListLoader(); 
     }
     
+	@Override
+	public void onBackPressed() {
+		int index = getActionBar().getSelectedNavigationIndex();
+		switch(index){
+		case FEED_LIST:
+			finish();
+			break;
+		case FEED_PAGE:
+			getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
+			break;
+		case FEED_DATA:
+			getActionBar().setSelectedNavigationItem(Homepage.FEED_PAGE);
+			break;
+		}
+	};
+
     public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
         private final Activity mActivity;
         private final String mTag;
@@ -195,7 +211,7 @@ public class Homepage extends Activity {
 											helper.logout();
 											helper.reloadFeedList();
 									    	username.setText("guest");
-									    	Toast.makeText(mContext, "You just log out and become guest", Toast.LENGTH_LONG).show();
+									    	Toast.makeText(mContext, "Logged out", Toast.LENGTH_LONG).show();
 									    	dialog.dismiss();
 										}
 								   })
@@ -235,9 +251,9 @@ public class Homepage extends Activity {
 									helper.reloadFeedList();
 									getActivity().getActionBar().setSelectedNavigationItem(Homepage.FEED_LIST);
 									username.setText(lgName);
-							    	Toast.makeText(mContext, "You just log in as " + username.getText(), Toast.LENGTH_LONG).show();
+							    	Toast.makeText(mContext, "Logged in as " + username.getText(), Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext, "You enter wrong name or password", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Login failed, wrong name or password", Toast.LENGTH_LONG).show();
 								}
 							}
 					   })

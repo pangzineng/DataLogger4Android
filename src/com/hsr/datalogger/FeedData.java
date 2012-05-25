@@ -172,16 +172,16 @@ public class FeedData extends Activity {
 								String unit = sp.getSelectedItem().toString();
 								
 								if((sp.getSelectedItemPosition() == sp.getCount()-1)&&(Integer.parseInt(dura) > 730)){
-									Toast.makeText(mContext, "Donnot set > 23months, Y U NO LISTEN !?", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Do not set > 23 months", Toast.LENGTH_LONG).show();
 									dialog.cancel();
 								} else if((sp.getSelectedItemPosition() == sp.getCount()-2)&&(Integer.parseInt(dura) > 23)){
-									Toast.makeText(mContext, "Donnot set > 730days, Y U NO LISTEN !?", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Do not set > 730 days", Toast.LENGTH_LONG).show();
 									dialog.cancel();
 								} else if(dura.length()==0){
 									Toast.makeText(mContext, "Please enter a number", Toast.LENGTH_LONG).show();
 									dialog.cancel();
 								} else{			
-									Toast.makeText(mContext, "You just set the duration to " + dura + unit, Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Duration set to " + dura + unit, Toast.LENGTH_LONG).show();
 									helper.setDiagramDuration(dura+unit);
 									helper.reDraw();
 								}

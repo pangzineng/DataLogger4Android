@@ -48,7 +48,7 @@
 		        android:id="@+id/textView1"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="Data: "
+		        android:text="Sensor: "
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
 		    <TextView
 		        android:id="@+id/list_feed_data_count"

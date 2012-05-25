@@ -56,7 +56,7 @@ public class FeedPage extends Activity {
 		super.onResume();
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
-
+	
 	public static class DataItem {
 		
 		private String dataName;
@@ -476,11 +476,11 @@ public class FeedPage extends Activity {
 										// reload the data list
 										helper.reloadDataList();
 									} else {
-										Toast.makeText(mContext, "Fail to create new data", Toast.LENGTH_SHORT).show();
+										Toast.makeText(mContext, "Failed to create new data", Toast.LENGTH_SHORT).show();
 									}
 									
 								} else {
-									Toast.makeText(mContext, "Please enter a name for datastream", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Please enter a name for data", Toast.LENGTH_LONG).show();
 								}
 							}
 						})
@@ -540,7 +540,7 @@ public class FeedPage extends Activity {
 								if(helper.sendEmail(emailAddress.getText().toString(), selected.getText().toString(), forDialog)){
 									Toast.makeText(mContext, "Email is sent successfully", Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext, "Fail to create permission, or there are no email apps", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Failed to create permission, or there are no email apps", Toast.LENGTH_LONG).show();
 								}
 							}
 						})
@@ -678,10 +678,10 @@ public class FeedPage extends Activity {
 								String dataID = dataName.getText().toString();
 								
 								if(helper.dataDelete(dataID)){
-									Toast.makeText(mContext, "You successfully delete the data", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Data deleted successfully", Toast.LENGTH_LONG).show();
 									helper.reloadDataList();
 								} else {
-									Toast.makeText(mContext, "Fail to delete the data, error occurs", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Failed to delete the data", Toast.LENGTH_LONG).show();
 								}
 							}
 					   	})
@@ -709,10 +709,10 @@ public class FeedPage extends Activity {
 						String nTags = newTags.getText().toString();
 
 						if(helper.dataEdit(dataID, nTags)){
-							Toast.makeText(mContext, "You successfully edit the data", Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, "Data successfully edited", Toast.LENGTH_LONG).show();
 							helper.reloadDataList();
 						} else {
-							Toast.makeText(mContext, "Fail to edit, error with pachube", Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, "Error from server: Failed to edit", Toast.LENGTH_LONG).show();
 						}
 					}
 			  })

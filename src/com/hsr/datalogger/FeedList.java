@@ -419,7 +419,7 @@ public class FeedList extends Activity {
 					if(helper.updateLocation(currentID.getText().toString())){
 						Toast.makeText(mContext, "Location is updated", Toast.LENGTH_LONG).show();
 					} else {
-						Toast.makeText(mContext, "Fail to update location", Toast.LENGTH_LONG).show();
+						Toast.makeText(mContext, "Failed to update location", Toast.LENGTH_LONG).show();
 					}
 				}
 			});
@@ -447,9 +447,9 @@ public class FeedList extends Activity {
 									local = true;
 								}
 								if(helper.feedDelete(id, local)){
-									Toast.makeText(mContext, "You successfully delete the feed", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Feed was deleted successfully", Toast.LENGTH_LONG).show();
 								} else {
-									Toast.makeText(mContext, "Error from pachube server, fail to delete on server side", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext, "Error from server: Failed to delete", Toast.LENGTH_LONG).show();
 								}
 								helper.reloadFeedList();
 							}
@@ -480,9 +480,9 @@ public class FeedList extends Activity {
 												nOwn = newOwnership.isChecked()?"Private":"Public";
 											}
 											if(helper.feedEdit(id, nTitle, titleOnly, nOwn)){
-												Toast.makeText(mContext, "You successfully edit the feed", Toast.LENGTH_LONG).show();
+												Toast.makeText(mContext, "Feed was successfully edited", Toast.LENGTH_LONG).show();
 											} else {
-												Toast.makeText(mContext, "Error from pachube server, fail to edit on server side", Toast.LENGTH_LONG).show();
+												Toast.makeText(mContext, "Error from server: failed to edited", Toast.LENGTH_LONG).show();
 											}
 											helper.reloadFeedList();
 										}
@@ -578,18 +578,18 @@ public class FeedList extends Activity {
 								if(feedid.length()<=0 && newfeedtitle.length()>0){
 									// For create new feed
 									if(helper.feedCreate(title, type, ownership)){
-										Toast.makeText(mContext, "You just create a new feed", Toast.LENGTH_LONG).show();
+										Toast.makeText(mContext, "New feed created", Toast.LENGTH_LONG).show();
 										result = true;
 									} else {
-										Toast.makeText(mContext, "Fail to create new feed", Toast.LENGTH_SHORT).show();
+										Toast.makeText(mContext, "Failed to create new feed", Toast.LENGTH_SHORT).show();
 									}
 								} else if (feedid.length()>0 && newfeedtitle.length()<=0){
 									// For import existed feed
 									if(helper.feedImport(importID, importPermission)){
-										Toast.makeText(mContext, "You just import a feed", Toast.LENGTH_LONG).show();
+										Toast.makeText(mContext, "Feed imported", Toast.LENGTH_LONG).show();
 										result = true;
 									} else {
-										Toast.makeText(mContext, "Fail to import feed", Toast.LENGTH_SHORT).show();
+										Toast.makeText(mContext, "Failed to import feed", Toast.LENGTH_SHORT).show();
 									}
 								} else {
 									Toast.makeText(mContext, "Please enter feed id or new feed title", Toast.LENGTH_LONG).show();
