@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.hsr.datalogger.FeedList.FLFragment;
@@ -465,6 +466,7 @@ public class Helper {
 
 	public String[] getDiagramStat() {
 		String dataName = caH.getDataInfoForDiagram()[1];
+		Log.d("DL", "Current: " + getFeedPageInfo()[0] + " feed: " + getFeedPageInfo()[1] + " data: " + dataName);
 
 		//current, unit, max, min
 		return paH.getDataStat(getFeedPageInfo()[1], dataName, getFeedPageInfo()[2]);
